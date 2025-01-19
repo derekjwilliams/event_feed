@@ -83,7 +83,7 @@ To view all: Open browser to http://localhost:3000/api/rss
 
 To filter by tags: Open browser to http://localhost:3000/api/rss?tags=PNCA,Housing
 
-## Example Query
+## Example GraphQL Query
 
 ```
 query($modifiedSince: String!, $tags:[String!]!) {
