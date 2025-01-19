@@ -3,7 +3,7 @@ import { Feed } from 'feed'
 
 const GRAPHQL_ENDPOINT = 'http://localhost:3001/graphql'
 
-interface Article {
+interface Event {
   id: string
   title: string
   description: string
@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
 
     // Define the GraphQL query
     const query = `
-      query GetArticles($tags: [String!]) {
-        articles(tags: $tags) {
+      query GetEvents($tags: [String!]) {
+        events(tags: $tags) {
           id
           title
           description
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
       }
     `
 
-    // Fetch articles from the GraphQL endpoint
+    // Fetch events from the GraphQL endpoint
     const response = await fetch(GRAPHQL_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -44,23 +44,23 @@ export async function GET(req: NextRequest) {
     })
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch articles: ${response.statusText}`)
+      throw new Error(`Failed to fetch events: ${response.statusText}`)
     }
 
     const { data } = await response.json()
 
     console.log('data: ', data)
 
-    if (!data?.articles) {
-      throw new Error('No articles found in the GraphQL response.')
+    if (!data?.events) {
+      throw new Error('No events found in the GraphQL response.')
     }
 
-    const articlesData = data.articles
+    const eventsData = data.events
 
     // Create the RSS feed
     const feed = new Feed({
       title: 'My RSS Feed',
-      description: 'Stay updated with the latest articles!',
+      description: 'Stay updated with the latest events!',
       id: 'http://localhost:3000/api/rss',
       link: 'http://localhost:3000/api/rss',
       language: 'en',
@@ -73,16 +73,16 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    // Add articles to the feed
-    articlesData.forEach((article: Article) => {
+    // Add events to the feed
+    eventsData.forEach((event: Event) => {
       feed.addItem({
-        title: article.title,
-        id: `http://localhost:3000/articles/${article.id}`,
-        link: `http://localhost:3000/articles/${article.id}`,
-        description: article.description,
-        content: article.content,
-        author: [{ name: article.author }],
-        date: new Date(article.date),
+        title: event.title,
+        id: `http://localhost:3000/events/${event.id}`,
+        link: `http://localhost:3000/events/${event.id}`,
+        description: event.description,
+        content: event.content,
+        author: [{ name: event.author }],
+        date: new Date(event.date),
       })
     })
 

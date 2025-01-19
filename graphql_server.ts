@@ -24,7 +24,7 @@ const events = [
 ]
 
 const typeDefs = `
-  type Article {
+  type Event {
     id: String!
     title: String!
     description: String
@@ -35,20 +35,20 @@ const typeDefs = `
   }
 
   type Query {
-    articles(tags: [String]): [Article]
-    article(id: String!): Article
+    events(tags: [String]): [Event]
+    event(id: String!): Event
   }
 `
 
-interface ArticleArgs {
+interface EventArgs {
   id: string;
 }
-interface ArticlesArgs {
+interface EventsArgs {
   tags?: string[]
 }
 const resolvers = {
   Query: {
-    articles: (_: unknown, { tags }: ArticlesArgs) => {
+    events: (_: unknown, { tags }: EventsArgs) => {
       if (tags && tags.length > 0) {
         return events.filter(event =>
           tags.every(tag => event.tags.includes(tag))
@@ -56,7 +56,7 @@ const resolvers = {
       }
       return events
     },
-    article: (_: unknown, { id }: ArticleArgs) =>
+    event: (_: unknown, { id }: EventArgs) =>
       events.find((event) => event.id === id),
   },
 }
