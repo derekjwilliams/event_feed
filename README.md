@@ -103,7 +103,7 @@ variables:
 {"modifiedSince":"2022-01-15T12:00:00Z", "tags": ["Housing"]}
 ```
 
-## Curl Examples
+## Curl Examples To Get Data From RSS Feed
 
 ```bash
 curl -i http://localhost:3000/api/rss -H "If-Modified-Since: Thu, 02 Jan 2025 12:00:00 GMT"
