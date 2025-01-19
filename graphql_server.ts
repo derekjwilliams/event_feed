@@ -2,29 +2,27 @@ import { createServer } from 'node:http'
 import { createYoga } from 'graphql-yoga'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 
-// Mock data for articles
-const articles = [
+const events = [
   {
     id: '1',
-    title: 'GraphQL Introduction',
-    description: 'Learn the basics of GraphQL.',
-    content: 'GraphQL is a query language for APIs...',
-    author: 'John Doe',
-    date: '2023-01-01T10:00:00Z',
-    tags: ['graphql', 'api', 'intro'],
+    title: 'Housing Contract for 2025-26 Opens - All Campuses',
+    description: 'Sign your housing contract to be eligible for housing in the Spring selection process.',
+    content: 'Get a comfy spot to hang your hat...',
+    author: 'Events Calendar',
+    date: '2023-02-03T10:00:00Z',
+    tags: ['Housing','Willamette','PNCA'],
   },
   {
     id: '2',
-    title: 'Advanced GraphQL',
-    description: 'Dive deeper into GraphQL.',
-    content: 'This article explores advanced topics...',
+    title: 'Spring Activities Fair and Carnival in the UC',
+    description: 'An introduction to student clubs and organizations as well as the resources available in the University Center.',
+    content: 'Get Involved...',
     author: 'Jane Smith',
     date: '2023-01-15T12:00:00Z',
-    tags: ['graphql', 'api', 'advanced'],
+    tags: ['Putnam', 'Salem', 'Activities'],
   },
-];
+]
 
-// GraphQL schema definition
 const typeDefs = `
   type Article {
     id: String!
@@ -37,31 +35,36 @@ const typeDefs = `
   }
 
   type Query {
-    articles: [Article]
+    articles(tags: [String]): [Article]
     article(id: String!): Article
   }
-`;
+`
+
 interface ArticleArgs {
   id: string;
 }
-// Resolvers
+interface ArticlesArgs {
+  tags?: string[]
+}
 const resolvers = {
   Query: {
-    articles: () => articles,
-    article: (_:unknown, { id }: ArticleArgs) => articles.find((article) => article.id === id),
+    articles: (_: unknown, { tags }: ArticlesArgs) => {
+      if (tags && tags.length > 0) {
+        return events.filter(event =>
+          tags.every(tag => event.tags.includes(tag))
+        )
+      }
+      return events
+    },
+    article: (_: unknown, { id }: ArticleArgs) =>
+      events.find((event) => event.id === id),
   },
-};
+}
 
-// Create an executable schema
-const schema = makeExecutableSchema({ typeDefs, resolvers });
+const schema = makeExecutableSchema({ typeDefs, resolvers })
+const yoga = createYoga({ schema })
+const server = createServer(yoga)
 
-// Create a Yoga instance with the schema
-const yoga = createYoga({ schema });
-
-// Create a Node HTTP server and pass the Yoga instance into it
-const server = createServer(yoga);
-
-// Start the server
 server.listen(3001, () => {
-  console.info('Server is running on http://localhost:3001/graphql');
+  console.info('Server is running on http://localhost:3001/graphql')
 });

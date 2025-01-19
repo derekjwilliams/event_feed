@@ -1,31 +1,97 @@
-// app/api/rss/route.ts
-import { NextResponse } from "next/server";
-import { Feed } from "feed";
-import { articles } from "../../../../data/articles";
+import { NextRequest, NextResponse } from 'next/server'
+import { Feed } from 'feed'
 
-export async function GET() {
-  const feed = new Feed({
-    title: "My RSS Feed",
-    description: "This is a sample RSS feed",
-    id: "http://localhost:3000/",
-    link: "http://localhost:3000/",
-    language: "en",
-    image: "http://localhost:3000/favicon.ico",
-    favicon: "http://localhost:3000/favicon.ico",
-    updated: new Date(),
-    generator: "Next.js",
-    copyright: "2025"
-  });
+const GRAPHQL_ENDPOINT = 'http://localhost:3001/graphql'
 
-  articles.forEach((article) => {
-    feed.addItem({
-      title: article.title,
-      link: article.url,
-      description: article.description,
-      date: article.date,
-    });
-  });
+interface Article {
+  id: string
+  title: string
+  description: string
+  content: string
+  author: string
+  date: Date
+}
 
-  // Return the RSS feed as XML
-  return NextResponse.json(feed.rss2(), { headers: { "Content-Type": "application/rss+xml" } });
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const tags = searchParams.get('tags')?.split(',') || null
+
+    // Define the GraphQL query
+    const query = `
+      query GetArticles($tags: [String!]) {
+        articles(tags: $tags) {
+          id
+          title
+          description
+          content
+          author
+          date
+        }
+      }
+    `
+
+    // Fetch articles from the GraphQL endpoint
+    const response = await fetch(GRAPHQL_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: { tags },
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch articles: ${response.statusText}`)
+    }
+
+    const { data } = await response.json()
+
+    console.log('data: ', data)
+
+    if (!data?.articles) {
+      throw new Error('No articles found in the GraphQL response.')
+    }
+
+    const articlesData = data.articles
+
+    // Create the RSS feed
+    const feed = new Feed({
+      title: 'My RSS Feed',
+      description: 'Stay updated with the latest articles!',
+      id: 'http://localhost:3000/api/rss',
+      link: 'http://localhost:3000/api/rss',
+      language: 'en',
+      copyright: 'All rights reserved 2025, My RSS Feed',
+      updated: new Date(),
+      generator: 'feed package',
+      feedLinks: {
+        rss: 'http://localhost:3000/api/rss',
+        atom: 'http://localhost:3000/api/rss/atom',
+      },
+    })
+
+    // Add articles to the feed
+    articlesData.forEach((article: Article) => {
+      feed.addItem({
+        title: article.title,
+        id: `http://localhost:3000/articles/${article.id}`,
+        link: `http://localhost:3000/articles/${article.id}`,
+        description: article.description,
+        content: article.content,
+        author: [{ name: article.author }],
+        date: new Date(article.date),
+      })
+    })
+
+    // Return the RSS feed
+    return new NextResponse(feed.rss2(), {
+      headers: { 'Content-Type': 'application/rss+xml' },
+    })
+  } catch (error) {
+    console.error('Error generating RSS feed:', error);
+    return NextResponse.json({ error: 'Failed to generate RSS feed' }, { status: 500 })
+  }
 }
