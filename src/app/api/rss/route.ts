@@ -105,6 +105,9 @@ export async function GET(req: NextRequest) {
       : new Date().toUTCString();
     const etag = `"${Buffer.from(rssContent).toString('base64').substring(0, 16)}"`;
 
+    console.log(`ETag: ${etag}`)
+    console.log(`Last-Modified: ${lastModified}`)
+
     // Respond with 304 if the feed hasn't changed
     if (ifNoneMatch === etag || ifModifiedSince === lastModified) {
       return new NextResponse(null, { status: 304 });
