@@ -85,7 +85,7 @@ To filter by tags: Open browser to http://localhost:3000/api/rss?tags=PNCA,Housi
 
 ## Example GraphQL Query
 
-```
+```gql
 query($modifiedSince: String!, $tags:[String!]!) {
   events(modifiedSince: $modifiedSince, tags:$tags) {
     id
@@ -99,7 +99,7 @@ query($modifiedSince: String!, $tags:[String!]!) {
 
 variables:
 
-```
+```json
 {"modifiedSince":"2022-01-15T12:00:00Z", "tags": ["Housing"]}
 ```
 
