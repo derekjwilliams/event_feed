@@ -34,3 +34,23 @@ To view all: Open browser to http://localhost:3000/api/rss
 
 To filter by tags: Open browser to http://localhost:3000/api/rss?tags=PNCA,Housing
 
+## Example Query
+
+```
+query($modifiedSince: String!, $tags:[String!]!) {
+  events(modifiedSince: $modifiedSince, tags:$tags) {
+    id
+    title
+    description
+    date
+    content
+   }
+}
+```
+
+variables:
+
+```
+{"modifiedSince":"2022-01-15T12:00:00Z", "tags": ["Housing"]}
+```
+
