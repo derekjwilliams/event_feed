@@ -1,5 +1,11 @@
 # Simple GraphQL Next.js RSS 2.0 Feed
 
+## Prerequesites
+
+Node version 20.6 or greater
+
+npm version 10.9.0 or greater
+
 ## Install
 
 ```bash
