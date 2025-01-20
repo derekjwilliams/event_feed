@@ -7,14 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gql_server": "node --experimental-strip-types graphql_server.ts"
+    "gql_server": "node --experimental-strip-types graphql_server.ts",
+    "postgraphile": "node --experimental-strip-types postgraphile_server.js"
   },
   "dependencies": {
-    "graphql-yoga": "^5.10.10",
     "@graphql-tools/schema": "^10.0.16",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "feed": "^4.2.2",
+    "graphql": "^15.10.1",
+    "graphql-yoga": "^5.10.10",
     "next": "15.1.5",
+    "pg": "^8.13.1",
+    "postgraphile": "^4.14.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
