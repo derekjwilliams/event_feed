@@ -26,6 +26,16 @@ pnpm run gql_server
 
 Serves graphql at http://localhost:3001/graphql
 
+
+## Run the Postgraphile GraphQL Server
+
+```bash
+pnpm run postgraphile
+```
+
+Serves graphql at http://localhost:3002/graphql
+
+
 ## Run the Next.js application
 
 ```bash
