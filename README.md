@@ -93,7 +93,7 @@ To view all: Open browser to http://localhost:3000/api/rss
 
 To filter by tags: Open browser to http://localhost:3000/api/rss?tags=PNCA,Housing
 
-## Example GraphQL Query
+## Example GraphQL Query for Mock GraphQL Server
 
 ```gql
 query($modifiedSince: String!, $tags:[String!]!) {
@@ -112,6 +112,18 @@ variables:
 ```json
 {"modifiedSince":"2022-01-15T12:00:00Z", "tags": ["Housing"]}
 ```
+## Example GraphQL Query for Postgraphile GraphQL Server
+query {
+  allEvents {
+    nodes {
+      id
+      title
+      description
+      content
+      pubDate
+    }
+  }
+}
 
 ## Curl Examples To Get Data From RSS Feed
 
