@@ -34,35 +34,33 @@ interface Event {
 }
 
 export type EventsConnection = {
-  /** A list of edges which contains the `Event` and cursor to aid in pagination. */
-  /** A list of `Event` objects. */
   nodes: Array<Event>
   totalCount: number
 }
 
 const EVENTS_QUERY = `
-      query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {
-  getEventsByDateAndTags(pPubDate: $pubDate, pTagNames: $tagNames) {
-    nodes {
-      id
-      author
-      title
-      description
-      content
-      link
-      pubDate
-      createdAt
-      updatedAt
-      eventTagsByEventId {
-        nodes {
-          tagByTagId {
-            name
+  query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {
+    getEventsByDateAndTags(pPubDate: $pubDate, pTagNames: $tagNames) {
+      nodes {
+        id
+        author
+        title
+        description
+        content
+        link
+        pubDate
+        createdAt
+        updatedAt
+        eventTagsByEventId {
+          nodes {
+            tagByTagId {
+              name
+            }
           }
         }
       }
     }
-  }
-}`
+  }`
 
 async function fetchEvents(
   pubDate?: string,
@@ -105,15 +103,15 @@ const generateRSSFeed = (events: EventsConnection) => {
   const feed = new Feed({
     title: 'Willamette Events RSS Feed',
     description: 'Stay updated with the latest events!',
-    id: 'http://localhost:3000/api/rss',
-    link: 'http://localhost:3000/api/rss',
+    id: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
+    link: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
     language: 'en',
     copyright: 'All rights reserved 2025, My RSS Feed',
     updated: new Date(),
     generator: 'feed package',
     feedLinks: {
-      rss: 'http://localhost:3000/api/rss',
-      atom: 'http://localhost:3000/api/rss/atom',
+      rss: process.env.RSS_EVENTS_FEED_LINK || 'http://localhost:3000/api',
+      atom: process.env.RSS_EVENTS_FEED_LINK || 'http://localhost:3000/api',
     },
   })
   events.nodes.forEach((event: Event) => {
