@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "gql_server": "node --experimental-strip-types graphql_server.ts",
-    "postgraphile": "node --experimental-strip-types postgraphile_server.js"
+    "postgraphile": "node postgraphile_server.js"
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.0.16",

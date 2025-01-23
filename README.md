@@ -1,5 +1,15 @@
 # Simple GraphQL Next.js RSS 2.0 Feed
 
+## Great Post on Using feed package to create RSS feeds
+
+https://javascript.plainenglish.io/generate-an-rss-feed-for-your-next-js-website-ce921e2d04c6
+
+The examples on that post were used for much of this code.
+
+## Reeder Application
+
+For viewing the RSS feed, [Reeder](https://reederapp.com/) works great
+
 ## Prerequesites
 
 Node version 20.6 or greater
@@ -18,16 +28,10 @@ pnpm install
 pnpm run build
 ```
 
-## Run the Mock GraphQL Server
-
-```bash
-pnpm run gql_server
-```
-
-Serves graphql at http://localhost:3001/graphql
-
 
 ## Run the Postgraphile GraphQL Server
+
+This is deprecated, see https://github.com/derekjwilliams/event_graphql to run the postgraphile server
 
 ```bash
 pnpm run postgraphile
@@ -35,6 +39,15 @@ pnpm run postgraphile
 
 Serves graphql at http://localhost:3002/graphql
 
+## Run the Mock GraphQL Server
+
+This is deprecated, the schema is not correct. See https://github.com/derekjwilliams/event_graphql to run the postgraphile server
+
+```bash
+pnpm run gql_server
+```
+
+Serves graphql at http://localhost:3001/graphql
 
 ## Run the Next.js application
 

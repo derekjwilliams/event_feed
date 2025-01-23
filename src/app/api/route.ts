@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Feed } from 'feed'
 import { Category } from 'feed/lib/typings'
 
-const GRAPHQL_ENDPOINT = 'https://express-psi-tawny.vercel.app/graphql' // TODO get from environment variable
+const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
 
+// TODO get these types from generated typescript types.
 interface Tag {
   id: number
   name: string
@@ -62,10 +63,17 @@ const EVENTS_QUERY = `
     }
   }
 }`
+
+
 async function fetchEvents(pubDate?: string, tagNames: string[] =[]) : Promise<EventsConnection>{
-  if (!pubDate) {
-    pubDate = '1970-01-01T00:00:00+00:00' // zero date
+  if (GRAPHQL_ENDPOINT === '') {
+    throw new Error(`No GRAPHQL_ENDPOINT environment variable not found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`)
   }
+
+  if (!pubDate) {
+    pubDate = new Date(0).toISOString() //'1970-01-01T00:00:00+00:00, for returning all events
+  }
+
   const response = await fetch(GRAPHQL_ENDPOINT, {
   "headers": {
     "accept": "application/json",
@@ -82,12 +90,8 @@ async function fetchEvents(pubDate?: string, tagNames: string[] =[]) : Promise<E
 if (!response.ok) {
     throw new Error(`Failed to get events from graphql server at ${GRAPHQL_ENDPOINT}: ${response.statusText}. Query: ${EVENTS_QUERY}`)
   }
-
   const { data } = await response.json();
-  console.log(JSON.stringify(data, null, 2))
-
   return data?.getEventsByDateAndTags || [];
-  
 }
 
 const generateRSSFeed = (events: EventsConnection) => {
@@ -129,7 +133,7 @@ const generateRSSFeed = (events: EventsConnection) => {
   return feed.rss2(); // Generates the RSS XML
 };
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, res: NextResponse) {
   try {
     // Request headers for caching
     const ifModifiedSince = req.headers.get('if-modified-since')
@@ -173,9 +177,18 @@ export async function GET(req: NextRequest) {
 
     return new NextResponse(rssContent, { status: 200, headers });
   } catch (error) {
-    return new NextResponse(
-      JSON.stringify(error),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    console.log(error)
+    if (error instanceof Error) {
+      return NextResponse.json(
+        // JSON.stringify(error),
+        { message: error.message },
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    } else {
+      return new NextResponse(
+        JSON.stringify(error),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
   }
 }

@@ -2,6 +2,8 @@ import { createServer } from 'node:http'
 import { createYoga } from 'graphql-yoga'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 
+// Deprecated, and was just an example Mock Server, schema no longer matches what is expected by src/app/api/route.ts
+// For full testing use the server from https://github.com/derekjwilliams/event_graphql
 const events = [
   {
     id: '1',
