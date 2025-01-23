@@ -21,31 +21,33 @@ export function createFeed(events: EventsConnection) {
         process.env.ATOM_EVENTS_FEED_LINK || 'http://localhost:3000/api/atom',
     },
   })
-  events.nodes.forEach((event) => {
-    if (event) {
-      const categories: Category[] = []
-      event.eventTagsByEventId.nodes.forEach((node) => {
-        if (node && node.tagByTagId) {
-          categories.push({
-            name: node.tagByTagId.name,
-            domain: 'Willamette-events',
-          })
-        }
-      })
-      // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
-      feed.addItem({
-        title: event.title ?? 'None',
-        id: event.id.toString(),
-        link: event.link ?? '',
-        description: event.description ?? '',
-        content: event.content ?? '',
-        author: [{ name: event.author ?? '' }],
-        published: event.pubDate ? new Date(event.pubDate) : undefined,
-        date: event.pubDate ? new Date(event.pubDate) : new Date(),
-        category: categories,
-      })
-    }
-  })
+  if (events.nodes) {
+    events.nodes.forEach((event) => {
+      if (event) {
+        const categories: Category[] = []
+        event.eventTagsByEventId.nodes.forEach((node) => {
+          if (node && node.tagByTagId) {
+            categories.push({
+              name: node.tagByTagId.name,
+              domain: 'Willamette-events',
+            })
+          }
+        })
+        // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
+        feed.addItem({
+          title: event.title ?? 'None',
+          id: event.id.toString(),
+          link: event.link ?? '',
+          description: event.description ?? '',
+          content: event.content ?? '',
+          author: [{ name: event.author ?? '' }],
+          published: event.pubDate ? new Date(event.pubDate) : undefined,
+          date: event.pubDate ? new Date(event.pubDate) : new Date(),
+          category: categories,
+        })
+      }
+    })
+  }
   return feed
 }
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
@@ -59,9 +61,10 @@ export async function fetchEvents(
     )
   }
   if (!pubDate) {
-    console.log('no pub date')
     pubDate = new Date(0).toISOString() //'1970-01-01T00:00:00+00:00, for returning all events
   }
+
+  console.log('pubDate in fetch: ', pubDate)
 
   const response = await fetch(GRAPHQL_ENDPOINT, {
     headers: {
@@ -70,9 +73,14 @@ export async function fetchEvents(
       'sec-fetch-mode': 'cors',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
+    // body: '{"query":"query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {\\n  getEventsByDateAndTags(pPubDate: $pubDate, pTagNames: $tagNames) {\\n    nodes {\\n      id\\n      author\\n      title\\n      description\\n      content\\n      link\\n      pubDate\\n      createdAt\\n      updatedAt\\n      eventTagsByEventId {\\n        nodes {\\n          tagByTagId {\\n            name\\n          }\\n        }\\n      }\\n    }\\n  }\\n}\\n\\n# {\\n#   query {\\n#     node\\n#   }\\n#   getEventsByDateAndTags {\\n#     nodes {\\n#       description\\n#     }\\n#   }\\n# }\\n\\n# query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {getEventsByDateAndTags(pPubDate: $pubDate, pTagNames: $tagNames) {nodes {description}}}\\n","variables":{"pubDate":"2025-01-25T21:26:03.6308+00:00","tagNames":[]},"operationName":"getEventsByDateAndTags"}',
     body: JSON.stringify({
       query: EVENTS_QUERY,
-      variables: { pubDate, tagNames },
+      variables: {
+        pubDate: pubDate, //'2025-01-21T210:26:03.6308+00:00',
+        tagNames: tagNames,
+      },
+      operationName: 'getEventsByDateAndTags',
     }),
     method: 'POST',
   })

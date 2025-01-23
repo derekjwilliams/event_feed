@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Event } from '@/types/graphql'
 import { createFeed, fetchEvents } from '@/lib/feed'
 
 export async function GET(req: NextRequest) {
@@ -7,6 +6,7 @@ export async function GET(req: NextRequest) {
     // Request headers for caching
     const ifModifiedSince = req.headers.get('if-modified-since')
     const ifNoneMatch = req.headers.get('if-none-match')
+
     const modifiedSinceDate = ifModifiedSince
       ? new Date(ifModifiedSince).toISOString()
       : undefined
@@ -14,41 +14,40 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
     const tags = tagsParam ? tagsParam.split(',') : undefined
-
     const events = await fetchEvents(modifiedSinceDate, tags)
 
     const feed = createFeed(events)
     const feedContent = feed.atom1()
 
-    const lastModified = events.nodes.length
-      ? new Date(
-          Math.max(
-            ...events.nodes
-              .filter((node): node is Event => node !== null) // Ensure nodes are not null
-              .map((node) =>
-                node.pubDate
-                  ? new Date(node.pubDate).getTime()
-                  : new Date().getTime()
-              )
-          )
-        ).toUTCString()
-      : new Date().toUTCString()
+    const pubDates = []
+    for (const node of events.nodes) {
+      if (node && node.pubDate) {
+        pubDates.push(node.pubDate)
+      }
+    }
 
+    let mostRecent = modifiedSinceDate
+      ? modifiedSinceDate
+      : 'new Date(0).toISOString()'
+
+    if (pubDates.length) {
+      mostRecent = pubDates.reduce((max, date) =>
+        new Date(date) > new Date(max) ? date : max
+      )
+    }
     const etag = `"${Buffer.from(feedContent)
       .toString('base64')
       .substring(0, 16)}"`
-    console.log(`ETag: ${etag}`)
-    console.log(`Last-Modified: ${lastModified}`)
 
     // Respond with 304 if the feed hasn't changed
-    if (ifNoneMatch === etag || ifModifiedSince === lastModified) {
+    if (ifNoneMatch === etag || ifModifiedSince === mostRecent) {
       return new NextResponse(null, { status: 304 })
     }
 
     // Return the RSS feed with caching headers
     const headers = new Headers({
       'Content-Type': 'application/rss+xml',
-      'Last-Modified': lastModified,
+      'Last-Modified': mostRecent,
       ETag: etag,
     })
 
