@@ -137,7 +137,7 @@ const generateRSSFeed = (events: EventsConnection) => {
       category: categories,
     })
   })
-  return feed.rss2() // Generates the RSS XML
+  return feed.atom1() // Generates the Atom XML
 }
 
 export async function GET(req: NextRequest) {
