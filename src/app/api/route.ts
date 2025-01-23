@@ -17,7 +17,7 @@ interface EventTag {
   tagByTagId?: Tag
 }
 interface EventTagsConnection {
-  nodes: Array<EventTag>;
+  nodes: Array<EventTag>
 }
 interface Event {
   id: number
@@ -30,15 +30,15 @@ interface Event {
   nodeId: string
   createdAt?: string
   updatedAt?: string
-  eventTagsByEventId: EventTagsConnection;
+  eventTagsByEventId: EventTagsConnection
 }
 
 export type EventsConnection = {
   /** A list of edges which contains the `Event` and cursor to aid in pagination. */
   /** A list of `Event` objects. */
-  nodes: Array<Event>;
-  totalCount: number;
-};
+  nodes: Array<Event>
+  totalCount: number
+}
 
 const EVENTS_QUERY = `
       query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {
@@ -64,10 +64,14 @@ const EVENTS_QUERY = `
   }
 }`
 
-
-async function fetchEvents(pubDate?: string, tagNames: string[] =[]) : Promise<EventsConnection>{
+async function fetchEvents(
+  pubDate?: string,
+  tagNames: string[] = []
+): Promise<EventsConnection> {
   if (GRAPHQL_ENDPOINT === '') {
-    throw new Error(`No GRAPHQL_ENDPOINT environment variable not found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`)
+    throw new Error(
+      `No GRAPHQL_ENDPOINT environment variable not found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`
+    )
   }
 
   if (!pubDate) {
@@ -75,23 +79,25 @@ async function fetchEvents(pubDate?: string, tagNames: string[] =[]) : Promise<E
   }
 
   const response = await fetch(GRAPHQL_ENDPOINT, {
-  "headers": {
-    "accept": "application/json",
-    "content-type": "application/json",
-    "sec-fetch-mode": "cors",
-    "Referrer-Policy": "strict-origin-when-cross-origin"
-  },
-  body: JSON.stringify({
-        query: EVENTS_QUERY,
-        variables: { pubDate : pubDate, tagNames: tagNames },        
-      }),
-  "method": "POST"
-})
-if (!response.ok) {
-    throw new Error(`Failed to get events from graphql server at ${GRAPHQL_ENDPOINT}: ${response.statusText}. Query: ${EVENTS_QUERY}`)
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      'sec-fetch-mode': 'cors',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+    },
+    body: JSON.stringify({
+      query: EVENTS_QUERY,
+      variables: { pubDate: pubDate, tagNames: tagNames },
+    }),
+    method: 'POST',
+  })
+  if (!response.ok) {
+    throw new Error(
+      `Failed to get events from graphql server at ${GRAPHQL_ENDPOINT}: ${response.statusText}. Query: ${EVENTS_QUERY}`
+    )
   }
-  const { data } = await response.json();
-  return data?.getEventsByDateAndTags || [];
+  const { data } = await response.json()
+  return data?.getEventsByDateAndTags || []
 }
 
 const generateRSSFeed = (events: EventsConnection) => {
@@ -111,13 +117,16 @@ const generateRSSFeed = (events: EventsConnection) => {
     },
   })
   events.nodes.forEach((event: Event) => {
-    const categories: Category[] = [];
+    const categories: Category[] = []
     event.eventTagsByEventId.nodes.forEach((node: EventTag) => {
       if (node.tagByTagId) {
-        categories.push({ name: node.tagByTagId.name, domain: 'Willamette-events'})
+        categories.push({
+          name: node.tagByTagId.name,
+          domain: 'Willamette-events',
+        })
       }
     })
-// TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
+    // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
     feed.addItem({
       title: event.title ?? 'None',
       id: event.id.toString(),
@@ -127,18 +136,20 @@ const generateRSSFeed = (events: EventsConnection) => {
       author: [{ name: event.author }],
       published: event.pubDate ? new Date(event.pubDate) : undefined,
       date: event.pubDate ? new Date(event.pubDate) : new Date(),
-      category: categories
+      category: categories,
     })
   })
-  return feed.rss2(); // Generates the RSS XML
-};
+  return feed.rss2() // Generates the RSS XML
+}
 
 export async function GET(req: NextRequest) {
   try {
     // Request headers for caching
     const ifModifiedSince = req.headers.get('if-modified-since')
-    const ifNoneMatch = req.headers.get('if-none-match');
-    const modifiedSinceDate = ifModifiedSince ? new Date(ifModifiedSince).toISOString() : undefined
+    const ifNoneMatch = req.headers.get('if-none-match')
+    const modifiedSinceDate = ifModifiedSince
+      ? new Date(ifModifiedSince).toISOString()
+      : undefined
 
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
@@ -146,36 +157,41 @@ export async function GET(req: NextRequest) {
 
     const events = await fetchEvents(modifiedSinceDate, tags)
 
-    const rssContent = generateRSSFeed(events);
+    const rssContent = generateRSSFeed(events)
 
     // Calculate ETag and Last-Modified headers
 
     const lastModified = events.nodes.length
-  ? new Date(
-      Math.max(
-        ...events.nodes
-          .map(node => node.pubDate ? new Date(node.pubDate).getTime() : new Date().getTime()) // Provide a fallback for undefined values
-      )
-    ).toUTCString()
-  : new Date().toUTCString();
+      ? new Date(
+          Math.max(
+            ...events.nodes.map((node) =>
+              node.pubDate
+                ? new Date(node.pubDate).getTime()
+                : new Date().getTime()
+            ) // Provide a fallback for undefined values
+          )
+        ).toUTCString()
+      : new Date().toUTCString()
 
-    const etag = `"${Buffer.from(rssContent).toString('base64').substring(0, 16)}"`;
+    const etag = `"${Buffer.from(rssContent)
+      .toString('base64')
+      .substring(0, 16)}"`
     console.log(`ETag: ${etag}`)
     console.log(`Last-Modified: ${lastModified}`)
 
     // Respond with 304 if the feed hasn't changed
     if (ifNoneMatch === etag || ifModifiedSince === lastModified) {
-      return new NextResponse(null, { status: 304 });
+      return new NextResponse(null, { status: 304 })
     }
 
     // Return the RSS feed with caching headers
     const headers = new Headers({
       'Content-Type': 'application/rss+xml',
       'Last-Modified': lastModified,
-      'ETag': etag,
-    });
+      ETag: etag,
+    })
 
-    return new NextResponse(rssContent, { status: 200, headers });
+    return new NextResponse(rssContent, { status: 200, headers })
   } catch (error) {
     console.log(error)
     if (error instanceof Error) {
@@ -185,10 +201,10 @@ export async function GET(req: NextRequest) {
         { status: 500, headers: { 'Content-Type': 'application/json' } }
       )
     } else {
-      return new NextResponse(
-        JSON.stringify(error),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      )
+      return new NextResponse(JSON.stringify(error), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
   }
 }
