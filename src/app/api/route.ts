@@ -133,7 +133,7 @@ const generateRSSFeed = (events: EventsConnection) => {
   return feed.rss2(); // Generates the RSS XML
 };
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     // Request headers for caching
     const ifModifiedSince = req.headers.get('if-modified-since')
