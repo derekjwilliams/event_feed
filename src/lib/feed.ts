@@ -33,13 +33,18 @@ export function createFeed(events: EventsConnection) {
             })
           }
         })
+        let title = event.title ?? ''
+        if (title && event.pubDate) {
+          title = title + ' - ' + new Date(event.pubDate).toDateString()
+        }
+
         // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
         feed.addItem({
           image:
             event.imageUrl && event.imageUrl.trim() !== ''
               ? event.imageUrl
               : process.env.DEFAULT_FEED_ITEM_IMAGE_URL,
-          title: event.title ?? 'None',
+          title: title,
           id: event.id.toString(),
           link: event.link ? `https://events.willamette.edu${event.link}` : '',
           description: event.description ?? '',
