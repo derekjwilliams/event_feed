@@ -101,12 +101,12 @@ async function fetchEvents(
 const generateRSSFeed = (events: EventsConnection) => {
   // TODO fixup this feed, e.g. id, link, feedLinks are all incorrect
   const feed = new Feed({
-    title: 'Willamette Events RSS Feed',
+    title: 'Willamette Events Atom Feed',
     description: 'Stay updated with the latest events!',
     id: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
     link: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
     language: 'en',
-    copyright: 'All rights reserved 2025, My RSS Feed',
+    copyright: 'All rights reserved 2025, Derek J Williams',
     updated: new Date(),
     generator: 'feed package',
     feedLinks: {
