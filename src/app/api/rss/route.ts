@@ -3,7 +3,7 @@ import { Feed } from 'feed'
 import { Category } from 'feed/lib/typings'
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
-import { EventsConnection } from '@/types/graphql'
+// import { EventsConnection } from '@/types/graphql'
 // TODO get these types from generated typescript types.
 interface Tag {
   id: number
@@ -33,10 +33,10 @@ interface Event {
   eventTagsByEventId: EventTagsConnection
 }
 
-// export type EventsConnection = {
-//   nodes: Array<Event>
-//   totalCount: number
-// }
+export type EventsConnection = {
+  nodes: Array<Event>
+  totalCount: number
+}
 
 const EVENTS_QUERY = `
   query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {
