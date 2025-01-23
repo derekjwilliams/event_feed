@@ -1,4 +1,6 @@
-"""The root query type which gives access points into the data universe."""
+"""
+The root query type which gives access points into the data universe.
+"""
 type Query implements Node {
   """
   Exposes the root query type nested one level down. This is helpful for Relay 1
@@ -11,18 +13,28 @@ type Query implements Node {
   """
   nodeId: ID!
 
-  """Fetches an object given its globally unique `ID`."""
+  """
+  Fetches an object given its globally unique `ID`.
+  """
   node(
-    """The globally unique `ID`."""
+    """
+    The globally unique `ID`.
+    """
     nodeId: ID!
   ): Node
 
-  """Reads and enables pagination through a set of `EventTag`."""
+  """
+  Reads and enables pagination through a set of `EventTag`.
+  """
   allEventTags(
-    """Only read the first `n` values of the set."""
+    """
+    Only read the first `n` values of the set.
+    """
     first: Int
 
-    """Only read the last `n` values of the set."""
+    """
+    Only read the last `n` values of the set.
+    """
     last: Int
 
     """
@@ -31,13 +43,19 @@ type Query implements Node {
     """
     offset: Int
 
-    """Read all values in the set before (above) this cursor."""
+    """
+    Read all values in the set before (above) this cursor.
+    """
     before: Cursor
 
-    """Read all values in the set after (below) this cursor."""
+    """
+    Read all values in the set after (below) this cursor.
+    """
     after: Cursor
 
-    """The method to use when ordering `EventTag`."""
+    """
+    The method to use when ordering `EventTag`.
+    """
     orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -51,12 +69,18 @@ type Query implements Node {
     filter: EventTagFilter
   ): EventTagsConnection
 
-  """Reads and enables pagination through a set of `Event`."""
+  """
+  Reads and enables pagination through a set of `Event`.
+  """
   allEvents(
-    """Only read the first `n` values of the set."""
+    """
+    Only read the first `n` values of the set.
+    """
     first: Int
 
-    """Only read the last `n` values of the set."""
+    """
+    Only read the last `n` values of the set.
+    """
     last: Int
 
     """
@@ -65,13 +89,19 @@ type Query implements Node {
     """
     offset: Int
 
-    """Read all values in the set before (above) this cursor."""
+    """
+    Read all values in the set before (above) this cursor.
+    """
     before: Cursor
 
-    """Read all values in the set after (below) this cursor."""
+    """
+    Read all values in the set after (below) this cursor.
+    """
     after: Cursor
 
-    """The method to use when ordering `Event`."""
+    """
+    The method to use when ordering `Event`.
+    """
     orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -85,12 +115,18 @@ type Query implements Node {
     filter: EventFilter
   ): EventsConnection
 
-  """Reads and enables pagination through a set of `Tag`."""
+  """
+  Reads and enables pagination through a set of `Tag`.
+  """
   allTags(
-    """Only read the first `n` values of the set."""
+    """
+    Only read the first `n` values of the set.
+    """
     first: Int
 
-    """Only read the last `n` values of the set."""
+    """
+    Only read the last `n` values of the set.
+    """
     last: Int
 
     """
@@ -99,13 +135,19 @@ type Query implements Node {
     """
     offset: Int
 
-    """Read all values in the set before (above) this cursor."""
+    """
+    Read all values in the set before (above) this cursor.
+    """
     before: Cursor
 
-    """Read all values in the set after (below) this cursor."""
+    """
+    Read all values in the set after (below) this cursor.
+    """
     after: Cursor
 
-    """The method to use when ordering `Tag`."""
+    """
+    The method to use when ordering `Tag`.
+    """
     orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -123,40 +165,20 @@ type Query implements Node {
   tagById(id: Int!): Tag
   tagByName(name: String!): Tag
 
-  """Reads and enables pagination through a set of `Event`."""
-  getAllEvents(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: EventFilter
-  ): EventsConnection
-
-  """Reads and enables pagination through a set of `Event`."""
+  """
+  Reads and enables pagination through a set of `Event`.
+  """
   getEventsByDate(
     pPubDate: String
 
-    """Only read the first `n` values of the set."""
+    """
+    Only read the first `n` values of the set.
+    """
     first: Int
 
-    """Only read the last `n` values of the set."""
+    """
+    Only read the last `n` values of the set.
+    """
     last: Int
 
     """
@@ -165,10 +187,14 @@ type Query implements Node {
     """
     offset: Int
 
-    """Read all values in the set before (above) this cursor."""
+    """
+    Read all values in the set before (above) this cursor.
+    """
     before: Cursor
 
-    """Read all values in the set after (below) this cursor."""
+    """
+    Read all values in the set after (below) this cursor.
+    """
     after: Cursor
 
     """
@@ -177,15 +203,21 @@ type Query implements Node {
     filter: EventFilter
   ): EventsConnection
 
-  """Reads and enables pagination through a set of `Event`."""
+  """
+  Reads and enables pagination through a set of `Event`.
+  """
   getEventsByDateAndTags(
     pPubDate: String
     pTagNames: [String]
 
-    """Only read the first `n` values of the set."""
+    """
+    Only read the first `n` values of the set.
+    """
     first: Int
 
-    """Only read the last `n` values of the set."""
+    """
+    Only read the last `n` values of the set.
+    """
     last: Int
 
     """
@@ -194,10 +226,14 @@ type Query implements Node {
     """
     offset: Int
 
-    """Read all values in the set before (above) this cursor."""
+    """
+    Read all values in the set before (above) this cursor.
+    """
     before: Cursor
 
-    """Read all values in the set after (below) this cursor."""
+    """
+    Read all values in the set after (below) this cursor.
+    """
     after: Cursor
 
     """
@@ -206,26 +242,40 @@ type Query implements Node {
     filter: EventFilter
   ): EventsConnection
 
-  """Reads a single `EventTag` using its globally unique `ID`."""
+  """
+  Reads a single `EventTag` using its globally unique `ID`.
+  """
   eventTag(
-    """The globally unique `ID` to be used in selecting a single `EventTag`."""
+    """
+    The globally unique `ID` to be used in selecting a single `EventTag`.
+    """
     nodeId: ID!
   ): EventTag
 
-  """Reads a single `Event` using its globally unique `ID`."""
+  """
+  Reads a single `Event` using its globally unique `ID`.
+  """
   event(
-    """The globally unique `ID` to be used in selecting a single `Event`."""
+    """
+    The globally unique `ID` to be used in selecting a single `Event`.
+    """
     nodeId: ID!
   ): Event
 
-  """Reads a single `Tag` using its globally unique `ID`."""
+  """
+  Reads a single `Tag` using its globally unique `ID`.
+  """
   tag(
-    """The globally unique `ID` to be used in selecting a single `Tag`."""
+    """
+    The globally unique `ID` to be used in selecting a single `Tag`.
+    """
     nodeId: ID!
   ): Tag
 }
 
-"""An object with a globally unique `ID`."""
+"""
+An object with a globally unique `ID`.
+"""
 interface Node {
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
@@ -233,9 +283,13 @@ interface Node {
   nodeId: ID!
 }
 
-"""A connection to a list of `EventTag` values."""
+"""
+A connection to a list of `EventTag` values.
+"""
 type EventTagsConnection {
-  """A list of `EventTag` objects."""
+  """
+  A list of `EventTag` objects.
+  """
   nodes: [EventTag]!
 
   """
@@ -243,10 +297,14 @@ type EventTagsConnection {
   """
   edges: [EventTagsEdge!]!
 
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
 
-  """The count of *all* `EventTag` you could get from the connection."""
+  """
+  The count of *all* `EventTag` you could get from the connection.
+  """
   totalCount: Int!
 }
 
@@ -258,10 +316,14 @@ type EventTag implements Node {
   eventId: Int!
   tagId: Int!
 
-  """Reads a single `Event` that is related to this `EventTag`."""
+  """
+  Reads a single `Event` that is related to this `EventTag`.
+  """
   eventByEventId: Event
 
-  """Reads a single `Tag` that is related to this `EventTag`."""
+  """
+  Reads a single `Tag` that is related to this `EventTag`.
+  """
   tagByTagId: Tag
 }
 
@@ -279,13 +341,21 @@ type Event implements Node {
   pubDate: Datetime
   createdAt: Datetime
   updatedAt: Datetime
+  imageUrl: String
+  location: String
 
-  """Reads and enables pagination through a set of `EventTag`."""
+  """
+  Reads and enables pagination through a set of `EventTag`.
+  """
   eventTagsByEventId(
-    """Only read the first `n` values of the set."""
+    """
+    Only read the first `n` values of the set.
+    """
     first: Int
 
-    """Only read the last `n` values of the set."""
+    """
+    Only read the last `n` values of the set.
+    """
     last: Int
 
     """
@@ -294,13 +364,19 @@ type Event implements Node {
     """
     offset: Int
 
-    """Read all values in the set before (above) this cursor."""
+    """
+    Read all values in the set before (above) this cursor.
+    """
     before: Cursor
 
-    """Read all values in the set after (below) this cursor."""
+    """
+    Read all values in the set after (below) this cursor.
+    """
     after: Cursor
 
-    """The method to use when ordering `EventTag`."""
+    """
+    The method to use when ordering `EventTag`.
+    """
     orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -321,10 +397,14 @@ A point in time as described by the [ISO
 """
 scalar Datetime
 
-"""A location in a connection that can be used for resuming pagination."""
+"""
+A location in a connection that can be used for resuming pagination.
+"""
 scalar Cursor
 
-"""Methods to use when ordering `EventTag`."""
+"""
+Methods to use when ordering `EventTag`.
+"""
 enum EventTagsOrderBy {
   NATURAL
   EVENT_ID_ASC
@@ -340,10 +420,14 @@ A condition to be used against `EventTag` object types. All fields are tested
 for equality and combined with a logical ‘and.’
 """
 input EventTagCondition {
-  """Checks for equality with the object’s `eventId` field."""
+  """
+  Checks for equality with the object’s `eventId` field.
+  """
   eventId: Int
 
-  """Checks for equality with the object’s `tagId` field."""
+  """
+  Checks for equality with the object’s `tagId` field.
+  """
   tagId: Int
 }
 
@@ -351,19 +435,29 @@ input EventTagCondition {
 A filter to be used against `EventTag` object types. All fields are combined with a logical ‘and.’
 """
 input EventTagFilter {
-  """Filter by the object’s `eventId` field."""
+  """
+  Filter by the object’s `eventId` field.
+  """
   eventId: IntFilter
 
-  """Filter by the object’s `tagId` field."""
+  """
+  Filter by the object’s `tagId` field.
+  """
   tagId: IntFilter
 
-  """Checks for all expressions in this list."""
+  """
+  Checks for all expressions in this list.
+  """
   and: [EventTagFilter!]
 
-  """Checks for any expressions in this list."""
+  """
+  Checks for any expressions in this list.
+  """
   or: [EventTagFilter!]
 
-  """Negates the expression."""
+  """
+  Negates the expression.
+  """
   not: EventTagFilter
 }
 
@@ -376,10 +470,14 @@ input IntFilter {
   """
   isNull: Boolean
 
-  """Equal to the specified value."""
+  """
+  Equal to the specified value.
+  """
   equalTo: Int
 
-  """Not equal to the specified value."""
+  """
+  Not equal to the specified value.
+  """
   notEqualTo: Int
 
   """
@@ -387,25 +485,39 @@ input IntFilter {
   """
   distinctFrom: Int
 
-  """Equal to the specified value, treating null like an ordinary value."""
+  """
+  Equal to the specified value, treating null like an ordinary value.
+  """
   notDistinctFrom: Int
 
-  """Included in the specified list."""
+  """
+  Included in the specified list.
+  """
   in: [Int!]
 
-  """Not included in the specified list."""
+  """
+  Not included in the specified list.
+  """
   notIn: [Int!]
 
-  """Less than the specified value."""
+  """
+  Less than the specified value.
+  """
   lessThan: Int
 
-  """Less than or equal to the specified value."""
+  """
+  Less than or equal to the specified value.
+  """
   lessThanOrEqualTo: Int
 
-  """Greater than the specified value."""
+  """
+  Greater than the specified value.
+  """
   greaterThan: Int
 
-  """Greater than or equal to the specified value."""
+  """
+  Greater than or equal to the specified value.
+  """
   greaterThanOrEqualTo: Int
 }
 
@@ -417,12 +529,18 @@ type Tag implements Node {
   id: Int!
   name: String!
 
-  """Reads and enables pagination through a set of `EventTag`."""
+  """
+  Reads and enables pagination through a set of `EventTag`.
+  """
   eventTagsByTagId(
-    """Only read the first `n` values of the set."""
+    """
+    Only read the first `n` values of the set.
+    """
     first: Int
 
-    """Only read the last `n` values of the set."""
+    """
+    Only read the last `n` values of the set.
+    """
     last: Int
 
     """
@@ -431,13 +549,19 @@ type Tag implements Node {
     """
     offset: Int
 
-    """Read all values in the set before (above) this cursor."""
+    """
+    Read all values in the set before (above) this cursor.
+    """
     before: Cursor
 
-    """Read all values in the set after (below) this cursor."""
+    """
+    Read all values in the set after (below) this cursor.
+    """
     after: Cursor
 
-    """The method to use when ordering `EventTag`."""
+    """
+    The method to use when ordering `EventTag`.
+    """
     orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -452,33 +576,53 @@ type Tag implements Node {
   ): EventTagsConnection!
 }
 
-"""A `EventTag` edge in the connection."""
+"""
+A `EventTag` edge in the connection.
+"""
 type EventTagsEdge {
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor
 
-  """The `EventTag` at the end of the edge."""
+  """
+  The `EventTag` at the end of the edge.
+  """
   node: EventTag
 }
 
-"""Information about pagination in a connection."""
+"""
+Information about pagination in a connection.
+"""
 type PageInfo {
-  """When paginating forwards, are there more items?"""
+  """
+  When paginating forwards, are there more items?
+  """
   hasNextPage: Boolean!
 
-  """When paginating backwards, are there more items?"""
+  """
+  When paginating backwards, are there more items?
+  """
   hasPreviousPage: Boolean!
 
-  """When paginating backwards, the cursor to continue."""
+  """
+  When paginating backwards, the cursor to continue.
+  """
   startCursor: Cursor
 
-  """When paginating forwards, the cursor to continue."""
+  """
+  When paginating forwards, the cursor to continue.
+  """
   endCursor: Cursor
 }
 
-"""A connection to a list of `Event` values."""
+"""
+A connection to a list of `Event` values.
+"""
 type EventsConnection {
-  """A list of `Event` objects."""
+  """
+  A list of `Event` objects.
+  """
   nodes: [Event]!
 
   """
@@ -486,23 +630,35 @@ type EventsConnection {
   """
   edges: [EventsEdge!]!
 
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
 
-  """The count of *all* `Event` you could get from the connection."""
+  """
+  The count of *all* `Event` you could get from the connection.
+  """
   totalCount: Int!
 }
 
-"""A `Event` edge in the connection."""
+"""
+A `Event` edge in the connection.
+"""
 type EventsEdge {
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor
 
-  """The `Event` at the end of the edge."""
+  """
+  The `Event` at the end of the edge.
+  """
   node: Event
 }
 
-"""Methods to use when ordering `Event`."""
+"""
+Methods to use when ordering `Event`.
+"""
 enum EventsOrderBy {
   NATURAL
   ID_ASC
@@ -523,6 +679,10 @@ enum EventsOrderBy {
   CREATED_AT_DESC
   UPDATED_AT_ASC
   UPDATED_AT_DESC
+  IMAGE_URL_ASC
+  IMAGE_URL_DESC
+  LOCATION_ASC
+  LOCATION_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -531,72 +691,134 @@ enum EventsOrderBy {
 A condition to be used against `Event` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input EventCondition {
-  """Checks for equality with the object’s `id` field."""
+  """
+  Checks for equality with the object’s `id` field.
+  """
   id: Int
 
-  """Checks for equality with the object’s `title` field."""
+  """
+  Checks for equality with the object’s `title` field.
+  """
   title: String
 
-  """Checks for equality with the object’s `description` field."""
+  """
+  Checks for equality with the object’s `description` field.
+  """
   description: String
 
-  """Checks for equality with the object’s `content` field."""
+  """
+  Checks for equality with the object’s `content` field.
+  """
   content: String
 
-  """Checks for equality with the object’s `link` field."""
+  """
+  Checks for equality with the object’s `link` field.
+  """
   link: String
 
-  """Checks for equality with the object’s `author` field."""
+  """
+  Checks for equality with the object’s `author` field.
+  """
   author: String
 
-  """Checks for equality with the object’s `pubDate` field."""
+  """
+  Checks for equality with the object’s `pubDate` field.
+  """
   pubDate: Datetime
 
-  """Checks for equality with the object’s `createdAt` field."""
+  """
+  Checks for equality with the object’s `createdAt` field.
+  """
   createdAt: Datetime
 
-  """Checks for equality with the object’s `updatedAt` field."""
+  """
+  Checks for equality with the object’s `updatedAt` field.
+  """
   updatedAt: Datetime
+
+  """
+  Checks for equality with the object’s `imageUrl` field.
+  """
+  imageUrl: String
+
+  """
+  Checks for equality with the object’s `location` field.
+  """
+  location: String
 }
 
 """
 A filter to be used against `Event` object types. All fields are combined with a logical ‘and.’
 """
 input EventFilter {
-  """Filter by the object’s `id` field."""
+  """
+  Filter by the object’s `id` field.
+  """
   id: IntFilter
 
-  """Filter by the object’s `title` field."""
+  """
+  Filter by the object’s `title` field.
+  """
   title: StringFilter
 
-  """Filter by the object’s `description` field."""
+  """
+  Filter by the object’s `description` field.
+  """
   description: StringFilter
 
-  """Filter by the object’s `content` field."""
+  """
+  Filter by the object’s `content` field.
+  """
   content: StringFilter
 
-  """Filter by the object’s `link` field."""
+  """
+  Filter by the object’s `link` field.
+  """
   link: StringFilter
 
-  """Filter by the object’s `author` field."""
+  """
+  Filter by the object’s `author` field.
+  """
   author: StringFilter
 
-  """Filter by the object’s `pubDate` field."""
+  """
+  Filter by the object’s `pubDate` field.
+  """
   pubDate: DatetimeFilter
 
-  """Filter by the object’s `createdAt` field."""
+  """
+  Filter by the object’s `createdAt` field.
+  """
   createdAt: DatetimeFilter
 
-  """Filter by the object’s `updatedAt` field."""
+  """
+  Filter by the object’s `updatedAt` field.
+  """
   updatedAt: DatetimeFilter
 
-  """Checks for all expressions in this list."""
+  """
+  Filter by the object’s `imageUrl` field.
+  """
+  imageUrl: StringFilter
+
+  """
+  Filter by the object’s `location` field.
+  """
+  location: StringFilter
+
+  """
+  Checks for all expressions in this list.
+  """
   and: [EventFilter!]
 
-  """Checks for any expressions in this list."""
+  """
+  Checks for any expressions in this list.
+  """
   or: [EventFilter!]
 
-  """Negates the expression."""
+  """
+  Negates the expression.
+  """
   not: EventFilter
 }
 
@@ -609,10 +831,14 @@ input StringFilter {
   """
   isNull: Boolean
 
-  """Equal to the specified value."""
+  """
+  Equal to the specified value.
+  """
   equalTo: String
 
-  """Not equal to the specified value."""
+  """
+  Not equal to the specified value.
+  """
   notEqualTo: String
 
   """
@@ -620,61 +846,99 @@ input StringFilter {
   """
   distinctFrom: String
 
-  """Equal to the specified value, treating null like an ordinary value."""
+  """
+  Equal to the specified value, treating null like an ordinary value.
+  """
   notDistinctFrom: String
 
-  """Included in the specified list."""
+  """
+  Included in the specified list.
+  """
   in: [String!]
 
-  """Not included in the specified list."""
+  """
+  Not included in the specified list.
+  """
   notIn: [String!]
 
-  """Less than the specified value."""
+  """
+  Less than the specified value.
+  """
   lessThan: String
 
-  """Less than or equal to the specified value."""
+  """
+  Less than or equal to the specified value.
+  """
   lessThanOrEqualTo: String
 
-  """Greater than the specified value."""
+  """
+  Greater than the specified value.
+  """
   greaterThan: String
 
-  """Greater than or equal to the specified value."""
+  """
+  Greater than or equal to the specified value.
+  """
   greaterThanOrEqualTo: String
 
-  """Contains the specified string (case-sensitive)."""
+  """
+  Contains the specified string (case-sensitive).
+  """
   includes: String
 
-  """Does not contain the specified string (case-sensitive)."""
+  """
+  Does not contain the specified string (case-sensitive).
+  """
   notIncludes: String
 
-  """Contains the specified string (case-insensitive)."""
+  """
+  Contains the specified string (case-insensitive).
+  """
   includesInsensitive: String
 
-  """Does not contain the specified string (case-insensitive)."""
+  """
+  Does not contain the specified string (case-insensitive).
+  """
   notIncludesInsensitive: String
 
-  """Starts with the specified string (case-sensitive)."""
+  """
+  Starts with the specified string (case-sensitive).
+  """
   startsWith: String
 
-  """Does not start with the specified string (case-sensitive)."""
+  """
+  Does not start with the specified string (case-sensitive).
+  """
   notStartsWith: String
 
-  """Starts with the specified string (case-insensitive)."""
+  """
+  Starts with the specified string (case-insensitive).
+  """
   startsWithInsensitive: String
 
-  """Does not start with the specified string (case-insensitive)."""
+  """
+  Does not start with the specified string (case-insensitive).
+  """
   notStartsWithInsensitive: String
 
-  """Ends with the specified string (case-sensitive)."""
+  """
+  Ends with the specified string (case-sensitive).
+  """
   endsWith: String
 
-  """Does not end with the specified string (case-sensitive)."""
+  """
+  Does not end with the specified string (case-sensitive).
+  """
   notEndsWith: String
 
-  """Ends with the specified string (case-insensitive)."""
+  """
+  Ends with the specified string (case-insensitive).
+  """
   endsWithInsensitive: String
 
-  """Does not end with the specified string (case-insensitive)."""
+  """
+  Does not end with the specified string (case-insensitive).
+  """
   notEndsWithInsensitive: String
 
   """
@@ -697,10 +961,14 @@ input StringFilter {
   """
   notLikeInsensitive: String
 
-  """Equal to the specified value (case-insensitive)."""
+  """
+  Equal to the specified value (case-insensitive).
+  """
   equalToInsensitive: String
 
-  """Not equal to the specified value (case-insensitive)."""
+  """
+  Not equal to the specified value (case-insensitive).
+  """
   notEqualToInsensitive: String
 
   """
@@ -713,22 +981,34 @@ input StringFilter {
   """
   notDistinctFromInsensitive: String
 
-  """Included in the specified list (case-insensitive)."""
+  """
+  Included in the specified list (case-insensitive).
+  """
   inInsensitive: [String!]
 
-  """Not included in the specified list (case-insensitive)."""
+  """
+  Not included in the specified list (case-insensitive).
+  """
   notInInsensitive: [String!]
 
-  """Less than the specified value (case-insensitive)."""
+  """
+  Less than the specified value (case-insensitive).
+  """
   lessThanInsensitive: String
 
-  """Less than or equal to the specified value (case-insensitive)."""
+  """
+  Less than or equal to the specified value (case-insensitive).
+  """
   lessThanOrEqualToInsensitive: String
 
-  """Greater than the specified value (case-insensitive)."""
+  """
+  Greater than the specified value (case-insensitive).
+  """
   greaterThanInsensitive: String
 
-  """Greater than or equal to the specified value (case-insensitive)."""
+  """
+  Greater than or equal to the specified value (case-insensitive).
+  """
   greaterThanOrEqualToInsensitive: String
 }
 
@@ -741,10 +1021,14 @@ input DatetimeFilter {
   """
   isNull: Boolean
 
-  """Equal to the specified value."""
+  """
+  Equal to the specified value.
+  """
   equalTo: Datetime
 
-  """Not equal to the specified value."""
+  """
+  Not equal to the specified value.
+  """
   notEqualTo: Datetime
 
   """
@@ -752,31 +1036,49 @@ input DatetimeFilter {
   """
   distinctFrom: Datetime
 
-  """Equal to the specified value, treating null like an ordinary value."""
+  """
+  Equal to the specified value, treating null like an ordinary value.
+  """
   notDistinctFrom: Datetime
 
-  """Included in the specified list."""
+  """
+  Included in the specified list.
+  """
   in: [Datetime!]
 
-  """Not included in the specified list."""
+  """
+  Not included in the specified list.
+  """
   notIn: [Datetime!]
 
-  """Less than the specified value."""
+  """
+  Less than the specified value.
+  """
   lessThan: Datetime
 
-  """Less than or equal to the specified value."""
+  """
+  Less than or equal to the specified value.
+  """
   lessThanOrEqualTo: Datetime
 
-  """Greater than the specified value."""
+  """
+  Greater than the specified value.
+  """
   greaterThan: Datetime
 
-  """Greater than or equal to the specified value."""
+  """
+  Greater than or equal to the specified value.
+  """
   greaterThanOrEqualTo: Datetime
 }
 
-"""A connection to a list of `Tag` values."""
+"""
+A connection to a list of `Tag` values.
+"""
 type TagsConnection {
-  """A list of `Tag` objects."""
+  """
+  A list of `Tag` objects.
+  """
   nodes: [Tag]!
 
   """
@@ -784,23 +1086,35 @@ type TagsConnection {
   """
   edges: [TagsEdge!]!
 
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
 
-  """The count of *all* `Tag` you could get from the connection."""
+  """
+  The count of *all* `Tag` you could get from the connection.
+  """
   totalCount: Int!
 }
 
-"""A `Tag` edge in the connection."""
+"""
+A `Tag` edge in the connection.
+"""
 type TagsEdge {
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor
 
-  """The `Tag` at the end of the edge."""
+  """
+  The `Tag` at the end of the edge.
+  """
   node: Tag
 }
 
-"""Methods to use when ordering `Tag`."""
+"""
+Methods to use when ordering `Tag`.
+"""
 enum TagsOrderBy {
   NATURAL
   ID_ASC
@@ -815,10 +1129,14 @@ enum TagsOrderBy {
 A condition to be used against `Tag` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input TagCondition {
-  """Checks for equality with the object’s `id` field."""
+  """
+  Checks for equality with the object’s `id` field.
+  """
   id: Int
 
-  """Checks for equality with the object’s `name` field."""
+  """
+  Checks for equality with the object’s `name` field.
+  """
   name: String
 }
 
@@ -826,19 +1144,29 @@ input TagCondition {
 A filter to be used against `Tag` object types. All fields are combined with a logical ‘and.’
 """
 input TagFilter {
-  """Filter by the object’s `id` field."""
+  """
+  Filter by the object’s `id` field.
+  """
   id: IntFilter
 
-  """Filter by the object’s `name` field."""
+  """
+  Filter by the object’s `name` field.
+  """
   name: StringFilter
 
-  """Checks for all expressions in this list."""
+  """
+  Checks for all expressions in this list.
+  """
   and: [TagFilter!]
 
-  """Checks for any expressions in this list."""
+  """
+  Checks for any expressions in this list.
+  """
   or: [TagFilter!]
 
-  """Negates the expression."""
+  """
+  Negates the expression.
+  """
   not: TagFilter
 }
 
@@ -846,7 +1174,9 @@ input TagFilter {
 The root mutation type which contains root level fields which mutate data.
 """
 type Mutation {
-  """Creates a single `EventTag`."""
+  """
+  Creates a single `EventTag`.
+  """
   createEventTag(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -854,7 +1184,9 @@ type Mutation {
     input: CreateEventTagInput!
   ): CreateEventTagPayload
 
-  """Creates a single `Event`."""
+  """
+  Creates a single `Event`.
+  """
   createEvent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -862,7 +1194,9 @@ type Mutation {
     input: CreateEventInput!
   ): CreateEventPayload
 
-  """Creates a single `Tag`."""
+  """
+  Creates a single `Tag`.
+  """
   createTag(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -870,7 +1204,9 @@ type Mutation {
     input: CreateTagInput!
   ): CreateTagPayload
 
-  """Updates a single `EventTag` using its globally unique id and a patch."""
+  """
+  Updates a single `EventTag` using its globally unique id and a patch.
+  """
   updateEventTag(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -878,7 +1214,9 @@ type Mutation {
     input: UpdateEventTagInput!
   ): UpdateEventTagPayload
 
-  """Updates a single `EventTag` using a unique key and a patch."""
+  """
+  Updates a single `EventTag` using a unique key and a patch.
+  """
   updateEventTagByEventIdAndTagId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -886,7 +1224,9 @@ type Mutation {
     input: UpdateEventTagByEventIdAndTagIdInput!
   ): UpdateEventTagPayload
 
-  """Updates a single `Event` using its globally unique id and a patch."""
+  """
+  Updates a single `Event` using its globally unique id and a patch.
+  """
   updateEvent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -894,7 +1234,9 @@ type Mutation {
     input: UpdateEventInput!
   ): UpdateEventPayload
 
-  """Updates a single `Event` using a unique key and a patch."""
+  """
+  Updates a single `Event` using a unique key and a patch.
+  """
   updateEventById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -902,7 +1244,9 @@ type Mutation {
     input: UpdateEventByIdInput!
   ): UpdateEventPayload
 
-  """Updates a single `Tag` using its globally unique id and a patch."""
+  """
+  Updates a single `Tag` using its globally unique id and a patch.
+  """
   updateTag(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -910,7 +1254,9 @@ type Mutation {
     input: UpdateTagInput!
   ): UpdateTagPayload
 
-  """Updates a single `Tag` using a unique key and a patch."""
+  """
+  Updates a single `Tag` using a unique key and a patch.
+  """
   updateTagById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -918,7 +1264,9 @@ type Mutation {
     input: UpdateTagByIdInput!
   ): UpdateTagPayload
 
-  """Updates a single `Tag` using a unique key and a patch."""
+  """
+  Updates a single `Tag` using a unique key and a patch.
+  """
   updateTagByName(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -926,7 +1274,9 @@ type Mutation {
     input: UpdateTagByNameInput!
   ): UpdateTagPayload
 
-  """Deletes a single `EventTag` using its globally unique id."""
+  """
+  Deletes a single `EventTag` using its globally unique id.
+  """
   deleteEventTag(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -934,7 +1284,9 @@ type Mutation {
     input: DeleteEventTagInput!
   ): DeleteEventTagPayload
 
-  """Deletes a single `EventTag` using a unique key."""
+  """
+  Deletes a single `EventTag` using a unique key.
+  """
   deleteEventTagByEventIdAndTagId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -942,7 +1294,9 @@ type Mutation {
     input: DeleteEventTagByEventIdAndTagIdInput!
   ): DeleteEventTagPayload
 
-  """Deletes a single `Event` using its globally unique id."""
+  """
+  Deletes a single `Event` using its globally unique id.
+  """
   deleteEvent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -950,7 +1304,9 @@ type Mutation {
     input: DeleteEventInput!
   ): DeleteEventPayload
 
-  """Deletes a single `Event` using a unique key."""
+  """
+  Deletes a single `Event` using a unique key.
+  """
   deleteEventById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -958,7 +1314,9 @@ type Mutation {
     input: DeleteEventByIdInput!
   ): DeleteEventPayload
 
-  """Deletes a single `Tag` using its globally unique id."""
+  """
+  Deletes a single `Tag` using its globally unique id.
+  """
   deleteTag(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -966,7 +1324,9 @@ type Mutation {
     input: DeleteTagInput!
   ): DeleteTagPayload
 
-  """Deletes a single `Tag` using a unique key."""
+  """
+  Deletes a single `Tag` using a unique key.
+  """
   deleteTagById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -974,7 +1334,9 @@ type Mutation {
     input: DeleteTagByIdInput!
   ): DeleteTagPayload
 
-  """Deletes a single `Tag` using a unique key."""
+  """
+  Deletes a single `Tag` using a unique key.
+  """
   deleteTagByName(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -983,7 +1345,9 @@ type Mutation {
   ): DeleteTagPayload
 }
 
-"""The output of our create `EventTag` mutation."""
+"""
+The output of our create `EventTag` mutation.
+"""
 type CreateEventTagPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -991,7 +1355,9 @@ type CreateEventTagPayload {
   """
   clientMutationId: String
 
-  """The `EventTag` that was created by this mutation."""
+  """
+  The `EventTag` that was created by this mutation.
+  """
   eventTag: EventTag
 
   """
@@ -999,20 +1365,30 @@ type CreateEventTagPayload {
   """
   query: Query
 
-  """Reads a single `Event` that is related to this `EventTag`."""
+  """
+  Reads a single `Event` that is related to this `EventTag`.
+  """
   eventByEventId: Event
 
-  """Reads a single `Tag` that is related to this `EventTag`."""
+  """
+  Reads a single `Tag` that is related to this `EventTag`.
+  """
   tagByTagId: Tag
 
-  """An edge for our `EventTag`. May be used by Relay 1."""
+  """
+  An edge for our `EventTag`. May be used by Relay 1.
+  """
   eventTagEdge(
-    """The method to use when ordering `EventTag`."""
+    """
+    The method to use when ordering `EventTag`.
+    """
     orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
   ): EventTagsEdge
 }
 
-"""All input for the create `EventTag` mutation."""
+"""
+All input for the create `EventTag` mutation.
+"""
 input CreateEventTagInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1020,17 +1396,23 @@ input CreateEventTagInput {
   """
   clientMutationId: String
 
-  """The `EventTag` to be created by this mutation."""
+  """
+  The `EventTag` to be created by this mutation.
+  """
   eventTag: EventTagInput!
 }
 
-"""An input for mutations affecting `EventTag`"""
+"""
+An input for mutations affecting `EventTag`
+"""
 input EventTagInput {
   eventId: Int!
   tagId: Int!
 }
 
-"""The output of our create `Event` mutation."""
+"""
+The output of our create `Event` mutation.
+"""
 type CreateEventPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -1038,7 +1420,9 @@ type CreateEventPayload {
   """
   clientMutationId: String
 
-  """The `Event` that was created by this mutation."""
+  """
+  The `Event` that was created by this mutation.
+  """
   event: Event
 
   """
@@ -1046,14 +1430,20 @@ type CreateEventPayload {
   """
   query: Query
 
-  """An edge for our `Event`. May be used by Relay 1."""
+  """
+  An edge for our `Event`. May be used by Relay 1.
+  """
   eventEdge(
-    """The method to use when ordering `Event`."""
+    """
+    The method to use when ordering `Event`.
+    """
     orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
   ): EventsEdge
 }
 
-"""All input for the create `Event` mutation."""
+"""
+All input for the create `Event` mutation.
+"""
 input CreateEventInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1061,11 +1451,15 @@ input CreateEventInput {
   """
   clientMutationId: String
 
-  """The `Event` to be created by this mutation."""
+  """
+  The `Event` to be created by this mutation.
+  """
   event: EventInput!
 }
 
-"""An input for mutations affecting `Event`"""
+"""
+An input for mutations affecting `Event`
+"""
 input EventInput {
   id: Int
   title: String!
@@ -1076,9 +1470,13 @@ input EventInput {
   pubDate: Datetime
   createdAt: Datetime
   updatedAt: Datetime
+  imageUrl: String
+  location: String
 }
 
-"""The output of our create `Tag` mutation."""
+"""
+The output of our create `Tag` mutation.
+"""
 type CreateTagPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -1086,7 +1484,9 @@ type CreateTagPayload {
   """
   clientMutationId: String
 
-  """The `Tag` that was created by this mutation."""
+  """
+  The `Tag` that was created by this mutation.
+  """
   tag: Tag
 
   """
@@ -1094,14 +1494,20 @@ type CreateTagPayload {
   """
   query: Query
 
-  """An edge for our `Tag`. May be used by Relay 1."""
+  """
+  An edge for our `Tag`. May be used by Relay 1.
+  """
   tagEdge(
-    """The method to use when ordering `Tag`."""
+    """
+    The method to use when ordering `Tag`.
+    """
     orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
   ): TagsEdge
 }
 
-"""All input for the create `Tag` mutation."""
+"""
+All input for the create `Tag` mutation.
+"""
 input CreateTagInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1109,17 +1515,23 @@ input CreateTagInput {
   """
   clientMutationId: String
 
-  """The `Tag` to be created by this mutation."""
+  """
+  The `Tag` to be created by this mutation.
+  """
   tag: TagInput!
 }
 
-"""An input for mutations affecting `Tag`"""
+"""
+An input for mutations affecting `Tag`
+"""
 input TagInput {
   id: Int
   name: String!
 }
 
-"""The output of our update `EventTag` mutation."""
+"""
+The output of our update `EventTag` mutation.
+"""
 type UpdateEventTagPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -1127,7 +1539,9 @@ type UpdateEventTagPayload {
   """
   clientMutationId: String
 
-  """The `EventTag` that was updated by this mutation."""
+  """
+  The `EventTag` that was updated by this mutation.
+  """
   eventTag: EventTag
 
   """
@@ -1135,20 +1549,30 @@ type UpdateEventTagPayload {
   """
   query: Query
 
-  """Reads a single `Event` that is related to this `EventTag`."""
+  """
+  Reads a single `Event` that is related to this `EventTag`.
+  """
   eventByEventId: Event
 
-  """Reads a single `Tag` that is related to this `EventTag`."""
+  """
+  Reads a single `Tag` that is related to this `EventTag`.
+  """
   tagByTagId: Tag
 
-  """An edge for our `EventTag`. May be used by Relay 1."""
+  """
+  An edge for our `EventTag`. May be used by Relay 1.
+  """
   eventTagEdge(
-    """The method to use when ordering `EventTag`."""
+    """
+    The method to use when ordering `EventTag`.
+    """
     orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
   ): EventTagsEdge
 }
 
-"""All input for the `updateEventTag` mutation."""
+"""
+All input for the `updateEventTag` mutation.
+"""
 input UpdateEventTagInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1175,7 +1599,9 @@ input EventTagPatch {
   tagId: Int
 }
 
-"""All input for the `updateEventTagByEventIdAndTagId` mutation."""
+"""
+All input for the `updateEventTagByEventIdAndTagId` mutation.
+"""
 input UpdateEventTagByEventIdAndTagIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1191,7 +1617,9 @@ input UpdateEventTagByEventIdAndTagIdInput {
   tagId: Int!
 }
 
-"""The output of our update `Event` mutation."""
+"""
+The output of our update `Event` mutation.
+"""
 type UpdateEventPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -1199,7 +1627,9 @@ type UpdateEventPayload {
   """
   clientMutationId: String
 
-  """The `Event` that was updated by this mutation."""
+  """
+  The `Event` that was updated by this mutation.
+  """
   event: Event
 
   """
@@ -1207,14 +1637,20 @@ type UpdateEventPayload {
   """
   query: Query
 
-  """An edge for our `Event`. May be used by Relay 1."""
+  """
+  An edge for our `Event`. May be used by Relay 1.
+  """
   eventEdge(
-    """The method to use when ordering `Event`."""
+    """
+    The method to use when ordering `Event`.
+    """
     orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
   ): EventsEdge
 }
 
-"""All input for the `updateEvent` mutation."""
+"""
+All input for the `updateEvent` mutation.
+"""
 input UpdateEventInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1246,9 +1682,13 @@ input EventPatch {
   pubDate: Datetime
   createdAt: Datetime
   updatedAt: Datetime
+  imageUrl: String
+  location: String
 }
 
-"""All input for the `updateEventById` mutation."""
+"""
+All input for the `updateEventById` mutation.
+"""
 input UpdateEventByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1263,7 +1703,9 @@ input UpdateEventByIdInput {
   id: Int!
 }
 
-"""The output of our update `Tag` mutation."""
+"""
+The output of our update `Tag` mutation.
+"""
 type UpdateTagPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -1271,7 +1713,9 @@ type UpdateTagPayload {
   """
   clientMutationId: String
 
-  """The `Tag` that was updated by this mutation."""
+  """
+  The `Tag` that was updated by this mutation.
+  """
   tag: Tag
 
   """
@@ -1279,14 +1723,20 @@ type UpdateTagPayload {
   """
   query: Query
 
-  """An edge for our `Tag`. May be used by Relay 1."""
+  """
+  An edge for our `Tag`. May be used by Relay 1.
+  """
   tagEdge(
-    """The method to use when ordering `Tag`."""
+    """
+    The method to use when ordering `Tag`.
+    """
     orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
   ): TagsEdge
 }
 
-"""All input for the `updateTag` mutation."""
+"""
+All input for the `updateTag` mutation.
+"""
 input UpdateTagInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1305,13 +1755,17 @@ input UpdateTagInput {
   tagPatch: TagPatch!
 }
 
-"""Represents an update to a `Tag`. Fields that are set will be updated."""
+"""
+Represents an update to a `Tag`. Fields that are set will be updated.
+"""
 input TagPatch {
   id: Int
   name: String
 }
 
-"""All input for the `updateTagById` mutation."""
+"""
+All input for the `updateTagById` mutation.
+"""
 input UpdateTagByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1326,7 +1780,9 @@ input UpdateTagByIdInput {
   id: Int!
 }
 
-"""All input for the `updateTagByName` mutation."""
+"""
+All input for the `updateTagByName` mutation.
+"""
 input UpdateTagByNameInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1341,7 +1797,9 @@ input UpdateTagByNameInput {
   name: String!
 }
 
-"""The output of our delete `EventTag` mutation."""
+"""
+The output of our delete `EventTag` mutation.
+"""
 type DeleteEventTagPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -1349,7 +1807,9 @@ type DeleteEventTagPayload {
   """
   clientMutationId: String
 
-  """The `EventTag` that was deleted by this mutation."""
+  """
+  The `EventTag` that was deleted by this mutation.
+  """
   eventTag: EventTag
   deletedEventTagId: ID
 
@@ -1358,20 +1818,30 @@ type DeleteEventTagPayload {
   """
   query: Query
 
-  """Reads a single `Event` that is related to this `EventTag`."""
+  """
+  Reads a single `Event` that is related to this `EventTag`.
+  """
   eventByEventId: Event
 
-  """Reads a single `Tag` that is related to this `EventTag`."""
+  """
+  Reads a single `Tag` that is related to this `EventTag`.
+  """
   tagByTagId: Tag
 
-  """An edge for our `EventTag`. May be used by Relay 1."""
+  """
+  An edge for our `EventTag`. May be used by Relay 1.
+  """
   eventTagEdge(
-    """The method to use when ordering `EventTag`."""
+    """
+    The method to use when ordering `EventTag`.
+    """
     orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
   ): EventTagsEdge
 }
 
-"""All input for the `deleteEventTag` mutation."""
+"""
+All input for the `deleteEventTag` mutation.
+"""
 input DeleteEventTagInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1385,7 +1855,9 @@ input DeleteEventTagInput {
   nodeId: ID!
 }
 
-"""All input for the `deleteEventTagByEventIdAndTagId` mutation."""
+"""
+All input for the `deleteEventTagByEventIdAndTagId` mutation.
+"""
 input DeleteEventTagByEventIdAndTagIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1396,7 +1868,9 @@ input DeleteEventTagByEventIdAndTagIdInput {
   tagId: Int!
 }
 
-"""The output of our delete `Event` mutation."""
+"""
+The output of our delete `Event` mutation.
+"""
 type DeleteEventPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -1404,7 +1878,9 @@ type DeleteEventPayload {
   """
   clientMutationId: String
 
-  """The `Event` that was deleted by this mutation."""
+  """
+  The `Event` that was deleted by this mutation.
+  """
   event: Event
   deletedEventId: ID
 
@@ -1413,14 +1889,20 @@ type DeleteEventPayload {
   """
   query: Query
 
-  """An edge for our `Event`. May be used by Relay 1."""
+  """
+  An edge for our `Event`. May be used by Relay 1.
+  """
   eventEdge(
-    """The method to use when ordering `Event`."""
+    """
+    The method to use when ordering `Event`.
+    """
     orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
   ): EventsEdge
 }
 
-"""All input for the `deleteEvent` mutation."""
+"""
+All input for the `deleteEvent` mutation.
+"""
 input DeleteEventInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1434,7 +1916,9 @@ input DeleteEventInput {
   nodeId: ID!
 }
 
-"""All input for the `deleteEventById` mutation."""
+"""
+All input for the `deleteEventById` mutation.
+"""
 input DeleteEventByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1444,7 +1928,9 @@ input DeleteEventByIdInput {
   id: Int!
 }
 
-"""The output of our delete `Tag` mutation."""
+"""
+The output of our delete `Tag` mutation.
+"""
 type DeleteTagPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -1452,7 +1938,9 @@ type DeleteTagPayload {
   """
   clientMutationId: String
 
-  """The `Tag` that was deleted by this mutation."""
+  """
+  The `Tag` that was deleted by this mutation.
+  """
   tag: Tag
   deletedTagId: ID
 
@@ -1461,14 +1949,20 @@ type DeleteTagPayload {
   """
   query: Query
 
-  """An edge for our `Tag`. May be used by Relay 1."""
+  """
+  An edge for our `Tag`. May be used by Relay 1.
+  """
   tagEdge(
-    """The method to use when ordering `Tag`."""
+    """
+    The method to use when ordering `Tag`.
+    """
     orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
   ): TagsEdge
 }
 
-"""All input for the `deleteTag` mutation."""
+"""
+All input for the `deleteTag` mutation.
+"""
 input DeleteTagInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1482,7 +1976,9 @@ input DeleteTagInput {
   nodeId: ID!
 }
 
-"""All input for the `deleteTagById` mutation."""
+"""
+All input for the `deleteTagById` mutation.
+"""
 input DeleteTagByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -1492,7 +1988,9 @@ input DeleteTagByIdInput {
   id: Int!
 }
 
-"""All input for the `deleteTagByName` mutation."""
+"""
+All input for the `deleteTagByName` mutation.
+"""
 input DeleteTagByNameInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the

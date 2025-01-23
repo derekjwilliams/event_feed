@@ -36,6 +36,7 @@ export function createFeed(events: EventsConnection) {
         // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
         feed.addItem({
           image:
+            event.imageUrl ??
             'https://d1tvaw2qn8888b.cloudfront.net/cal-7e28e92c-f8a7-447f-bd60-acc4dad2eff9/square.jpg',
           title: event.title ?? 'None',
           id: event.id.toString(),
