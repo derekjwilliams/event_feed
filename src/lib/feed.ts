@@ -5,7 +5,7 @@ import { EVENTS_QUERY } from '@/graphql_queries/queries'
 
 export function createFeed(events: EventsConnection) {
   const feed = new Feed({
-    title: 'Willamette Events RSS Feed',
+    title: 'Willamette Events Feed',
     description: 'Stay updated with the latest events!',
     id: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
     link: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
