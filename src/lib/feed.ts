@@ -37,8 +37,8 @@ export function createFeed(events: EventsConnection) {
         feed.addItem({
           image:
             event.imageUrl && event.imageUrl.trim() !== ''
-              ? 'https://d1tvaw2qn8888b.cloudfront.net/cal-7e28e92c-f8a7-447f-bd60-acc4dad2eff9/square.jpg'
-              : '',
+              ? event.imageUrl
+              : 'https://d1tvaw2qn8888b.cloudfront.net/cal-7e28e92c-f8a7-447f-bd60-acc4dad2eff9/square.jpg',
           title: event.title ?? 'None',
           id: event.id.toString(),
           link: event.link ? `https://events.willamette.edu${event.link}` : '',
