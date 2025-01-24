@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     const events = await fetchEvents(modifiedSinceDate, tags)
 
     const feed = createFeed(events)
-    const feedContent = feed.rss2()
+    const feedContent = feed.json1()
 
     const pubDates = []
     for (const node of events.nodes) {
