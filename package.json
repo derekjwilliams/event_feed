@@ -12,8 +12,11 @@
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.0.16",
+    "axios": "^1.7.9",
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
+    "drizzle-kit": "0.30.2",
+    "drizzle-orm": "0.38.4",
     "express": "^4.21.2",
     "feed": "^4.2.2",
     "graphql": "^15.10.1",
