@@ -34,8 +34,8 @@ export function createFeed(events: EventsConnection) {
           }
         })
         let title = event.title ?? ''
-        if (title && event.pubDate) {
-          title = title + ' - ' + new Date(event.pubDate).toDateString()
+        if (title && event.eventStartDate) {
+          title = title + ' - ' + new Date(event.eventStartDate).toDateString()
         }
 
         const startDate: Extension = {
@@ -91,7 +91,6 @@ export async function fetchEvents(
       'sec-fetch-mode': 'cors',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
-    // body: '{"query":"query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {\\n  getEventsByDateAndTags(pPubDate: $pubDate, pTagNames: $tagNames) {\\n    nodes {\\n      id\\n      author\\n      title\\n      description\\n      content\\n      link\\n      pubDate\\n      createdAt\\n      updatedAt\\n      eventTagsByEventId {\\n        nodes {\\n          tagByTagId {\\n            name\\n          }\\n        }\\n      }\\n    }\\n  }\\n}\\n\\n# {\\n#   query {\\n#     node\\n#   }\\n#   getEventsByDateAndTags {\\n#     nodes {\\n#       description\\n#     }\\n#   }\\n# }\\n\\n# query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {getEventsByDateAndTags(pPubDate: $pubDate, pTagNames: $tagNames) {nodes {description}}}\\n","variables":{"pubDate":"2025-01-25T21:26:03.6308+00:00","tagNames":[]},"operationName":"getEventsByDateAndTags"}',
     body: JSON.stringify({
       query: EVENTS_QUERY,
       variables: {
