@@ -12,6 +12,8 @@ export const EVENTS_QUERY = `
         createdAt
         updatedAt
         imageUrl
+        eventStartDate
+        eventEndDate
         eventTagsByEventId {
           nodes {
             tagByTagId {

@@ -321,6 +321,8 @@ export type Event = Node & {
   content?: Maybe<Scalars['String']['output']>
   createdAt?: Maybe<Scalars['Datetime']['output']>
   description?: Maybe<Scalars['String']['output']>
+  eventEndDate?: Maybe<Scalars['Datetime']['output']>
+  eventStartDate?: Maybe<Scalars['Datetime']['output']>
   /** Reads and enables pagination through a set of `EventTag`. */
   eventTagsByEventId: EventTagsConnection
   id: Scalars['Int']['output']
@@ -355,6 +357,10 @@ export type EventCondition = {
   createdAt?: InputMaybe<Scalars['Datetime']['input']>
   /** Checks for equality with the object’s `description` field. */
   description?: InputMaybe<Scalars['String']['input']>
+  /** Checks for equality with the object’s `eventEndDate` field. */
+  eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
+  /** Checks for equality with the object’s `eventStartDate` field. */
+  eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['Int']['input']>
   /** Checks for equality with the object’s `imageUrl` field. */
@@ -383,6 +389,10 @@ export type EventFilter = {
   createdAt?: InputMaybe<DatetimeFilter>
   /** Filter by the object’s `description` field. */
   description?: InputMaybe<StringFilter>
+  /** Filter by the object’s `eventEndDate` field. */
+  eventEndDate?: InputMaybe<DatetimeFilter>
+  /** Filter by the object’s `eventStartDate` field. */
+  eventStartDate?: InputMaybe<DatetimeFilter>
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<IntFilter>
   /** Filter by the object’s `imageUrl` field. */
@@ -409,6 +419,8 @@ export type EventInput = {
   content?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['Datetime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
+  eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
+  eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
   id?: InputMaybe<Scalars['Int']['input']>
   imageUrl?: InputMaybe<Scalars['String']['input']>
   link?: InputMaybe<Scalars['String']['input']>
@@ -424,6 +436,8 @@ export type EventPatch = {
   content?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['Datetime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
+  eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
+  eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
   id?: InputMaybe<Scalars['Int']['input']>
   imageUrl?: InputMaybe<Scalars['String']['input']>
   link?: InputMaybe<Scalars['String']['input']>
@@ -547,6 +561,10 @@ export enum EventsOrderBy {
   CreatedAtDesc = 'CREATED_AT_DESC',
   DescriptionAsc = 'DESCRIPTION_ASC',
   DescriptionDesc = 'DESCRIPTION_DESC',
+  EventEndDateAsc = 'EVENT_END_DATE_ASC',
+  EventEndDateDesc = 'EVENT_END_DATE_DESC',
+  EventStartDateAsc = 'EVENT_START_DATE_ASC',
+  EventStartDateDesc = 'EVENT_START_DATE_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   ImageUrlAsc = 'IMAGE_URL_ASC',
@@ -1671,6 +1689,16 @@ export type EventResolvers<
   >
   description?: Resolver<
     Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  eventEndDate?: Resolver<
+    Maybe<ResolversTypes['Datetime']>,
+    ParentType,
+    ContextType
+  >
+  eventStartDate?: Resolver<
+    Maybe<ResolversTypes['Datetime']>,
     ParentType,
     ContextType
   >

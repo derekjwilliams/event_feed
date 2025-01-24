@@ -1,5 +1,5 @@
 import { Feed } from 'feed'
-import { Category } from 'feed/lib/typings'
+import { Category, Extension } from 'feed/lib/typings'
 import { EventsConnection } from '@/types/graphql'
 import { EVENTS_QUERY } from '@/graphql_queries/queries'
 
@@ -38,6 +38,12 @@ export function createFeed(events: EventsConnection) {
           title = title + ' - ' + new Date(event.pubDate).toDateString()
         }
 
+        const startDate: Extension = {
+          name: 'startDate',
+          objects: {
+            date: event.eventStartDate,
+          },
+        }
         // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
         feed.addItem({
           image:
@@ -49,9 +55,14 @@ export function createFeed(events: EventsConnection) {
           link: event.link ? `https://events.willamette.edu${event.link}` : '',
           description: event.description ?? '',
           content: event.content ?? '',
-          author: [{ name: event.author ?? '' }],
+          author: [
+            { name: event.author ?? '', email: 'events_creator@example.com' },
+          ],
           published: event.pubDate ? new Date(event.pubDate) : undefined,
-          date: event.pubDate ? new Date(event.pubDate) : new Date(),
+          date: event.eventStartDate
+            ? new Date(event.eventStartDate)
+            : new Date(),
+          extensions: [startDate],
           category: categories,
         })
       }
@@ -59,11 +70,11 @@ export function createFeed(events: EventsConnection) {
   }
   return feed
 }
-const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
 export async function fetchEvents(
   pubDate?: string,
   tagNames: string[] = []
 ): Promise<EventsConnection> {
+  const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
   if (GRAPHQL_ENDPOINT === '') {
     throw new Error(
       `No GRAPHQL_ENDPOINT environment variable not found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`
@@ -72,8 +83,6 @@ export async function fetchEvents(
   if (!pubDate) {
     pubDate = new Date(0).toISOString() //'1970-01-01T00:00:00+00:00, for returning all events
   }
-
-  console.log('pubDate in fetch: ', pubDate)
 
   const response = await fetch(GRAPHQL_ENDPOINT, {
     headers: {

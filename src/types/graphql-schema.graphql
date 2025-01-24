@@ -343,6 +343,8 @@ type Event implements Node {
   updatedAt: Datetime
   imageUrl: String
   location: String
+  eventEndDate: Datetime
+  eventStartDate: Datetime
 
   """
   Reads and enables pagination through a set of `EventTag`.
@@ -683,6 +685,10 @@ enum EventsOrderBy {
   IMAGE_URL_DESC
   LOCATION_ASC
   LOCATION_DESC
+  EVENT_END_DATE_ASC
+  EVENT_END_DATE_DESC
+  EVENT_START_DATE_ASC
+  EVENT_START_DATE_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -745,6 +751,16 @@ input EventCondition {
   Checks for equality with the object’s `location` field.
   """
   location: String
+
+  """
+  Checks for equality with the object’s `eventEndDate` field.
+  """
+  eventEndDate: Datetime
+
+  """
+  Checks for equality with the object’s `eventStartDate` field.
+  """
+  eventStartDate: Datetime
 }
 
 """
@@ -805,6 +821,16 @@ input EventFilter {
   Filter by the object’s `location` field.
   """
   location: StringFilter
+
+  """
+  Filter by the object’s `eventEndDate` field.
+  """
+  eventEndDate: DatetimeFilter
+
+  """
+  Filter by the object’s `eventStartDate` field.
+  """
+  eventStartDate: DatetimeFilter
 
   """
   Checks for all expressions in this list.
@@ -1472,6 +1498,8 @@ input EventInput {
   updatedAt: Datetime
   imageUrl: String
   location: String
+  eventEndDate: Datetime
+  eventStartDate: Datetime
 }
 
 """
@@ -1684,6 +1712,8 @@ input EventPatch {
   updatedAt: Datetime
   imageUrl: String
   location: String
+  eventEndDate: Datetime
+  eventStartDate: Datetime
 }
 
 """
