@@ -94,7 +94,7 @@ export async function fetchEvents(
     body: JSON.stringify({
       query: EVENTS_QUERY,
       variables: {
-        pubDate: pubDate, //'2025-01-21T210:26:03.6308+00:00',
+        pubDate: pubDate, //'e.g.: 2025-01-21',
         tagNames: tagNames,
       },
       operationName: 'getEventsByDateAndTags',

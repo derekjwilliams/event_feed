@@ -67,30 +67,31 @@ export const events = pgTable(
       withTimezone: true,
       mode: 'string',
     }).default(sql`CURRENT_TIMESTAMP`),
-  },
-  (table) => [
-    pgPolicy('Allow authenticated delete on events', {
-      as: 'permissive',
-      for: 'delete',
-      to: ['public'],
-      using: sql`(auth.role() = 'authenticated'::text)`,
-    }),
-    pgPolicy('Allow authenticated update on events', {
-      as: 'permissive',
-      for: 'update',
-      to: ['public'],
-    }),
-    pgPolicy('Allow authenticated insert on events', {
-      as: 'permissive',
-      for: 'insert',
-      to: ['public'],
-    }),
-    pgPolicy('Allow public read on events', {
-      as: 'permissive',
-      for: 'select',
-      to: ['public'],
-    }),
-  ]
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // (table) => [
+  //   pgPolicy('Allow authenticated delete on events', {
+  //     as: 'permissive',
+  //     for: 'delete',
+  //     to: ['public'],
+  //     using: sql`(auth.role() = 'authenticated'::text)`,
+  //   }),
+  //   pgPolicy('Allow authenticated update on events', {
+  //     as: 'permissive',
+  //     for: 'update',
+  //     to: ['public'],
+  //   }),
+  //   pgPolicy('Allow authenticated insert on events', {
+  //     as: 'permissive',
+  //     for: 'insert',
+  //     to: ['public'],
+  //   }),
+  //   pgPolicy('Allow public read on events', {
+  //     as: 'permissive',
+  //     for: 'select',
+  //     to: ['public'],
+  //   }),
+  // ]
 )
 
 export const eventTags = pgTable(
