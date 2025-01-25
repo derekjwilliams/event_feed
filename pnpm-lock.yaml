@@ -59,6 +59,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      ts-ics:
+        specifier: ^1.6.7
+        version: 1.6.7(date-fns@4.1.0)(lodash@4.17.21)(zod@3.24.1)
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3
@@ -2711,6 +2714,13 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  ts-ics@1.6.7:
+    resolution: {integrity: sha512-j8+opqoX5VQqiH3fB7RE5sxV9NA1BNKZAEMZ7E6QmNGe+uz04bgA9/ydW0WpBsXSB3aYGkSqPvfW+9Y/Ylwueg==}
+    peerDependencies:
+      date-fns: ^4
+      lodash: ^4
+      zod: ^3
+
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
@@ -2888,6 +2898,9 @@ packages:
 
   yup@1.6.1:
     resolution: {integrity: sha512-JED8pB50qbA4FOkDol0bYF/p60qSEDQqBD0/qeIrUCG1KbPBIQ776fCUNb9ldbPcSTxA69g/47XTo4TqWiuXOA==}
+
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
 snapshots:
 
@@ -5695,6 +5708,12 @@ snapshots:
     dependencies:
       typescript: 5.7.3
 
+  ts-ics@1.6.7(date-fns@4.1.0)(lodash@4.17.21)(zod@3.24.1):
+    dependencies:
+      date-fns: 4.1.0
+      lodash: 4.17.21
+      zod: 3.24.1
+
   ts-interface-checker@0.1.13: {}
 
   ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3):
@@ -5887,3 +5906,5 @@ snapshots:
       tiny-case: 1.0.3
       toposort: 2.0.2
       type-fest: 2.19.0
+
+  zod@3.24.1: {}

@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { format } from 'date-fns'
 import { EVENTS_QUERY } from '@/graphql_queries/queries'
+import { Event } from '@/types/graphql'
+import { generateIcsCalendar, VEvent, type VCalendar } from 'ts-ics'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
-  const pubDate = searchParams.get('pubDate') || '2025-01-01'
+  const pubDate = searchParams.get('pubDate') || '1970-01-01'
   const tagNames = searchParams.get('tagNames')?.split(',') || []
 
   try {
     const events = await fetchEvents(pubDate, tagNames)
-    const icsData = generateICS(events)
+    const icsData = await generateICS(events)
 
-    return new NextResponse(icsData, {
+    return new NextResponse(await icsData, {
       status: 200,
       headers: {
         'Content-Type': 'text/calendar; charset=utf-8',
@@ -26,7 +27,6 @@ export async function GET(request: NextRequest) {
     )
   }
 }
-import { Event } from '@/types/graphql'
 
 const fetchEvents = async (
   pubDate: string,
@@ -42,33 +42,46 @@ const fetchEvents = async (
   })
 
   const { data } = await res.json()
+
   return data.getEventsByDateAndTags.nodes
 }
+const generateICS = async (events: Event[]): Promise<string> => {
+  // const foo => (events: Event[]) : string => {
 
-const generateICS = (events: Event[]): string => {
-  let icsContent =
-    'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Willamette//Event Calendar//EN\n'
+  let vEvents: VEvent[] = []
 
-  events.forEach((event) => {
-    const start = event.eventStartDate
-      ? format(new Date(event.eventStartDate), "yyyyMMdd'T'HHmmss'Z'")
-      : ''
-    const end = event.eventEndDate
-      ? format(new Date(event.eventEndDate), "yyyyMMdd'T'HHmmss'Z'")
-      : ''
+  if (events && events.length > 0) {
+    vEvents = events.map((event) => {
+      const uid =
+        process.env.ICS_UID ||
+        'e0bec92c-3f4b-4322-a772-a984545cab7e@event-feed-eta.vercel.app'
+      const start = event.eventStartDate
+        ? new Date(event.eventStartDate)
+        : new Date()
+      const end = event.eventStartDate //TODO fix when the DB has end dates
+        ? new Date(event.eventStartDate)
+        : new Date()
+      const categories = event.eventTagsByEventId.nodes
+        .filter((tag) => tag && tag.tagByTagId && tag.tagByTagId.name)
+        .map((tag) => tag!.tagByTagId!.name as string)
 
-    icsContent += `
-      BEGIN:VEVENT
-      UID:${event.id}@yourapp.com
-      SUMMARY:${event.title}
-      DESCRIPTION:${event.description || ''}
-      LOCATION:${event.link || ''}
-      DTSTART:${start}
-      DTEND:${end}
-      END:VEVENT
-      `
-  })
-
-  icsContent += 'END:VCALENDAR'
-  return icsContent
+      return {
+        start: { date: start },
+        stamp: { date: start },
+        end: { date: end },
+        summary: event.title,
+        description: event.description ?? '',
+        uid: uid + `/${event.link}`,
+        url: event.link ? `https://events.willamette.edu${event.link}` : '',
+        categories: categories,
+      }
+    })
+  }
+  const calendar: VCalendar = {
+    prodId: 'event-feed-eta.vercel.app', // TODO
+    version: '2.0',
+    events: vEvents,
+  }
+  const icsCalendar = generateIcsCalendar(calendar)
+  return icsCalendar
 }
