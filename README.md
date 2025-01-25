@@ -28,7 +28,6 @@ pnpm install
 pnpm run build
 ```
 
-
 ## Run the Postgraphile GraphQL Server
 
 This is deprecated, see https://github.com/derekjwilliams/event_graphql to run the postgraphile server
@@ -109,33 +108,35 @@ To filter by tags: Open browser to http://localhost:3000/api/rss?tags=PNCA,Housi
 ## Example GraphQL Query for Mock GraphQL Server
 
 ```gql
-query($modifiedSince: String!, $tags:[String!]!) {
-  events(modifiedSince: $modifiedSince, tags:$tags) {
+query ($modifiedSince: String!, $tags: [String!]!) {
+  events(modifiedSince: $modifiedSince, tags: $tags) {
     id
     title
     description
     date
     content
-   }
+  }
 }
 ```
 
 variables:
 
 ```json
-{"modifiedSince":"2022-01-15T12:00:00Z", "tags": ["Housing"]}
+{ "modifiedSince": "2022-01-15T12:00:00Z", "tags": ["Housing"] }
 ```
+
 ## Example GraphQL Query for Postgraphile GraphQL Server
+
 query {
-  allEvents {
-    nodes {
-      id
-      title
-      description
-      content
-      pubDate
-    }
-  }
+allEvents {
+nodes {
+id
+title
+description
+content
+pubDate
+}
+}
 }
 
 ## Curl Examples To Get Data From RSS Feed
@@ -146,4 +147,10 @@ curl -i http://localhost:3000/api/rss -H "If-Modified-Since: Thu, 02 Jan 2025 12
 
 ```bash
 curl -i http://localhost:3000/api/rss -H "If-None-Match: <etag>"
+```
+
+## Create Typescript Types from Database Using Introspection
+
+```bash
+npx drizzle-kit introspect
 ```
