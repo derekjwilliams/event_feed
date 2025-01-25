@@ -11,7 +11,7 @@ export default function Home() {
         <Link href="api/atom">Here</Link> to see the Atom feed content (XML)
       </div>
       <div>
-        <Link href="api/json1">Here</Link> to see the JSON1 feed content (XML)
+        <Link href="api/json1">Here</Link> to see the JSON1 feed content (JSON)
       </div>
     </div>
   )
