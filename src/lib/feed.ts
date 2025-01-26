@@ -2,6 +2,7 @@ import { Feed } from 'feed'
 import { Category, Extension } from 'feed/lib/typings'
 import { EventsConnection } from '@/types/graphql'
 import { EVENTS_QUERY } from '@/graphql_queries/queries'
+import { generateIcsCalendar, VEvent, type VCalendar } from 'ts-ics'
 
 export function createFeed(events: EventsConnection) {
   const feed = new Feed({
@@ -70,6 +71,54 @@ export function createFeed(events: EventsConnection) {
   }
   return feed
 }
+
+export const generateICS = async (
+  events: EventsConnection
+): Promise<string> => {
+  let vEvents: VEvent[] = []
+
+  if (events.nodes && events.nodes.length > 0) {
+    vEvents = []
+
+    events.nodes.forEach((event) => {
+      if (event) {
+        const uid =
+          process.env.ICS_UID ||
+          'e0bec92c-3f4b-4322-a772-a984545cab7e@event-feed-eta.vercel.app'
+
+        const start = event.eventStartDate
+          ? new Date(event.eventStartDate)
+          : new Date()
+        const end = event.eventStartDate // TODO: fix when the DB has end dates
+          ? new Date(event.eventStartDate)
+          : new Date()
+
+        const categories = event.eventTagsByEventId.nodes
+          .filter((tag) => tag && tag.tagByTagId && tag.tagByTagId.name)
+          .map((tag) => tag!.tagByTagId!.name as string)
+
+        vEvents.push({
+          start: { date: start },
+          stamp: { date: start },
+          end: { date: end },
+          summary: event.title,
+          description: event.description ?? '',
+          uid: uid + `/${event.link}`,
+          url: event.link ? `https://events.willamette.edu${event.link}` : '',
+          categories: categories,
+        })
+      }
+    })
+  }
+  const calendar: VCalendar = {
+    prodId: 'event-feed-eta.vercel.app', // TODO
+    version: '2.0',
+    events: vEvents,
+  }
+  const icsCalendar = generateIcsCalendar(calendar)
+  return icsCalendar
+}
+
 export async function fetchEvents(
   pubDate?: string,
   tagNames: string[] = []
@@ -93,11 +142,7 @@ export async function fetchEvents(
     },
     body: JSON.stringify({
       query: EVENTS_QUERY,
-      variables: {
-        pubDate: pubDate, //'e.g.: 2025-01-21',
-        tagNames: tagNames,
-      },
-      operationName: 'getEventsByDateAndTags',
+      variables: { pubDate, tagNames },
     }),
     method: 'POST',
   })

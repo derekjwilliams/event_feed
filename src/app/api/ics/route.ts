@@ -1,24 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { EVENTS_QUERY } from '@/graphql_queries/queries'
-import { Event } from '@/types/graphql'
-import { generateIcsCalendar, VEvent, type VCalendar } from 'ts-ics'
+import { fetchEvents, generateICS } from '@/lib/feed'
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
-  const pubDate = searchParams.get('pubDate') || '1970-01-01'
+const EPOCH_START = '1970-01-01'
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  // const pubDate = searchParams.get('pubDate') || '1970-01-01'
   const tagNames = searchParams.get('tagNames')?.split(',') || []
 
   try {
-    const events = await fetchEvents(pubDate, tagNames)
+    const ifModifiedSince = req.headers.get('if-modified-since') || EPOCH_START
+    const ifNoneMatch = req.headers.get('if-none-match')
+    const modifiedSinceDate = ifModifiedSince
+      ? new Date(ifModifiedSince).toISOString()
+      : undefined
+
+    const events = await fetchEvents(modifiedSinceDate, tagNames)
     const icsData = await generateICS(events)
 
-    return new NextResponse(await icsData, {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/calendar; charset=utf-8',
-        'Content-Disposition': 'attachment; filename="events.ics"',
-      },
+    const pubDates = []
+    for (const node of events.nodes) {
+      if (node && node.pubDate) {
+        pubDates.push(node.pubDate)
+      }
+    }
+
+    let mostRecent = modifiedSinceDate
+      ? modifiedSinceDate
+      : 'new Date(0).toISOString()'
+
+    if (pubDates.length) {
+      mostRecent = pubDates.reduce((max, date) =>
+        new Date(date) > new Date(max) ? date : max
+      )
+    }
+
+    const etag = `"${Buffer.from(icsData).toString('base64').substring(0, 16)}"`
+
+    // Respond with 304 if the feed hasn't changed
+    if (ifNoneMatch === etag || ifModifiedSince === mostRecent) {
+      return new NextResponse(null, { status: 304 })
+    }
+
+    const headers = new Headers({
+      'Content-Type': 'text/calendar; charset=utf-8',
+      'Content-Disposition': 'attachment; filename="events.ics"',
+      'Last-Modified': mostRecent,
+      ETag: etag,
     })
+
+    return new NextResponse(icsData, { status: 200, headers })
   } catch (error) {
     console.error('Error generating ICS:', error)
     return NextResponse.json(
@@ -26,62 +57,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
-}
-
-const fetchEvents = async (
-  pubDate: string,
-  tagNames: string[]
-): Promise<Event[]> => {
-  const query = EVENTS_QUERY
-  const res = await fetch(process.env.GRAPHQL_ENDPOINT || '', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ query, variables: { pubDate, tagNames } }),
-  })
-
-  const { data } = await res.json()
-
-  return data.getEventsByDateAndTags.nodes
-}
-const generateICS = async (events: Event[]): Promise<string> => {
-  // const foo => (events: Event[]) : string => {
-
-  let vEvents: VEvent[] = []
-
-  if (events && events.length > 0) {
-    vEvents = events.map((event) => {
-      const uid =
-        process.env.ICS_UID ||
-        'e0bec92c-3f4b-4322-a772-a984545cab7e@event-feed-eta.vercel.app'
-      const start = event.eventStartDate
-        ? new Date(event.eventStartDate)
-        : new Date()
-      const end = event.eventStartDate //TODO fix when the DB has end dates
-        ? new Date(event.eventStartDate)
-        : new Date()
-      const categories = event.eventTagsByEventId.nodes
-        .filter((tag) => tag && tag.tagByTagId && tag.tagByTagId.name)
-        .map((tag) => tag!.tagByTagId!.name as string)
-
-      return {
-        start: { date: start },
-        stamp: { date: start },
-        end: { date: end },
-        summary: event.title,
-        description: event.description ?? '',
-        uid: uid + `/${event.link}`,
-        url: event.link ? `https://events.willamette.edu${event.link}` : '',
-        categories: categories,
-      }
-    })
-  }
-  const calendar: VCalendar = {
-    prodId: 'event-feed-eta.vercel.app', // TODO
-    version: '2.0',
-    events: vEvents,
-  }
-  const icsCalendar = generateIcsCalendar(calendar)
-  return icsCalendar
 }
