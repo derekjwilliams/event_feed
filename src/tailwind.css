@@ -1,0 +1,21 @@
+/* tailwind.css */
+@import 'tailwindcss';
+/* Custom link styling */
+a {
+  color: #1e40af; /* Blue color for unvisited links (blue-700) */
+  text-decoration: underline; /* Underline links by default */
+}
+
+/* Visited links */
+a:visited {
+  color: #6b21a8; /* Purple color for visited links (purple-700) */
+}
+
+/* Hover and focus states */
+a:hover {
+  color: #2563eb; /* Light blue (blue-500) for hover state */
+}
+
+a:focus {
+  outline: 2px solid #2563eb; /* Focus outline with blue color for accessibility */
+}
