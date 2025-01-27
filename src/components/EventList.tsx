@@ -6,6 +6,15 @@ import { EventsResponse, TagsResponse } from '../types'
 import Image from 'next/image'
 import { EVENTS_QUERY, TAGS_QUERY } from '@/graphql_queries/queries'
 
+interface FetchEventsVariables {
+  pubDate: string
+  tagNames: string[]
+  first?: number
+  after?: string
+  last?: number
+  before?: string
+}
+
 const fetchTags = async () => {
   const response = await fetch('https://event-graphql.vercel.app/graphql', {
     method: 'POST',
@@ -24,10 +33,7 @@ const fetchTags = async () => {
   return data as TagsResponse
 }
 
-const fetchEvents = async (variables: {
-  pubDate: string
-  tagNames: string[]
-}) => {
+const fetchEvents = async (variables: FetchEventsVariables) => {
   const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || '', {
     method: 'POST',
     headers: {
@@ -38,6 +44,10 @@ const fetchEvents = async (variables: {
       variables: {
         pubDate: variables.pubDate,
         tagNames: variables.tagNames,
+        first: variables.first,
+        after: variables.after,
+        last: variables.last,
+        before: variables.before,
       },
     }),
   })
@@ -52,6 +62,13 @@ const fetchEvents = async (variables: {
 export default function EventsList() {
   const [pubDate] = useState(new Date(0).toISOString())
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [pageSize] = useState(20)
+  const [pagination, setPagination] = useState<{
+    after?: string
+    before?: string
+    hasNextPage: boolean
+    hasPreviousPage: boolean
+  }>({ hasNextPage: false, hasPreviousPage: false })
 
   const {
     data: tagsData,
@@ -63,12 +80,53 @@ export default function EventsList() {
   })
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['events', { pubDate, tagNames: selectedTags }],
-    queryFn: () => fetchEvents({ pubDate, tagNames: selectedTags }),
+    queryKey: ['events', { pubDate, tagNames: selectedTags, ...pagination }],
+    queryFn: () =>
+      fetchEvents({
+        pubDate,
+        tagNames: selectedTags,
+        first: !pagination.before ? pageSize : undefined,
+        after: pagination.after,
+        last: pagination.before ? pageSize : undefined,
+        before: pagination.before,
+      }),
     placeholderData: (previous) => previous,
     retry: 2,
     retryDelay: 1000,
+    //keepPreviousData: true,
   })
+  const handleNext = () => {
+    // Always use fresh data from the query rather than state
+    const pageInfo = data?.getEventsByDateAndTags.pageInfo
+
+    if (pageInfo?.hasNextPage) {
+      setPagination({
+        // Move forward using the end cursor
+        after: pageInfo.endCursor || undefined,
+        // Clear backward cursor
+        before: undefined,
+        // Reset page status flags (will be updated by next query)
+        hasNextPage: false,
+        hasPreviousPage: true,
+      })
+    }
+  }
+
+  const handlePrevious = () => {
+    if (!data) return
+
+    const { hasPreviousPage, startCursor } =
+      data.getEventsByDateAndTags.pageInfo
+
+    if (hasPreviousPage) {
+      setPagination({
+        before: startCursor || undefined, // Move backward from this cursor
+        after: undefined, // Clear forward navigation
+        hasNextPage: true, // Now we can go forward again
+        hasPreviousPage: false, // Assume no previous until refetch
+      })
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -79,7 +137,7 @@ export default function EventsList() {
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="h-8 w-20 light:bg-neutral-200 rounded-full inline-block"
+                className="h-8 w-20 bg-neutral-200 rounded-full inline-block"
               />
             ))}
           </div>
@@ -114,9 +172,14 @@ export default function EventsList() {
 
       {isLoading && !data && (
         <div className="space-y-4 animate-pulse">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-32 bg-neutral-100 rounded-lg"></div>
-          ))}
+          {[...Array(3)].map(
+            (
+              _,
+              i // TODO why 3 here?
+            ) => (
+              <div key={i} className="h-32 bg-neutral-100 rounded-lg"></div>
+            )
+          )}
         </div>
       )}
 
@@ -165,6 +228,34 @@ export default function EventsList() {
           </div>
         </div>
       ))}
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center">
+        <button
+          onClick={handlePrevious}
+          disabled={
+            !data?.getEventsByDateAndTags.pageInfo.hasPreviousPage || isLoading
+          }
+          className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
+        >
+          Previous
+        </button>
+
+        <div className="flex items-center gap-4">
+          {isLoading && (
+            <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full" />
+          )}
+        </div>
+
+        <button
+          onClick={handleNext}
+          disabled={
+            !data?.getEventsByDateAndTags.pageInfo.hasNextPage || isLoading
+          }
+          className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
+        >
+          Next
+        </button>
+      </div>
     </div>
   )
 }

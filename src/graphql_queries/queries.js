@@ -1,6 +1,23 @@
 export const EVENTS_QUERY = `
-  query getEventsByDateAndTags($pubDate: String!, $tagNames: [String!]!) {
-    getEventsByDateAndTags(pPubDate: $pubDate, pTagNames: $tagNames) {
+  query getEventsByDateAndTags($pubDate: String!
+    $tagNames: [String!]!
+    $first: Int
+    $after: Cursor
+    $last: Int
+    $before: Cursor) {
+    getEventsByDateAndTags(
+      pPubDate: $pubDate
+      pTagNames: $tagNames
+      first: $first
+      after: $after
+      last: $last
+      before: $before) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      } 
       nodes {
         id
         author
@@ -21,7 +38,7 @@ export const EVENTS_QUERY = `
             }
           }
         }
-      }
+      } 
     }
   }`
 
