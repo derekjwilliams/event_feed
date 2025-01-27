@@ -17,6 +17,7 @@
     "@tanstack/react-query-devtools": "^5.65.0",
     "axios": "^1.7.9",
     "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "drizzle-kit": "0.30.2",

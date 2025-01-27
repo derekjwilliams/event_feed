@@ -20,8 +20,6 @@ const fetchTags = async () => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'sec-fetch-mode': 'cors',
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
     body: JSON.stringify({
       query: TAGS_QUERY,
@@ -40,8 +38,6 @@ const fetchEvents = async (variables: FetchEventsVariables) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'sec-fetch-mode': 'cors',
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
     body: JSON.stringify({
       query: EVENTS_QUERY,
