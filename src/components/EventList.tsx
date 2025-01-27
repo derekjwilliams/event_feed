@@ -16,15 +16,19 @@ interface FetchEventsVariables {
 }
 
 const fetchTags = async () => {
-  const response = await fetch('https://event-graphql.vercel.app/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: TAGS_QUERY,
-    }),
-  })
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ||
+      'https://event-graphql.vercel.app/graphql',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: TAGS_QUERY,
+      }),
+    }
+  )
 
   if (!response.ok) throw new Error('Failed to fetch tags')
   const { data, errors } = await response.json()
@@ -34,23 +38,27 @@ const fetchTags = async () => {
 }
 
 const fetchEvents = async (variables: FetchEventsVariables) => {
-  const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || '', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: EVENTS_QUERY,
-      variables: {
-        pubDate: variables.pubDate,
-        tagNames: variables.tagNames,
-        first: variables.first,
-        after: variables.after,
-        last: variables.last,
-        before: variables.before,
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ||
+      'https://event-graphql.vercel.app/graphql',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    }),
-  })
+      body: JSON.stringify({
+        query: EVENTS_QUERY,
+        variables: {
+          pubDate: variables.pubDate,
+          tagNames: variables.tagNames,
+          first: variables.first,
+          after: variables.after,
+          last: variables.last,
+          before: variables.before,
+        },
+      }),
+    }
+  )
 
   if (!response.ok) throw new Error('Failed to fetch events')
   const { data, errors } = await response.json()
