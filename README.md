@@ -28,9 +28,13 @@ pnpm install
 pnpm run build
 ```
 
+## The GraphQL Server
+
+See https://github.com/derekjwilliams/event_graphql to run the postgraphile server. Live here: https://event-graphql.vercel.app/
+
 ## Run the Postgraphile GraphQL Server
 
-This is deprecated, see https://github.com/derekjwilliams/event_graphql to run the postgraphile server
+:Warning: This is deprecated and will be removed soon, see https://github.com/derekjwilliams/event_graphql to run the postgraphile server
 
 ```bash
 pnpm run postgraphile
@@ -40,7 +44,7 @@ Serves graphql at http://localhost:3002/graphql
 
 ## Run the Mock GraphQL Server
 
-This is deprecated, the schema is not correct. See https://github.com/derekjwilliams/event_graphql to run the postgraphile server
+:Warning: This is deprecated and will be removed soon, the schema is not correct. See https://github.com/derekjwilliams/event_graphql to run the postgraphile server
 
 ```bash
 pnpm run gql_server
