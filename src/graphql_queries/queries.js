@@ -24,3 +24,13 @@ export const EVENTS_QUERY = `
       }
     }
   }`
+
+export const TAGS_QUERY = `
+  query {
+    allTags {
+      nodes {
+        name
+      }
+    }
+  }
+`

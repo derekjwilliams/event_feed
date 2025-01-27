@@ -1,47 +1,35 @@
+// src/app/layout.tsx
 import type { Metadata } from 'next'
+import Providers from './providers'
+
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
 })
-
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 })
-
 export const metadata: Metadata = {
-  title: 'Willamette RSS Feed API',
+  title: 'Willamette Feeds API',
   description:
-    'Proof of Concept RSS Feed, uses a Graphql endpoint to get RSS data',
+    'Provides feeds for Willamette Events, RSS2, Atom, JSON1, and ICS.  This uses a Graphql endpoint to get RSS data',
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
 }
-
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode
-// }>) {
-//   return (
-//     <html lang="en">
-//       <body>{children}</body>
-//     </html>
-//   )
-// }
