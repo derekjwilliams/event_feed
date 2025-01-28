@@ -5,6 +5,8 @@ import Image from 'next/image'
 import CalendarButton from './ui/CalendarButton'
 import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
 
 export default function EventsList() {
   const [pubDate] = useState(new Date(0).toISOString())
@@ -140,7 +142,16 @@ export default function EventsList() {
                   />
                 )}
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold">{event.title}</h2>
+                  <h2 className="text-xl font-semibold">
+                    {event?.link ? (
+                      <a href={baseUrl + event.link}>{event.title}</a>
+                    ) : (
+                      <span>{event.title}</span>
+                    )}
+                  </h2>
+                  <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
+                    {new Date(event.eventStartDate).toDateString()}
+                  </h3>
                   <p className="text-neutral-600 dark:text-neutral-100 mt-2">
                     {event.description}
                   </p>
@@ -162,10 +173,11 @@ export default function EventsList() {
                         </span>
                       ))}
                   </div>
-                  <div className="mt-2 text-sm text-neutral-500 dark:text-neutral-300">
-                    {new Date(event.eventStartDate).toLocaleDateString()} -
-                    {new Date(event.eventEndDate).toLocaleDateString()}
-                  </div>
+                  {event.content && (
+                    <div className="p-3 rounded mt-4 bg-neutral-100 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300">
+                      {event.content}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
