@@ -165,11 +165,11 @@ npx drizzle-kit introspect
 
 ## Canonical Approaches Prefered
 
-While the code may seem daunting at first, it is using canonical approaches.
+While the code may seem daunting at first, it is using canonical approaches, which make it easier to learn if one is already familiar with these. An advantage for the novice learning the code is that online resources will have simpilar patterns and approaches.
 
 ### Tanstack React Query Hooks
 
-For instance the Tanstack React Query code is contained in custom hooks, that are located in src/queries. Another possible location for these would be in hooks, however the approach that is most common is to place these in the `queries1 folder. The actual query functions for these hooks are in src/queryFunctions.
+For instance, the Tanstack React Query code is contained in custom hooks, that are located in src/queries. Another possible location for these would be in hooks, however the approach that is most common is to place these in the `queries1 folder. The actual query functions for these hooks are in src/queryFunctions.
 
 #### Example for Tags
 
