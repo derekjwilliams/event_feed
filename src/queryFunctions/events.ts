@@ -1,14 +1,6 @@
 import { EVENTS_QUERY } from '@/graphql_queries/queries'
+import { FetchEventsVariables } from '@/queries/params'
 import { EventsConnection } from '@/types/graphql'
-
-interface FetchEventsVariables {
-  pubDate: string
-  tagNames: string[]
-  first?: number
-  after?: string
-  last?: number
-  before?: string
-}
 
 export async function fetchEventsWithPagination(
   variables: FetchEventsVariables

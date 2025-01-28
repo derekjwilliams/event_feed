@@ -1,17 +1,7 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { fetchEventsWithPagination } from '@/queryFunctions/events'
 import { EventsConnection } from '@/types/graphql'
-
-interface EventsQueryParams {
-  pubDate: string
-  tagNames: string[]
-  pagination: {
-    after?: string
-    before?: string
-    hasNextPage: boolean
-    hasPreviousPage: boolean
-  }
-}
+import { EventsQueryParams } from './params'
 
 const useEventsQuery = ({
   pubDate,
@@ -19,14 +9,17 @@ const useEventsQuery = ({
   pagination,
 }: EventsQueryParams): UseQueryResult<EventsConnection> => {
   const queryResult = useQuery({
-    queryKey: ['events', { pubDate, tagNames, ...pagination }],
+    queryKey: [
+      'events',
+      { pubDate, tagNames, after: pagination.after, before: pagination.before },
+    ],
     queryFn: () =>
       fetchEventsWithPagination({
         pubDate,
         tagNames,
-        first: !pagination.before ? 20 : undefined,
+        first: !pagination.before ? 10 : undefined,
         after: pagination.after,
-        last: pagination.before ? 20 : undefined,
+        last: pagination.before ? 10 : undefined,
         before: pagination.before,
       }),
     placeholderData: (previous) => previous,
