@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
-import CalendarButton from './ui/CalendarButton'
+import { Calendar } from 'lucide-react'
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
@@ -84,7 +84,12 @@ function EventsList() {
 
   return (
     <div className="space-y-4">
-      <CalendarButton calendarUrl="https://event-feed-eta.vercel.app/events" />
+      <a
+        href="webcal://event-feed-eta.vercel.app/api/ics"
+        className="float-right bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+      >
+        <Calendar className="h-5 w-5" />
+      </a>
       {/* Tag Filter */}
       <div className="flex gap-2 flex-wrap">
         {tagsLoading && (
