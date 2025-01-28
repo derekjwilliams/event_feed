@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
@@ -10,7 +11,7 @@ import CalendarButton from './ui/CalendarButton'
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
 
-export default function EventsList() {
+function EventsList() {
   const searchParams = useSearchParams()
   const [selectedTags, setSelectedTags] = useState<string[]>(
     searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []
@@ -211,3 +212,10 @@ export default function EventsList() {
     </div>
   )
 }
+const SuspendedEventsList = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EventsList />
+  </Suspense>
+)
+
+export default SuspendedEventsList
