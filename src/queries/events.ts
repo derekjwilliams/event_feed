@@ -1,47 +1,40 @@
-import { EVENTS_QUERY } from '@/graphql_queries/queries'
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import { fetchEventsWithPagination } from '@/queryFunctions/events'
 import { EventsConnection } from '@/types/graphql'
 
-interface FetchEventsVariables {
+interface EventsQueryParams {
   pubDate: string
   tagNames: string[]
-  first?: number
-  after?: string
-  last?: number
-  before?: string
+  pagination: {
+    after?: string
+    before?: string
+    hasNextPage: boolean
+    hasPreviousPage: boolean
+  }
 }
 
-export async function fetchEvents(
-  variables: FetchEventsVariables
-): Promise<EventsConnection> {
-  const response = await fetch(
-    process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ||
-      'https://event-graphql.vercel.app/graphql',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: EVENTS_QUERY,
-        variables: {
-          pubDate: variables.pubDate,
-          tagNames: variables.tagNames,
-          first: variables.first,
-          after: variables.after,
-          last: variables.last,
-          before: variables.before,
-        },
+const useEventsQuery = ({
+  pubDate,
+  tagNames,
+  pagination,
+}: EventsQueryParams): UseQueryResult<EventsConnection> => {
+  const queryResult = useQuery({
+    queryKey: ['events', { pubDate, tagNames, ...pagination }],
+    queryFn: () =>
+      fetchEventsWithPagination({
+        pubDate,
+        tagNames,
+        first: !pagination.before ? 20 : undefined,
+        after: pagination.after,
+        last: pagination.before ? 20 : undefined,
+        before: pagination.before,
       }),
-    }
-  )
+    placeholderData: (previous) => previous,
+    retry: 2,
+    retryDelay: 1000,
+  })
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch events')
-  }
-  const { data, errors } = await response.json()
-
-  if (errors) {
-    throw new Error(errors[0].message)
-  }
-  return data?.getEventsByDateAndTags || []
+  return queryResult
 }
+
+export default useEventsQuery

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { fetchEvents, generateICS } from '@/lib/feed'
+import { generateICS } from '@/lib/feed'
+import { fetchEvents } from '@/queryFunctions/events'
 
 const EPOCH_START = '1970-01-01'
 

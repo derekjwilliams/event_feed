@@ -1,16 +1,14 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import Image from 'next/image'
 import CalendarButton from './ui/CalendarButton'
-import { fetchTags } from '@/queries/tags'
-import { fetchEvents } from '@/queries/events'
+import useTagsQuery from '@/queries/tags'
+import useEventsQuery from '@/queries/events'
 
 export default function EventsList() {
   const [pubDate] = useState(new Date(0).toISOString())
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [pageSize] = useState(20)
   const [pagination, setPagination] = useState<{
     after?: string
     before?: string
@@ -22,32 +20,19 @@ export default function EventsList() {
     data: tagsData,
     isLoading: tagsLoading,
     error: tagsError,
-  } = useQuery({
-    queryKey: ['tags'],
-    queryFn: fetchTags,
-  })
+  } = useTagsQuery()
 
   const {
     data: eventsData,
     isLoading,
-    isError,
     error,
-  } = useQuery({
-    queryKey: ['events', { pubDate, tagNames: selectedTags, ...pagination }],
-    queryFn: () =>
-      fetchEvents({
-        pubDate,
-        tagNames: selectedTags,
-        first: !pagination.before ? pageSize : undefined,
-        after: pagination.after,
-        last: pagination.before ? pageSize : undefined,
-        before: pagination.before,
-      }),
-    placeholderData: (previous) => previous,
-    retry: 2,
-    retryDelay: 1000,
-    //keepPreviousData: true,
+    isError,
+  } = useEventsQuery({
+    pubDate,
+    tagNames: selectedTags,
+    pagination,
   })
+
   const handleNext = () => {
     const pageInfo = eventsData?.pageInfo
     if (pageInfo?.hasNextPage) {

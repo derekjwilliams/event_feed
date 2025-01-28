@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createFeed, fetchEvents } from '@/lib/feed'
+import { generateFeed } from '@/lib/feed'
+import { fetchEvents } from '@/queryFunctions/events'
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,7 +17,7 @@ export async function GET(req: NextRequest) {
     const tags = tagsParam ? tagsParam.split(',') : undefined
     const events = await fetchEvents(modifiedSinceDate, tags)
 
-    const feed = createFeed(events)
+    const feed = generateFeed(events)
     const feedContent = feed.rss2()
 
     const pubDates = []
