@@ -99,7 +99,7 @@ export default function EventsList() {
               }
               className={`px-3 py-1 rounded-full transition-colors ${
                 selectedTags.includes(tag.name)
-                  ? 'light:bg-blue-500 light:text-white dark:text-black'
+                  ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
                   : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300'
               }`}
             >
