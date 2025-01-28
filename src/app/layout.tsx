@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 import type { Metadata } from 'next'
 import Providers from './providers'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 const geistSans = Geist({
