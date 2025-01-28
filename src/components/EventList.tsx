@@ -51,15 +51,13 @@ export default function EventsList() {
     if (!eventsData) {
       return
     }
-
     const { hasPreviousPage, startCursor } = eventsData.pageInfo
-
     if (hasPreviousPage) {
       setPagination({
-        before: startCursor || undefined, // Move backward from this cursor
-        after: undefined, // Clear forward navigation
-        hasNextPage: true, // Now we can go forward again
-        hasPreviousPage: false, // Assume no previous until refetch
+        before: startCursor || undefined, // previous page prior to current cursor
+        after: undefined, // delete forward navigation
+        hasNextPage: true, // used for enabling next button
+        hasPreviousPage: false, // Set to no previous page, until refetch
       })
     }
   }
@@ -80,7 +78,6 @@ export default function EventsList() {
             ))}
           </div>
         )}
-
         {tagsError && (
           <div className="text-red-500">
             Error loading tags: {tagsError.message}
@@ -124,7 +121,7 @@ export default function EventsList() {
       )}
 
       {(eventsData?.nodes || [])
-        .filter((event): event is NonNullable<typeof event> => event !== null)
+        .filter((event): event is NonNullable<typeof event> => event !== null) // checks to see if event is not null in a typesafe fashion
         .map((event) => {
           return (
             <div
@@ -161,6 +158,7 @@ export default function EventsList() {
                         (
                           tag
                         ): tag is NonNullable<typeof tag> & {
+                          // checks to see if tag is not null in a typesafe fashion
                           tagByTagId: { name: string }
                         } => !!tag && !!tag.tagByTagId
                       )
@@ -183,7 +181,7 @@ export default function EventsList() {
             </div>
           )
         })}
-      {/* Pagination Controls */}
+      {/* Pagination  */}
       <div className="flex justify-between items-center">
         <button
           onClick={handlePrevious}

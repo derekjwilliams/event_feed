@@ -83,7 +83,7 @@ export const generateICS = async (
       if (event) {
         const uid =
           process.env.ICS_UID ||
-          'e0bec92c-3f4b-4322-a772-a984545cab7e@event-feed-eta.vercel.app'
+          'e0bec92c-3f4b-4322-a772-a984545cab6e@event-feed-eta.vercel.app'
 
         const start = event.eventStartDate
           ? new Date(event.eventStartDate)
