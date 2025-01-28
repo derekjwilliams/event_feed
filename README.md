@@ -252,7 +252,7 @@ Other notes on this topic:
 
 ## Some Tricky Bits
 
-Type safety is a very good thing, that being said TypeScript types can be a challenge to work with and sometimes tooling (like eslint), or even building the project, will catch type errors. It can also be difficult to do some things
+Type safety is a very good thing, that being said, TypeScript types can be a challenge to work with and sometimes tooling (like eslint), or even building the project, will catch type errors. It can also be difficult to do some things
 
 ### Null Guard Check
 
