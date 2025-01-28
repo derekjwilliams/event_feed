@@ -1,6 +1,5 @@
 'use client'
-import { useQueryStates, StringParam, ArrayParam } from 'nuqs'
-import { useState } from 'react'
+import { useQueryStates } from 'nuqs'
 import Image from 'next/image'
 import CalendarButton from './ui/CalendarButton'
 import useTagsQuery from '@/queries/tags'
