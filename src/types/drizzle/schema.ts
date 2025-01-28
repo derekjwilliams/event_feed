@@ -49,50 +49,23 @@ export const tags = pgTable(
   ]
 )
 
-export const events = pgTable(
-  'events',
-  {
-    id: serial().primaryKey().notNull(),
-    title: varchar({ length: 255 }).notNull(),
-    description: text(),
-    content: text(),
-    link: text(),
-    author: text(),
-    pubDate: timestamp('pub_date', { withTimezone: true, mode: 'string' }),
-    createdAt: timestamp('created_at', {
-      withTimezone: true,
-      mode: 'string',
-    }).default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: timestamp('updated_at', {
-      withTimezone: true,
-      mode: 'string',
-    }).default(sql`CURRENT_TIMESTAMP`),
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // (table) => [
-  //   pgPolicy('Allow authenticated delete on events', {
-  //     as: 'permissive',
-  //     for: 'delete',
-  //     to: ['public'],
-  //     using: sql`(auth.role() = 'authenticated'::text)`,
-  //   }),
-  //   pgPolicy('Allow authenticated update on events', {
-  //     as: 'permissive',
-  //     for: 'update',
-  //     to: ['public'],
-  //   }),
-  //   pgPolicy('Allow authenticated insert on events', {
-  //     as: 'permissive',
-  //     for: 'insert',
-  //     to: ['public'],
-  //   }),
-  //   pgPolicy('Allow public read on events', {
-  //     as: 'permissive',
-  //     for: 'select',
-  //     to: ['public'],
-  //   }),
-  // ]
-)
+export const events = pgTable('events', {
+  id: serial().primaryKey().notNull(),
+  title: varchar({ length: 255 }).notNull(),
+  description: text(),
+  content: text(),
+  link: text(),
+  author: text(),
+  pubDate: timestamp('pub_date', { withTimezone: true, mode: 'string' }),
+  createdAt: timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string',
+  }).default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp('updated_at', {
+    withTimezone: true,
+    mode: 'string',
+  }).default(sql`CURRENT_TIMESTAMP`),
+})
 
 export const eventTags = pgTable(
   'event_tags',

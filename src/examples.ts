@@ -935,7 +935,6 @@ interface EventData {
 }
 
 // Generate SQL queries
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const generateSQL = (events: EventData[]) => {
   // Generate event insert SQL
   const eventInsertSQL = `
