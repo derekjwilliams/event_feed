@@ -175,7 +175,7 @@ BEGIN
   ELSE
     -- Otherwise, return events with tags matching p_tag_names
     RETURN QUERY
-    SELECT e.*
+    SELECT DISTINCT e.*
     FROM events e
     JOIN event_tags et ON e.id = et.event_id
     JOIN tags t ON et.tag_id = t.id
