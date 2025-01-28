@@ -26,7 +26,6 @@ const useEventsQuery = ({
     retry: 2,
     retryDelay: 1000,
   })
-
   return queryResult
 }
 
