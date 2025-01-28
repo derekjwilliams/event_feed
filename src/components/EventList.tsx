@@ -1,7 +1,7 @@
 'use client'
-
+import { Calendar } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { EventsResponse, TagsResponse } from '../types'
 import Image from 'next/image'
 import { EVENTS_QUERY, TAGS_QUERY } from '@/graphql_queries/queries'
@@ -78,6 +78,12 @@ export default function EventsList() {
     hasPreviousPage: boolean
   }>({ hasNextPage: false, hasPreviousPage: false })
 
+  const [calendarUrl, setCalendarUrl] = useState('')
+
+  useEffect(() => {
+    setCalendarUrl(`webcal://${window.location.host}/api/ics`)
+  }, [])
+
   const {
     data: tagsData,
     isLoading: tagsLoading,
@@ -138,6 +144,12 @@ export default function EventsList() {
 
   return (
     <div className="space-y-4">
+      <a
+        href={calendarUrl}
+        className="float-right bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        <Calendar className="h-5 w-5" />
+      </a>
       {/* Tag Filter */}
       <div className="flex gap-2 flex-wrap">
         {tagsLoading && (
@@ -222,7 +234,7 @@ export default function EventsList() {
                 {event.eventTagsByEventId.nodes.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 bg-gray-100 rounded text-sm"
+                    className="px-2 py-1 bg-neutral-100 dark:text-neutral-100 dark:bg-neutral-600 rounded text-sm"
                   >
                     {tag.tagByTagId.name}
                   </span>
