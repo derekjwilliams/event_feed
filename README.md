@@ -264,7 +264,7 @@ tagsData?.nodes
       .map((event) => (....
 ````
 
-Which is a complex way of checking to see if tag is null. Just writing
+Which is a complex way of checking to see if tag is null like this
 
 ```Typescript
 .filter((event) => {return event != null})
