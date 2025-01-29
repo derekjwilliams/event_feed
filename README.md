@@ -1,151 +1,168 @@
-# Simple GraphQL Next.js RSS 2.0 Feed
+# Simple Events Application and Feed APIs
 
-## Great Post on Using feed package to create RSS feeds
+This is a simple Next.js application to view events. Endpoints are also provided for RSS2, ICS, JSON1, and ATOM feeds.
 
-https://javascript.plainenglish.io/generate-an-rss-feed-for-your-next-js-website-ce921e2d04c6
-
-The examples on that post were used for much of this code.
-
-## Reeder Application
-
-For viewing the RSS feed, [Reeder](https://reederapp.com/) works great
+If you want to skip this and read about the architecture, see [Architecture Techstack And Notes](#architecture-techstack-and-notes)
 
 ## Prerequesites
 
-Node version 20.6 or greater
+Node version 20.18.0 or greater
 
-npm version 10.9.0 or greater
+pnpm version 9.15.4 or greater
 
-## Install
+### Installing pnpm If You Don't Have It
+
+```bash
+npm install -g pnpm@latest-10
+```
+
+See here https://pnpm.io/installation#using-npm. Other installation methods are also fine.
+
+### npm
+
+npm will also work, but you will adjust the directions accordingly (e.g. `npm install` instead of `pnpm install`)
+
+If you use npm, version 10.9.2 or greater is required.
+
+## Installing
+
+To install the packages
 
 ```bash
 pnpm install
 ```
 
-## Build Next Application
+## Run the Application in Development Mode
+
+```bash
+pnpm run dev
+```
+
+## Build and Start the Application
+
+To build
 
 ```bash
 pnpm run build
 ```
 
+You can then start with
+
+```bash
+pnpm run build
+```
+
+## View the Events
+
+After starting the application (`pnpm run dev` or `pnpm run start`) navigate to http://localhost:3000/events to see a user interface showing the events. A preview version may be running on Vercel at https://event-feed-eta.vercel.app/events. The user interface includes the ability to filter by tags, shown at the top, and pagination, at the bottom of the user interface. And add events to your calendar.
+
+![Image](https://github.com/user-attachments/assets/39ac0b53-01d1-4a26-a9b0-3c60d565ba9b)
+
 ## The GraphQL Server
 
-See https://github.com/derekjwilliams/event_graphql to run the postgraphile server. Live here: https://event-graphql.vercel.app/
+The application gets its data from this endpoint
 
-## Run the Postgraphile GraphQL Server
+https://event-graphql.vercel.app/graphql
 
-> [!WARNING]
-> This is deprecated and will be removed soon, see https://github.com/derekjwilliams/event_graphql to run the postgraphile server
+The GraphiQL user interface can be seen here: https://event-graphql.vercel.app/graphiql
 
-```bash
-pnpm run postgraphile
-```
+See [Example Query](#example-graphql-query)
 
-Serves graphql at http://localhost:3002/graphql
+## Download the Calendar (ICS) Data
 
-## Run the Mock GraphQL Server
-
-> [!WARNING]
-> This is deprecated and will be removed soon, the schema is not correct. See https://github.com/derekjwilliams/event_graphql to run the postgraphile server
-
-```bash
-pnpm run gql_server
-```
-
-Serves graphql at http://localhost:3001/graphql
-
-## Run the Next.js application
-
-```bash
-pnpm run start
-```
-
-Runs the Next.js application at http://localhost:3000/graphql
+Open browser to http://localhost:3000/api/ics, this will start a download of the calendar data, it should be about 40kB in size.
 
 ## View the RSS Data
 
-To view all: Open browser to http://localhost:3000/api/rss
+Open browser to http://localhost:3000/api/rss
 
-### Example Response
+This will show the events in XML RSS format. If it does not show events do a hard refresh on the browser, the feed uses the if-modified-since header to only show events after the date in that header.
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <title>Willamette Events RSS Feed</title>
-        <link>http://localhost:3000/api/rss</link>
-        <description>Stay updated with the latest events!</description>
-        <lastBuildDate>Sun, 19 Jan 2025 20:46:49 GMT</lastBuildDate>
-        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
-        <generator>feed package</generator>
-        <language>en</language>
-        <copyright>All rights reserved 2025, My RSS Feed</copyright>
-        <atom:link href="http://localhost:3000/api/rss" rel="self" type="application/rss+xml"/>
-        <item>
-            <title><![CDATA[Housing Contract for 2025-26 Opens - All Campuses]]></title>
-            <link>http://localhost:3000/events/1</link>
-            <guid>http://localhost:3000/events/1</guid>
-            <pubDate>Mon, 03 Feb 2025 10:00:00 GMT</pubDate>
-            <description><![CDATA[Sign your housing contract to be eligible for housing in the Spring selection process.]]></description>
-            <content:encoded><![CDATA[Get a comfy spot to hang your hat...]]></content:encoded>
-            <category domain="Willamette-events">Housing</category>
-            <category domain="Willamette-events">Willamette</category>
-            <category domain="Willamette-events">PNCA</category>
-        </item>
-        <item>
-            <title><![CDATA[Spring Activities Fair and Carnival in the UC]]></title>
-            <link>http://localhost:3000/events/2</link>
-            <guid>http://localhost:3000/events/2</guid>
-            <pubDate>Wed, 15 Jan 2025 12:00:00 GMT</pubDate>
-            <description><![CDATA[An introduction to student clubs and organizations as well as the resources available in the University Center.]]></description>
-            <content:encoded><![CDATA[Get Involved...]]></content:encoded>
-            <category domain="Willamette-events">Putnam</category>
-            <category domain="Willamette-events">Salem</category>
-            <category domain="Willamette-events">Activities</category>
-        </item>
-    </channel>
-</rss>
-```
+### Filtering by Tags
 
-### Filter by tags
+To filter by tags: Open browser to http://localhost:3000/api/rss?tags=PNCA,Housing (alternatively https://event-feed-eta.vercel.app/api/rss?tags=PNCA,Housing)
 
-To filter by tags: Open browser to http://localhost:3000/api/rss?tags=PNCA,Housing
+## GraphiQL User Interface
 
-## Example GraphQL Query for Mock GraphQL Server
+For the GraphQL Server. A GraphiQL user interface is running at https://event-graphql.vercel.app/graphiql
+
+### Example GraphQL Query
+
+Place this query into the main query pane, don't forget to add the variables in the QUERY VARIABLES pane, get those [here](#query-variables). You should have something similar to [this](#graqhiql-user-interface-image) in your browser.
 
 ```gql
-query ($modifiedSince: String!, $tags: [String!]!) {
-  events(modifiedSince: $modifiedSince, tags: $tags) {
-    id
-    title
-    description
-    date
-    content
+query getEventsByDateAndTags(
+  $pubDate: String!
+  $tagNames: [String!]!
+  $first: Int
+  $after: Cursor
+) {
+  getEventsByDateAndTags(
+    pPubDate: $pubDate
+    pTagNames: $tagNames
+    first: $first
+    after: $after
+  ) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+
+    nodes {
+      id
+      author
+      title
+      description
+      content
+      link
+      pubDate
+      createdAt
+      updatedAt
+      imageUrl
+      eventStartDate
+      eventEndDate
+      eventTagsByEventId {
+        nodes {
+          tagByTagId {
+            name
+          }
+        }
+      }
+    }
   }
 }
 ```
 
-variables:
+### Query Variables
 
 ```json
-{ "modifiedSince": "2022-01-15T12:00:00Z", "tags": ["Housing"] }
+{
+  "pubDate": "2017-01-01",
+  "tagNames": ["Housing"],
+  "first": 1,
+  "after": "WyJuYXR1cmFsIiwxXQ=="
+}
 ```
 
-## Example GraphQL Query for Postgraphile GraphQL Server
+### GraqhiQL User Interface Image
 
-query {
-allEvents {
-nodes {
-id
-title
-description
-content
-pubDate
-}
-}
-}
+![Image](https://github.com/user-attachments/assets/a9d5b333-6a20-4168-b38b-689b4efc7b69)
 
-## Curl Examples To Get Data From RSS Feed
+## Feed Endpoints
+
+When running locally the endpoints will be at
+
+http://localhost:3000/api/rss
+
+http://localhost:3000/api/atom
+
+http://localhost:3000/api/json1
+
+http://localhost:3000/api/ics
+
+### Curl Examples To Get Data From RSS Feed
 
 ```bash
 curl -i http://localhost:3000/api/rss -H "If-Modified-Since: Thu, 02 Jan 2025 12:00:00 GMT"
@@ -155,25 +172,31 @@ curl -i http://localhost:3000/api/rss -H "If-Modified-Since: Thu, 02 Jan 2025 12
 curl -i http://localhost:3000/api/rss -H "If-None-Match: <etag>"
 ```
 
-## Create Typescript Types from Database Using Introspection
+### Great Post on Using feed package to create RSS feeds
 
-```bash
-npx drizzle-kit introspect
-```
+https://javascript.plainenglish.io/generate-an-rss-feed-for-your-next-js-website-ce921e2d04c6
 
-# Architecture And Notes
+The examples on that post were used for much of this code.
 
-## Canonical Approaches Prefered
+### Reeder Application
+
+For viewing the RSS, Atom, and JSON1 feeds, [Reeder](https://reederapp.com/) works great.
+
+## Architecture Techstack And Notes
+
+### Canonical Approaches Preferred
 
 While the code may seem daunting at first, it is using canonical approaches, which make it easier to learn if one is already familiar with these. The advantage for novices learning the code is that online resources will have similar patterns and approaches.
 
-### Tanstack React Query Hooks
+#### TanStack Query Hooks
 
-Tanstack React Query code is contained in custom hooks, that are located in `src/queries`. Another possible location for these would be in `src/hooks`, however the approach that is most common is to place these in the `src/queries` folder. The actual query functions for these hooks are in src/queryFunctions.
+The TanStack Query code is contained in custom hooks, these are located in `src/queries`. The actual query functions for these hooks are in `src/queryFunctions`.
+
+Another possible location for these would be in `src/hooks`, however the approach that is most common is to place these in the `src/queries` folder.
 
 #### Example for Tags
 
-In src/queries/tags.ts we have this hook
+In `src/queries/tags.ts` we have this hook
 
 ```Typescript
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
@@ -192,7 +215,7 @@ const useTagsQuery = (): UseQueryResult<Query['allTags']> => {
 export default useTagsQuery
 ```
 
-That uses the query function fetchTags, found in src/queryFunctions/tags.ts
+That uses the query function `fetchTags`, found in `src/queryFunctions/tags.ts`
 
 ```Typescript
 import { TAGS_QUERY } from '@/graphql_queries/queries'
@@ -226,52 +249,52 @@ export async function fetchTags(): Promise<Query['allTags']> {
 }
 ```
 
-### Using Generated Types from Graphql Schema
+#### Using Generated Types from Graphql Schema
 
 To ensure type safety the code using the types found in which are generated in the [event_graphql](https://github.com/derekjwilliams/event_graphql) project, by running command `pnpm run codegen`. This creates the file src/generated/graphql.ts in that project. That file is used in this project and can be found in src/types. This approach avoids hand writing interfaces and types.
 
-### GraphQL Queries File
+#### GraphQL Queries File
 
 The GraphQL queries used by the queryFunctions in `src/queryFunctions` can be found in src/graphql_queries/queries.js
 
-## GraphQL EndPoint, Postgrahile, and Tanstack
+### GraphQL EndPoint, Postgraphile, and TanStack
 
-This code does not directly use Postgrapile, however it is dependent on a service that does use Postgraphile, that can be found in this repo: https://github.com/derekjwilliams/event_graphql
+This code does not directly use Postgraphile, however it is dependent on a service that does use Postgraphile, that can be found in this repo: https://github.com/derekjwilliams/event_graphql
 
-This is a bit of overhead, and provides little benefit for the feed endpoints (ics, rss, atom, and json1), however it does provide benefits to the client components that use them, e.g. EventList. Since the application, and contained api endpoints, do not mutate Events data the lack of normalized caching in TanStack Query does not have a performance impact. Other libraries, like Apollo, do support normalized caching. However, Apollo historically has not worked well with Next.js.
+This is a bit of overhead, and provides little benefit for the feed endpoints (ics, rss, atom, and json1), however it does provide benefits to the user interface client components, for example EventList. Since the application, and contained api endpoints, do not mutate Events the lack of normalized caching in TanStack Query does not have a performance impact. Other libraries, like Apollo, do support normalized caching. However, Apollo historically has not worked well with Next.js.
 
 Other notes on this topic:
 
-- It makes sense to host the graphql api directly in this Next application, however doing so has been problematic, this should be revisted
+- It may make sense to provide a GraphQL endpoint in the application, e.g. using Postgraphile, However doing this in Next.js has been problematic. This should be revisited
 
-- Postgraphile 5 brings breaking changes, but many good things. It is still in beta, and has been for a very long time, so the decision was made to stick with Postgraphile 4.14.0 for now.
+- [Drizzle-orm](https://www.npmjs.com/package/drizzle-orm) may be a better choice, especially for the api endpoints. Drizzle-orm is widely used, well respected, and well documented. Drizzle-orm has been added to package.json. The generated drizzle types are in `src/types/drizzle/schema.ts` and `src/types/drizzle/relations.ts`, and the `drizzle.config.ts` is in the root of the project. There is a `drizzle` branch on github where this work will take place.
 
-- [Drizzle-orm](https://www.npmjs.com/package/drizzle-orm) may be a better choice, especially for the api endpoints. Drizzle-orm is widely used, well respected, and well documented. Drizzle-orm has been added to package.json. The generated drizzle types are in `src/types/drizzle/schema.ts` and `src/types/drizzle/relations.ts`, and the `drizzle.config.ts` is in the root of the project.
+- Good Reading https://tanstack.com/query/latest/docs/framework/react/graphql
 
-- https://tanstack.com/query/latest/docs/framework/react/graphql Is a good read
+### Some Tricky Bits
 
-## Some Tricky Bits
+Type safety is a very good thing, that being said, Tooling (like eslint), or building the project, catch type errors. If you run into these look at the errors carefully. I've found that LLMs like ChatGPT, Meta AI, and Deepseek can often provide useful suggestions.
 
-Type safety is a very good thing, that being said, TypeScript types can be a challenge to work with and sometimes tooling (like eslint), or even building the project, will catch type errors. It can also be difficult to do some things
-
-### Null Guard Check
+#### Null Guard Check
 
 You will see code similar to this
 
-````Typescript
-tagsData?.nodes
-    ?.filter((event): tag is NonNullable<typeof event> => !!tag) // Type guard to filter out null/undefined```
-      .map((event) => (....
-````
+```Typescript
+{(eventsData?.nodes || [])
+        .filter((event): event is NonNullable<typeof event> => event !== null)
+        .map((event) => (
+          <EventItem key={event.id} event={event} />
+        ))}
+```
 
-Which is a complex way of checking to see if tag is null like this
+Which may seem to be a complex way of checking to see if tag is event is null like this:
 
 ```Typescript
 .filter((event) => {return event != null})
 ```
 
-However, TypeScript does not infer the type of event after the filter. This means that if event is of type Maybe<Event> (e.g., Event | null | undefined), the filtered array will still have the type Maybe<Event>[] rather than Event[]. This Maybe<Event> is the type stored in events from the generated types file, see `src/types/graphql.ts`
+However, TypeScript does not infer the type of event after the filter. This means that if event is of type `Maybe<Event>` (e.g., `Event | null | undefined`), the filtered array will still have the type `Maybe<Event>[]` rather than `Event[]`. This `Maybe<Event>` is the type stored in events from the generated types file, see `src/types/graphql.ts`. Yep, complex.
 
-### Return Values from the fetch Query Functions
+#### Return Values from the fetch Query Functions
 
-In the query function `src/functionQueries/tags.ts` we have `return data?.allTags || null`, this is typesafe because the returned type is `Query['allTags']`. Note, this was not done in `src/functionQueries/events.ts` because of the more complex nature of the type, but it should be done once we grok how to do this.
+In the query function in `src/functionQueries/tags.ts` we have `return data?.allTags || null`, this is typesafe because the returned type is `Query['allTags']`. Note, this was not done in `src/functionQueries/events.ts` because of the more complex nature of the type, but it should be revisited.
