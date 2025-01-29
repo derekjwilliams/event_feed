@@ -182,7 +182,7 @@ The examples on that post were used for much of this code.
 
 For viewing the RSS, Atom, and JSON1 feeds, [Reeder](https://reederapp.com/) works great.
 
-## Architecture Techstack And Notes
+## Architecture, Techstack, And Notes
 
 ### Canonical Approaches Preferred
 
