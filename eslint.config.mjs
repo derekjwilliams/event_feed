@@ -1,7 +1,7 @@
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { FlatCompat } from '@eslint/eslintrc'
-// import reactCompiler from 'eslint-plugin-react-compiler'
+import reactCompiler from 'eslint-plugin-react-compiler' // not sure if this is useful
 import pluginQuery from '@tanstack/eslint-plugin-query'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -13,14 +13,15 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...compat.extends('plugin:react-hooks/recommended'),
   {
     plugins: {
-      // 'react-compiler': reactCompiler,
+      'react-compiler': reactCompiler,
       '@tanstack/query': pluginQuery,
     },
     rules: {
-      // Example TanStack Query rules
       '@tanstack/query/exhaustive-deps': 'warn',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
 ]
