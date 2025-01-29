@@ -23,25 +23,26 @@ function EventsList() {
     hasPreviousPage: false,
   })
 
-  // Sync searchParams to state
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString()) // Copy searchParams to modify them
+    const params = new URLSearchParams(searchParams.toString())
     params.set('tags', selectedTags.join(','))
     params.set('after', pagination.after || '')
     params.set('before', pagination.before || '')
     window.history.replaceState({}, '', `?${params.toString()}`)
   }, [selectedTags, pagination, searchParams])
 
+  // Get all of the available tags
   const {
     data: tagsData,
     isLoading: tagsLoading,
     error: tagsError,
   } = useTagsQuery()
 
+  // Get the evenst, independent of date, with selectedTags, and pagination settings, which we set in the useEffect
   const {
     data: eventsData,
-    isLoading,
-    error,
+    isLoading: eventsLoading,
+    error: eventsError,
     isError,
   } = useEventsQuery({
     pubDate: new Date(0).toISOString(),
@@ -123,7 +124,8 @@ function EventsList() {
             </button>
           ))}
       </div>
-      {isLoading && !eventsData && (
+      {eventsLoading && !eventsData && (
+        // Five empty events for loading
         <div className="space-y-4 animate-pulse">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="h-32 bg-neutral-100 rounded-lg"></div>
@@ -132,7 +134,7 @@ function EventsList() {
       )}
       {isError && (
         <div className="p-4 text-red-600 bg-red-50 rounded-lg">
-          Error: {error?.message}
+          Error: {eventsError?.message}
         </div>
       )}
       {(eventsData?.nodes || [])
@@ -196,19 +198,19 @@ function EventsList() {
       <div className="flex justify-between items-center">
         <button
           onClick={handlePrevious}
-          disabled={!eventsData?.pageInfo?.hasPreviousPage || isLoading}
+          disabled={!eventsData?.pageInfo?.hasPreviousPage || eventsLoading}
           className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
         >
           Previous
         </button>
         <div className="flex items-center gap-4">
-          {isLoading && (
+          {eventsLoading && (
             <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full" />
           )}
         </div>
         <button
           onClick={handleNext}
-          disabled={!eventsData?.pageInfo?.hasNextPage || isLoading}
+          disabled={!eventsData?.pageInfo?.hasNextPage || eventsLoading}
           className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
         >
           Next

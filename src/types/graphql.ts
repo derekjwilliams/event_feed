@@ -769,8 +769,6 @@ export type Query = Node & {
   eventTag?: Maybe<EventTag>
   eventTagByEventIdAndTagId?: Maybe<EventTag>
   /** Reads and enables pagination through a set of `Event`. */
-  getEventsByDate?: Maybe<EventsConnection>
-  /** Reads and enables pagination through a set of `Event`. */
   getEventsByDateAndTags?: Maybe<EventsConnection>
   /** Fetches an object given its globally unique `ID`. */
   node?: Maybe<Node>
@@ -842,17 +840,6 @@ export type QueryEventTagArgs = {
 export type QueryEventTagByEventIdAndTagIdArgs = {
   eventId: Scalars['Int']['input']
   tagId: Scalars['Int']['input']
-}
-
-/** The root query type which gives access points into the data universe. */
-export type QueryGetEventsByDateArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>
-  before?: InputMaybe<Scalars['Cursor']['input']>
-  filter?: InputMaybe<EventFilter>
-  first?: InputMaybe<Scalars['Int']['input']>
-  last?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  pPubDate?: InputMaybe<Scalars['String']['input']>
 }
 
 /** The root query type which gives access points into the data universe. */
@@ -1321,14 +1308,9 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> =
       | EventTag
       | (Omit<
           Query,
-          | 'allEvents'
-          | 'getEventsByDate'
-          | 'getEventsByDateAndTags'
-          | 'node'
-          | 'query'
+          'allEvents' | 'getEventsByDateAndTags' | 'node' | 'query'
         > & {
           allEvents?: Maybe<_RefType['EventsConnection']>
-          getEventsByDate?: Maybe<_RefType['EventsConnection']>
           getEventsByDateAndTags?: Maybe<_RefType['EventsConnection']>
           node?: Maybe<_RefType['Node']>
           query: _RefType['Query']
@@ -1971,12 +1953,6 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryEventTagByEventIdAndTagIdArgs, 'eventId' | 'tagId'>
-  >
-  getEventsByDate?: Resolver<
-    Maybe<ResolversTypes['EventsConnection']>,
-    ParentType,
-    ContextType,
-    Partial<QueryGetEventsByDateArgs>
   >
   getEventsByDateAndTags?: Resolver<
     Maybe<ResolversTypes['EventsConnection']>,
