@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
 import { Calendar } from 'lucide-react'
-import Event from '@/components/Event'
+import EventItem from '@/components/EventItem'
 
 function EventsList() {
   const searchParams = useSearchParams()
@@ -76,7 +76,12 @@ function EventsList() {
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag]
-
+    setPagination({
+      before: undefined,
+      after: undefined,
+      hasNextPage: true,
+      hasPreviousPage: false,
+    })
     setSelectedTags(newTags)
   }
 
@@ -137,8 +142,8 @@ function EventsList() {
       {(eventsData?.nodes || [])
         .filter((event): event is NonNullable<typeof event> => event !== null)
         .map((event) => (
-          <Event key={event.id} event={event} />
-        ))}
+          <EventItem key={event.id} event={event} />
+        ))}{' '}
       <div className="flex justify-between items-center">
         <button
           onClick={handlePrevious}

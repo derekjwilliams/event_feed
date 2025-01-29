@@ -1,7 +1,7 @@
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { FlatCompat } from '@eslint/eslintrc'
-import reactCompiler from 'eslint-plugin-react-compiler'
+// import reactCompiler from 'eslint-plugin-react-compiler'
 import pluginQuery from '@tanstack/eslint-plugin-query'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -15,7 +15,7 @@ const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     plugins: {
-      'react-compiler': reactCompiler,
+      // 'react-compiler': reactCompiler,
       '@tanstack/query': pluginQuery,
     },
     rules: {

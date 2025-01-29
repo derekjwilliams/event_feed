@@ -1,26 +1,9 @@
 // Event.tsx
 import Image from 'next/image'
 
-interface EventProps {
-  event: {
-    id: string
-    title: string
-    link?: string
-    imageUrl?: string
-    eventStartDate: string
-    description: string
-    eventTagsByEventId: {
-      nodes: {
-        tagByTagId: {
-          name: string
-        }
-      }[]
-    }
-    content?: string
-  }
-}
+import { Event } from '@/types/graphql'
 
-const Event: React.FC<EventProps> = ({ event }) => {
+const EventItem: React.FC<{ event: Event }> = ({ event }) => {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
   return (
@@ -47,7 +30,7 @@ const Event: React.FC<EventProps> = ({ event }) => {
             )}
           </h2>
           <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
-            {new Date(event.eventStartDate).toDateString()}
+            {new Date(event.eventStartDate ?? '').toDateString()}
           </h3>
           <p className="text-neutral-600 dark:text-neutral-100 mt-2">
             {event.description}
@@ -81,4 +64,4 @@ const Event: React.FC<EventProps> = ({ event }) => {
   )
 }
 
-export default Event
+export default EventItem
