@@ -6,9 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "gql_server": "node --experimental-strip-types graphql_server.ts",
-    "postgraphile": "node postgraphile_server.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "@tanstack/query-core": "^5.65.0",
