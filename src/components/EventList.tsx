@@ -140,7 +140,7 @@ function EventsList() {
         </div>
       )}
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(490px,1fr))] gap-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(390px,1fr))] gap-4">
         {(eventsData?.nodes || [])
           .filter((event): event is NonNullable<typeof event> => event !== null)
           .map((event) => (
