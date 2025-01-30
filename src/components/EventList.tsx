@@ -120,9 +120,9 @@ function EventsList() {
                 selectedTags.includes(tag.name)
                   ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
                   : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300'
-              }`}
+              } ${tag.name === '' ? 'italic' : ''}`}
             >
-              {tag.name}
+              {tag.name !== '' ? tag.name : 'Untagged'}
             </button>
           ))}
       </div>

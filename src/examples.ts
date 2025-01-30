@@ -2,7 +2,8 @@ import * as cheerio from 'cheerio'
 
 // Sample HTML (replace with actual HTML if reading from a file or request)
 
-const allHtml = `<div class="list-events">
+const allHtml =
+  /*`<div class="list-events">
     
         <article>
           	<div class="image-container">
@@ -3185,8 +3186,9 @@ Catholic Church.</p>
         </article>
         </div>
 `
-
-/*----        <article>
+---------*/
+  `<div class="list-events">
+     <article>
           	<div class="image-container">
 		<div class="compass"></div>
 	</div>
@@ -4419,7 +4421,6 @@ Catholic Church.</p>
         </article>
 
     </div>`
------*/
 
 // Load HTML into Cheerio
 const $ = cheerio.load(allHtml)
@@ -4486,7 +4487,7 @@ ${events
     let endDateString = null
     if (event.date.includes('–')) {
       // hyphen not a minus sign
-      let dateStrings = event.date.split('–') // hyphen not a minus sign
+      const dateStrings = event.date.split('–') // hyphen not a minus sign
       // if (event.date === 'Jan  2, 2025– Jan 11, 2025') {
       //   console.log(dateStrings)
       // }
