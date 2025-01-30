@@ -4,6 +4,26 @@ import Image from 'next/image'
 import { Event } from '@/types/graphql'
 
 const EventItem: React.FC<{ event: Event }> = ({ event }) => {
+  const eventTimeZone = 'America/Los_Angeles' // Event's time zone
+
+  const eventStartTimeString = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: eventTimeZone, // Forces display in event's local time
+    hour12: true, // Ensures 12-hour format
+  }).format(new Date(event.eventStartDate))
+
+  const eventEndTimeString = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: eventTimeZone, // Forces display in event's local time
+    hour12: true, // Ensures 12-hour format
+  }).format(new Date(event.eventEndDate))
+
+  let timesMatch = eventStartTimeString === eventEndTimeString
+  if (timesMatch) {
+    console.log('Matchy Matchy')
+  }
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
   return (
@@ -29,9 +49,18 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
               <span>{event.title}</span>
             )}
           </h2>
-          <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
-            {new Date(event.eventStartDate ?? '').toDateString()}
-          </h3>
+          {event.eventStartDate && (
+            <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
+              {new Date(event.eventStartDate ?? '').toDateString()}
+            </h3>
+          )}
+          {eventStartTimeString !== eventEndTimeString && (
+            <h4 className="font-normal text-neutral-600 dark:text-neutral-200">
+              <span>
+                {eventStartTimeString} - {eventEndTimeString}
+              </span>
+            </h4>
+          )}
           <p className="text-neutral-600 dark:text-neutral-100 mt-2">
             {event.description}
           </p>
