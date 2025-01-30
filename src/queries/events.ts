@@ -8,10 +8,6 @@ const useEventsQuery = ({
   tagNames,
   pagination,
 }: EventsQueryParams): UseQueryResult<EventsConnection> => {
-  if (tagNames.length === 1 && tagNames[0] === '') {
-    //handle case with 1 empty string
-    tagNames = []
-  }
   const queryResult = useQuery({
     queryKey: [
       'events',
