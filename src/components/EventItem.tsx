@@ -79,7 +79,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
               ))}
           </div>
           {event.content && (
-            <div className="p-3 rounded mt-4 bg-neutral-100 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300">
+            <div className="max-h-[200px] overflow-auto p-3 rounded mt-4 bg-neutral-100 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300">
               {event.content}
             </div>
           )}

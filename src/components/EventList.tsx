@@ -139,11 +139,15 @@ function EventsList() {
           Error: {eventsError?.message}
         </div>
       )}
-      {(eventsData?.nodes || [])
-        .filter((event): event is NonNullable<typeof event> => event !== null)
-        .map((event) => (
-          <EventItem key={event.id} event={event} />
-        ))}{' '}
+
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(490px,1fr))] gap-4">
+        {(eventsData?.nodes || [])
+          .filter((event): event is NonNullable<typeof event> => event !== null)
+          .map((event) => (
+            <EventItem key={event.id} event={event} />
+          ))}{' '}
+      </div>
+
       <div className="flex justify-between items-center">
         <button
           onClick={handlePrevious}
