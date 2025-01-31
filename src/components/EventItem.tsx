@@ -57,32 +57,34 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
               </span>
             </h4>
           )}
-          <p className="text-neutral-600 dark:text-neutral-100 mt-2">
-            {event.description}
-          </p>
-          <div className="mt-2 flex gap-2">
-            {event.eventTagsByEventId.nodes
-              .filter(
-                (
-                  tag
-                ): tag is NonNullable<typeof tag> & {
-                  tagByTagId: { name: string }
-                } => !!tag && !!tag.tagByTagId
-              )
-              .map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-neutral-100 dark:text-neutral-100 dark:bg-neutral-600 rounded text-sm"
-                >
-                  {tag.tagByTagId.name}
-                </span>
-              ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-neutral-600 dark:text-neutral-100 mt-2">
+          {event.description}
+        </p>
+        {event.content && (
+          <div className="max-h-[240px] overflow-auto p-2 rounded mt-4 bg-neutral-100 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300">
+            {event.content}
           </div>
-          {event.content && (
-            <div className="max-h-[200px] overflow-auto p-3 rounded mt-4 bg-neutral-100 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300">
-              {event.content}
-            </div>
-          )}
+        )}
+        <div className="mt-2 gap-2">
+          {event.eventTagsByEventId.nodes
+            .filter(
+              (
+                tag
+              ): tag is NonNullable<typeof tag> & {
+                tagByTagId: { name: string }
+              } => !!tag && !!tag.tagByTagId
+            )
+            .map((tag, index) => (
+              <div
+                key={index}
+                className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100 dark:text-black"
+              >
+                {tag.tagByTagId.name}
+              </div>
+            ))}
         </div>
       </div>
     </div>
