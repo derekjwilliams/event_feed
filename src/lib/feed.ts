@@ -97,7 +97,7 @@ export const generateICS = async (
           .filter((tag) => tag && tag.tagByTagId && tag.tagByTagId.name)
           .map((tag) => tag!.tagByTagId!.name as string)
 
-        let e: VEvent = {
+        const e: VEvent = {
           start: { date: start },
           stamp: { date: start },
           end: { date: end },
