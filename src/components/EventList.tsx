@@ -20,14 +20,6 @@ function EventsList() {
     hasPreviousPage: false,
   })
 
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('tags', selectedTags.join(','))
-    params.set('after', pagination.after || '')
-    params.set('before', pagination.before || '')
-    window.history.replaceState({}, '', `?${params.toString()}`)
-  }, [selectedTags, pagination, searchParams])
-
   // Get all of the available tags
   const {
     data: tagsData,
@@ -35,7 +27,7 @@ function EventsList() {
     error: tagsError,
   } = useTagsQuery()
 
-  // Get the evenst, independent of date, with selectedTags, and pagination settings, which we set in the useEffect
+  // Get the events, independent of date, with selectedTags, and pagination settings, which we set in the useEffect
   const {
     data: eventsData,
     isLoading: eventsLoading,
@@ -46,6 +38,31 @@ function EventsList() {
     tagNames: selectedTags,
     pagination,
   })
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (selectedTags.length > 0) {
+      params.set('tags', selectedTags.join(','))
+    } else {
+      params.delete('tags')
+    }
+    if (eventsData && eventsData.pageInfo.hasNextPage) {
+      if (pagination.after) {
+        params.set('after', pagination.after)
+      }
+    } else {
+      params.delete('after')
+    }
+    if (eventsData && eventsData.pageInfo.hasPreviousPage) {
+      if (pagination.before) {
+        params.set('before', pagination.before)
+      }
+    } else {
+      params.delete('before')
+    }
+    window.history.replaceState({}, '', `?${params.toString()}`)
+  }, [selectedTags, pagination, searchParams, eventsData])
 
   const handleNext = () => {
     const pageInfo = eventsData?.pageInfo

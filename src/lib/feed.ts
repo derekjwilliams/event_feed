@@ -39,9 +39,10 @@ export function generateFeed(events: EventsConnection) {
         }
 
         const startDate: Extension = {
-          name: 'startDate',
+          name: 'startAndEndTimes',
           objects: {
-            date: event.eventStartDate,
+            start: event.eventStartDate,
+            end: event.eventEndDate ? event.eventEndDate : event.eventStartDate,
           },
         }
         // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
@@ -82,21 +83,21 @@ export const generateICS = async (
     events.nodes.forEach((event) => {
       if (event) {
         const uid =
-          process.env.ICS_UID ||
-          'e0bec92c-3f4b-4322-a772-a984545cab6e@event-feed-eta.vercel.app'
+          process.env.NEXT_PUBLIC_ICS_UID ||
+          'c109d7e6-4b6d-46b4-8b9f-8b9e3f0d1e7@event-feed-willamette.vercel'
 
         const start = event.eventStartDate
           ? new Date(event.eventStartDate)
           : new Date()
-        const end = event.eventStartDate // TODO: fix when the DB has end dates
-          ? new Date(event.eventStartDate)
+        const end = event.eventEndDate
+          ? new Date(event.eventEndDate)
           : new Date()
 
         const categories = event.eventTagsByEventId.nodes
           .filter((tag) => tag && tag.tagByTagId && tag.tagByTagId.name)
           .map((tag) => tag!.tagByTagId!.name as string)
 
-        vEvents.push({
+        let e: VEvent = {
           start: { date: start },
           stamp: { date: start },
           end: { date: end },
@@ -105,7 +106,8 @@ export const generateICS = async (
           uid: uid + `/${event.link}`,
           url: event.link ? `https://events.willamette.edu${event.link}` : '',
           categories: categories,
-        })
+        }
+        vEvents.push(e)
       }
     })
   }

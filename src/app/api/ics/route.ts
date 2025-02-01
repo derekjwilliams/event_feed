@@ -6,7 +6,6 @@ const EPOCH_START = '1970-01-01'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  // const pubDate = searchParams.get('pubDate') || '1970-01-01'
   const tagNames = searchParams.get('tagNames')?.split(',') || []
 
   try {
@@ -16,7 +15,8 @@ export async function GET(req: NextRequest) {
       ? new Date(ifModifiedSince).toISOString()
       : undefined
 
-    const events = await fetchEvents(modifiedSinceDate, tagNames)
+    const events = await fetchEvents(new Date(0).toISOString(), tagNames)
+
     const icsData = await generateICS(events)
 
     const pubDates = []
