@@ -15,6 +15,8 @@ const config: NextConfig = {
       {
         protocol: 'https',
         hostname: 'se-images.campuslabs.com',
+        port: '',
+        pathname: '/clink/**',
       },
     ],
   },
