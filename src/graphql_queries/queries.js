@@ -35,6 +35,7 @@ export const EVENTS_QUERY = `
         imageUrl
         eventStartDate
         eventEndDate
+        location
         eventTagsByEventId {
           nodes {
             tagByTagId {

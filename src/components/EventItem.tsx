@@ -1,7 +1,8 @@
 // Event.tsx
 import Image from 'next/image'
-
+import { Map } from 'lucide-react'
 import { Event } from '@/types/graphql'
+import Link from 'next/link'
 
 const EventItem: React.FC<{ event: Event }> = ({ event }) => {
   const eventTimeZone = 'America/Los_Angeles' // Event's time zone
@@ -22,6 +23,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
 
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
+  const hasGeoLocation = !!event.geoLocation
   return (
     <div
       key={event.id}
@@ -60,6 +62,33 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
         </div>
       </div>
       <div>
+        {event.location && (
+          <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
+            {hasGeoLocation && (
+              <span>
+                {' '}
+                {event.location}
+                <Link
+                  target="_blank"
+                  href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.latitude},${event.geoLocation?.longitude}`}
+                >
+                  <Map />
+                </Link>
+              </span>
+            )}
+            {!hasGeoLocation && <span> {event.location}</span>}
+          </h3>
+        )}
+        {!event.location && hasGeoLocation && (
+          <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
+            <Link
+              target="_blank"
+              href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.latitude},${event.geoLocation?.longitude}`}
+            >
+              <Map />
+            </Link>
+          </h3>
+        )}
         <p className="text-neutral-600 dark:text-neutral-100 mt-2">
           {event.description}
         </p>
