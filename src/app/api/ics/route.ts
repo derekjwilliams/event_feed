@@ -39,9 +39,9 @@ export async function GET(req: NextRequest) {
     const etag = `"${Buffer.from(icsData).toString('base64').substring(0, 16)}"`
 
     // Respond with 304 if the feed hasn't changed
-    if (ifNoneMatch === etag || ifModifiedSince === mostRecent) {
-      return new NextResponse(null, { status: 304 })
-    }
+    // if (ifNoneMatch === etag || ifModifiedSince === mostRecent) {
+    //   return new NextResponse(null, { status: 304 })
+    // }
 
     const headers = new Headers({
       'Content-Type': 'text/calendar',
