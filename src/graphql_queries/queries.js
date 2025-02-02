@@ -49,10 +49,10 @@ export const EVENTS_QUERY = `
 
 export const TAGS_QUERY = `
   query {
-    allTags {
-      nodes {
-        name
-      }
+  allTags (filter: {name : {notEqualTo: ""}} orderBy:NAME_ASC) {
+    nodes {
+      name
     }
   }
+}
 `

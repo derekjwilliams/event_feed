@@ -7,6 +7,7 @@ import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
 import { Calendar } from 'lucide-react'
 import EventItem from '@/components/EventItem'
+import { Tag } from '@/types/graphql'
 
 function EventsList() {
   const searchParams = useSearchParams()
@@ -102,6 +103,33 @@ function EventsList() {
     setSelectedTags(newTags)
   }
 
+  const handleToggleAnyTag = () => {
+    // Get all non-empty tag names from tagsData.nodes (filter out null and empty strings)
+    const allNonEmptyTagNames =
+      tagsData?.nodes
+        ?.filter((tag): tag is Tag => !!tag && tag.name !== '')
+        .map((tag) => tag.name) ?? []
+
+    // Check if every non-empty tag is currently selected
+    const areAllSelected = allNonEmptyTagNames.every((tag) =>
+      selectedTags.includes(tag)
+    )
+
+    let newSelectedTags: string[]
+    if (areAllSelected) {
+      // Remove all non-empty tags from selectedTags
+      newSelectedTags = selectedTags.filter(
+        (tag) => !allNonEmptyTagNames.includes(tag)
+      )
+    } else {
+      // Add all non-empty tags to selectedTags, ensuring no duplicates
+      newSelectedTags = Array.from(
+        new Set([...selectedTags, ...allNonEmptyTagNames])
+      )
+    }
+    setSelectedTags(newSelectedTags)
+  }
+
   return (
     <div className="space-y-4">
       <a
@@ -142,6 +170,26 @@ function EventsList() {
               {tag.name !== '' ? tag.name : 'Untagged'}
             </button>
           ))}
+
+        <div className="ml-auto">
+          <button
+            key={''}
+            onClick={() => handleTagChange('')}
+            className={`mx-4 px-3 py-1 rounded-full transition-colors ${
+              selectedTags.includes('')
+                ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
+                : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300 italic'
+            }`}
+          >
+            Untagged
+          </button>
+          <button
+            onClick={handleToggleAnyTag}
+            className="px-3 py-1 rounded-full transition-colors bg-blue-600 dark:bg-amber-200  saturate-25  text-white dark:text-black"
+          >
+            Any Tagged
+          </button>
+        </div>
       </div>
       {eventsLoading && !eventsData && (
         // Five empty events for loading
