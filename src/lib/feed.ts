@@ -84,7 +84,7 @@ export const generateICS = async (
       if (event) {
         const uid =
           process.env.NEXT_PUBLIC_ICS_UID ||
-          'c109d7e6-4b6d-46b4-8b9f-8b9e3f0d1e7@event-feed-willamette.vercel'
+          'e5486a1f-5a6d-44c3-83b3-4a3a4f5f6e7@event-feed-willamette.vercel'
 
         const start = event.eventStartDate
           ? new Date(event.eventStartDate)
@@ -107,6 +107,10 @@ export const generateICS = async (
           url: event.link ? `https://events.willamette.edu${event.link}` : '',
           categories: categories,
         }
+        if (event.geoLocation) {
+          e.geo = event.geoLocation.latitude + ';' + event.geoLocation.longitude
+        }
+
         vEvents.push(e)
       }
     })

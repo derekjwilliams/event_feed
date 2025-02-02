@@ -1,3 +1,261 @@
+type GeometryPoint implements GeometryInterface & GeometryGeometry {
+  geojson: GeoJSON
+  srid: Int!
+  x: Float!
+  y: Float!
+}
+
+"""
+All geometry types implement this interface
+"""
+interface GeometryInterface {
+  """
+  Converts the object to GeoJSON
+  """
+  geojson: GeoJSON
+
+  """
+  Spatial reference identifier (SRID)
+  """
+  srid: Int!
+}
+
+"""
+The `GeoJSON` scalar type represents GeoJSON values as specified by[RFC 7946](https://tools.ietf.org/html/rfc7946).
+"""
+scalar GeoJSON
+
+"""
+All geometry XY types implement this interface
+"""
+interface GeometryGeometry {
+  """
+  Converts the object to GeoJSON
+  """
+  geojson: GeoJSON
+
+  """
+  Spatial reference identifier (SRID)
+  """
+  srid: Int!
+}
+
+type GeometryPointM implements GeometryInterface & GeometryGeometryM {
+  geojson: GeoJSON
+  srid: Int!
+  x: Float!
+  y: Float!
+}
+
+"""
+All geometry XYM types implement this interface
+"""
+interface GeometryGeometryM {
+  """
+  Converts the object to GeoJSON
+  """
+  geojson: GeoJSON
+
+  """
+  Spatial reference identifier (SRID)
+  """
+  srid: Int!
+}
+
+type GeometryPointZ implements GeometryInterface & GeometryGeometryZ {
+  geojson: GeoJSON
+  srid: Int!
+  x: Float!
+  y: Float!
+  z: Float!
+}
+
+"""
+All geometry XYZ types implement this interface
+"""
+interface GeometryGeometryZ {
+  """
+  Converts the object to GeoJSON
+  """
+  geojson: GeoJSON
+
+  """
+  Spatial reference identifier (SRID)
+  """
+  srid: Int!
+}
+
+type GeometryPointZM implements GeometryInterface & GeometryGeometryZM {
+  geojson: GeoJSON
+  srid: Int!
+  x: Float!
+  y: Float!
+  z: Float!
+}
+
+"""
+All geometry XYZM types implement this interface
+"""
+interface GeometryGeometryZM {
+  """
+  Converts the object to GeoJSON
+  """
+  geojson: GeoJSON
+
+  """
+  Spatial reference identifier (SRID)
+  """
+  srid: Int!
+}
+
+type GeometryLineString implements GeometryInterface & GeometryGeometry {
+  geojson: GeoJSON
+  srid: Int!
+  points: [GeometryPoint]
+}
+
+type GeometryLineStringM implements GeometryInterface & GeometryGeometryM {
+  geojson: GeoJSON
+  srid: Int!
+  points: [GeometryPointM]
+}
+
+type GeometryLineStringZ implements GeometryInterface & GeometryGeometryZ {
+  geojson: GeoJSON
+  srid: Int!
+  points: [GeometryPointZ]
+}
+
+type GeometryLineStringZM implements GeometryInterface & GeometryGeometryZM {
+  geojson: GeoJSON
+  srid: Int!
+  points: [GeometryPointZM]
+}
+
+type GeometryPolygon implements GeometryInterface & GeometryGeometry {
+  geojson: GeoJSON
+  srid: Int!
+  exterior: GeometryLineString
+  interiors: [GeometryLineString]
+}
+
+type GeometryPolygonM implements GeometryInterface & GeometryGeometryM {
+  geojson: GeoJSON
+  srid: Int!
+  exterior: GeometryLineStringM
+  interiors: [GeometryLineStringM]
+}
+
+type GeometryPolygonZ implements GeometryInterface & GeometryGeometryZ {
+  geojson: GeoJSON
+  srid: Int!
+  exterior: GeometryLineStringZ
+  interiors: [GeometryLineStringZ]
+}
+
+type GeometryPolygonZM implements GeometryInterface & GeometryGeometryZM {
+  geojson: GeoJSON
+  srid: Int!
+  exterior: GeometryLineStringZM
+  interiors: [GeometryLineStringZM]
+}
+
+type GeometryMultiPoint implements GeometryInterface & GeometryGeometry {
+  geojson: GeoJSON
+  srid: Int!
+  points: [GeometryPoint]
+}
+
+type GeometryMultiPointM implements GeometryInterface & GeometryGeometryM {
+  geojson: GeoJSON
+  srid: Int!
+  points: [GeometryPointM]
+}
+
+type GeometryMultiPointZ implements GeometryInterface & GeometryGeometryZ {
+  geojson: GeoJSON
+  srid: Int!
+  points: [GeometryPointZ]
+}
+
+type GeometryMultiPointZM implements GeometryInterface & GeometryGeometryZM {
+  geojson: GeoJSON
+  srid: Int!
+  points: [GeometryPointZM]
+}
+
+type GeometryMultiLineString implements GeometryInterface & GeometryGeometry {
+  geojson: GeoJSON
+  srid: Int!
+  lines: [GeometryLineString]
+}
+
+type GeometryMultiLineStringM implements GeometryInterface & GeometryGeometryM {
+  geojson: GeoJSON
+  srid: Int!
+  lines: [GeometryLineStringM]
+}
+
+type GeometryMultiLineStringZ implements GeometryInterface & GeometryGeometryZ {
+  geojson: GeoJSON
+  srid: Int!
+  lines: [GeometryLineStringZ]
+}
+
+type GeometryMultiLineStringZM implements GeometryInterface & GeometryGeometryZM {
+  geojson: GeoJSON
+  srid: Int!
+  lines: [GeometryLineStringZM]
+}
+
+type GeometryMultiPolygon implements GeometryInterface & GeometryGeometry {
+  geojson: GeoJSON
+  srid: Int!
+  polygons: [GeometryPolygon]
+}
+
+type GeometryMultiPolygonM implements GeometryInterface & GeometryGeometryM {
+  geojson: GeoJSON
+  srid: Int!
+  polygons: [GeometryPolygonM]
+}
+
+type GeometryMultiPolygonZ implements GeometryInterface & GeometryGeometryZ {
+  geojson: GeoJSON
+  srid: Int!
+  polygons: [GeometryPolygonZ]
+}
+
+type GeometryMultiPolygonZM implements GeometryInterface & GeometryGeometryZM {
+  geojson: GeoJSON
+  srid: Int!
+  polygons: [GeometryPolygonZM]
+}
+
+type GeometryGeometryCollection implements GeometryInterface & GeometryGeometry {
+  geojson: GeoJSON
+  srid: Int!
+  geometries: [GeometryGeometry]
+}
+
+type GeometryGeometryCollectionM implements GeometryInterface & GeometryGeometryM {
+  geojson: GeoJSON
+  srid: Int!
+  geometries: [GeometryGeometryM]
+}
+
+type GeometryGeometryCollectionZ implements GeometryInterface & GeometryGeometryZ {
+  geojson: GeoJSON
+  srid: Int!
+  geometries: [GeometryGeometryZ]
+}
+
+type GeometryGeometryCollectionZM implements GeometryInterface & GeometryGeometryZM {
+  geojson: GeoJSON
+  srid: Int!
+  geometries: [GeometryGeometryZM]
+}
+
 """
 The root query type which gives access points into the data universe.
 """
@@ -345,6 +603,7 @@ type Event implements Node {
   location: String
   eventEndDate: Datetime
   eventStartDate: Datetime
+  geoLocation: GeographyPoint
 
   """
   Reads and enables pagination through a set of `EventTag`.
@@ -398,6 +657,43 @@ A point in time as described by the [ISO
 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
 scalar Datetime
+
+type GeographyPoint implements GeographyInterface & GeographyGeometry {
+  geojson: GeoJSON
+  srid: Int!
+  longitude: Float!
+  latitude: Float!
+}
+
+"""
+All geography types implement this interface
+"""
+interface GeographyInterface {
+  """
+  Converts the object to GeoJSON
+  """
+  geojson: GeoJSON
+
+  """
+  Spatial reference identifier (SRID)
+  """
+  srid: Int!
+}
+
+"""
+All geography XY types implement this interface
+"""
+interface GeographyGeometry {
+  """
+  Converts the object to GeoJSON
+  """
+  geojson: GeoJSON
+
+  """
+  Spatial reference identifier (SRID)
+  """
+  srid: Int!
+}
 
 """
 A location in a connection that can be used for resuming pagination.
@@ -689,6 +985,8 @@ enum EventsOrderBy {
   EVENT_END_DATE_DESC
   EVENT_START_DATE_ASC
   EVENT_START_DATE_DESC
+  GEO_LOCATION_ASC
+  GEO_LOCATION_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -761,6 +1059,11 @@ input EventCondition {
   Checks for equality with the object’s `eventStartDate` field.
   """
   eventStartDate: Datetime
+
+  """
+  Checks for equality with the object’s `geoLocation` field.
+  """
+  geoLocation: GeoJSON
 }
 
 """
@@ -1500,6 +1803,7 @@ input EventInput {
   location: String
   eventEndDate: Datetime
   eventStartDate: Datetime
+  geoLocation: GeoJSON
 }
 
 """
@@ -1714,6 +2018,7 @@ input EventPatch {
   location: String
   eventEndDate: Datetime
   eventStartDate: Datetime
+  geoLocation: GeoJSON
 }
 
 """

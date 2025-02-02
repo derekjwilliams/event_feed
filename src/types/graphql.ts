@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   GraphQLResolveInfo,
   GraphQLScalarType,
@@ -43,6 +41,8 @@ export type Scalars = {
    * 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
    */
   Datetime: { input: any; output: any }
+  /** The `GeoJSON` scalar type represents GeoJSON values as specified by[RFC 7946](https://tools.ietf.org/html/rfc7946). */
+  GeoJSON: { input: any; output: any }
 }
 
 /** All input for the create `Event` mutation. */
@@ -325,6 +325,7 @@ export type Event = Node & {
   eventStartDate?: Maybe<Scalars['Datetime']['output']>
   /** Reads and enables pagination through a set of `EventTag`. */
   eventTagsByEventId: EventTagsConnection
+  geoLocation?: Maybe<GeographyPoint>
   id: Scalars['Int']['output']
   imageUrl?: Maybe<Scalars['String']['output']>
   link?: Maybe<Scalars['String']['output']>
@@ -361,6 +362,8 @@ export type EventCondition = {
   eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
   /** Checks for equality with the object’s `eventStartDate` field. */
   eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
+  /** Checks for equality with the object’s `geoLocation` field. */
+  geoLocation?: InputMaybe<Scalars['GeoJSON']['input']>
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['Int']['input']>
   /** Checks for equality with the object’s `imageUrl` field. */
@@ -421,6 +424,7 @@ export type EventInput = {
   description?: InputMaybe<Scalars['String']['input']>
   eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
   eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
+  geoLocation?: InputMaybe<Scalars['GeoJSON']['input']>
   id?: InputMaybe<Scalars['Int']['input']>
   imageUrl?: InputMaybe<Scalars['String']['input']>
   link?: InputMaybe<Scalars['String']['input']>
@@ -438,6 +442,7 @@ export type EventPatch = {
   description?: InputMaybe<Scalars['String']['input']>
   eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
   eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
+  geoLocation?: InputMaybe<Scalars['GeoJSON']['input']>
   id?: InputMaybe<Scalars['Int']['input']>
   imageUrl?: InputMaybe<Scalars['String']['input']>
   link?: InputMaybe<Scalars['String']['input']>
@@ -565,6 +570,8 @@ export enum EventsOrderBy {
   EventEndDateDesc = 'EVENT_END_DATE_DESC',
   EventStartDateAsc = 'EVENT_START_DATE_ASC',
   EventStartDateDesc = 'EVENT_START_DATE_DESC',
+  GeoLocationAsc = 'GEO_LOCATION_ASC',
+  GeoLocationDesc = 'GEO_LOCATION_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   ImageUrlAsc = 'IMAGE_URL_ASC',
@@ -583,6 +590,305 @@ export enum EventsOrderBy {
   UpdatedAtAsc = 'UPDATED_AT_ASC',
   UpdatedAtDesc = 'UPDATED_AT_DESC',
 }
+
+/** All geography XY types implement this interface */
+export type GeographyGeometry = {
+  /** Converts the object to GeoJSON */
+  geojson?: Maybe<Scalars['GeoJSON']['output']>
+  /** Spatial reference identifier (SRID) */
+  srid: Scalars['Int']['output']
+}
+
+/** All geography types implement this interface */
+export type GeographyInterface = {
+  /** Converts the object to GeoJSON */
+  geojson?: Maybe<Scalars['GeoJSON']['output']>
+  /** Spatial reference identifier (SRID) */
+  srid: Scalars['Int']['output']
+}
+
+export type GeographyPoint = GeographyGeometry &
+  GeographyInterface & {
+    __typename?: 'GeographyPoint'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    latitude: Scalars['Float']['output']
+    longitude: Scalars['Float']['output']
+    srid: Scalars['Int']['output']
+  }
+
+/** All geometry XY types implement this interface */
+export type GeometryGeometry = {
+  /** Converts the object to GeoJSON */
+  geojson?: Maybe<Scalars['GeoJSON']['output']>
+  /** Spatial reference identifier (SRID) */
+  srid: Scalars['Int']['output']
+}
+
+export type GeometryGeometryCollection = GeometryGeometry &
+  GeometryInterface & {
+    __typename?: 'GeometryGeometryCollection'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    geometries?: Maybe<Array<Maybe<GeometryGeometry>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryGeometryCollectionM = GeometryGeometryM &
+  GeometryInterface & {
+    __typename?: 'GeometryGeometryCollectionM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    geometries?: Maybe<Array<Maybe<GeometryGeometryM>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryGeometryCollectionZ = GeometryGeometryZ &
+  GeometryInterface & {
+    __typename?: 'GeometryGeometryCollectionZ'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    geometries?: Maybe<Array<Maybe<GeometryGeometryZ>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryGeometryCollectionZm = GeometryGeometryZm &
+  GeometryInterface & {
+    __typename?: 'GeometryGeometryCollectionZM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    geometries?: Maybe<Array<Maybe<GeometryGeometryZm>>>
+    srid: Scalars['Int']['output']
+  }
+
+/** All geometry XYM types implement this interface */
+export type GeometryGeometryM = {
+  /** Converts the object to GeoJSON */
+  geojson?: Maybe<Scalars['GeoJSON']['output']>
+  /** Spatial reference identifier (SRID) */
+  srid: Scalars['Int']['output']
+}
+
+/** All geometry XYZ types implement this interface */
+export type GeometryGeometryZ = {
+  /** Converts the object to GeoJSON */
+  geojson?: Maybe<Scalars['GeoJSON']['output']>
+  /** Spatial reference identifier (SRID) */
+  srid: Scalars['Int']['output']
+}
+
+/** All geometry XYZM types implement this interface */
+export type GeometryGeometryZm = {
+  /** Converts the object to GeoJSON */
+  geojson?: Maybe<Scalars['GeoJSON']['output']>
+  /** Spatial reference identifier (SRID) */
+  srid: Scalars['Int']['output']
+}
+
+/** All geometry types implement this interface */
+export type GeometryInterface = {
+  /** Converts the object to GeoJSON */
+  geojson?: Maybe<Scalars['GeoJSON']['output']>
+  /** Spatial reference identifier (SRID) */
+  srid: Scalars['Int']['output']
+}
+
+export type GeometryLineString = GeometryGeometry &
+  GeometryInterface & {
+    __typename?: 'GeometryLineString'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    points?: Maybe<Array<Maybe<GeometryPoint>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryLineStringM = GeometryGeometryM &
+  GeometryInterface & {
+    __typename?: 'GeometryLineStringM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    points?: Maybe<Array<Maybe<GeometryPointM>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryLineStringZ = GeometryGeometryZ &
+  GeometryInterface & {
+    __typename?: 'GeometryLineStringZ'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    points?: Maybe<Array<Maybe<GeometryPointZ>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryLineStringZm = GeometryGeometryZm &
+  GeometryInterface & {
+    __typename?: 'GeometryLineStringZM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    points?: Maybe<Array<Maybe<GeometryPointZm>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiLineString = GeometryGeometry &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiLineString'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    lines?: Maybe<Array<Maybe<GeometryLineString>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiLineStringM = GeometryGeometryM &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiLineStringM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    lines?: Maybe<Array<Maybe<GeometryLineStringM>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiLineStringZ = GeometryGeometryZ &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiLineStringZ'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    lines?: Maybe<Array<Maybe<GeometryLineStringZ>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiLineStringZm = GeometryGeometryZm &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiLineStringZM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    lines?: Maybe<Array<Maybe<GeometryLineStringZm>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiPoint = GeometryGeometry &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiPoint'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    points?: Maybe<Array<Maybe<GeometryPoint>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiPointM = GeometryGeometryM &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiPointM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    points?: Maybe<Array<Maybe<GeometryPointM>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiPointZ = GeometryGeometryZ &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiPointZ'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    points?: Maybe<Array<Maybe<GeometryPointZ>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiPointZm = GeometryGeometryZm &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiPointZM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    points?: Maybe<Array<Maybe<GeometryPointZm>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiPolygon = GeometryGeometry &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiPolygon'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    polygons?: Maybe<Array<Maybe<GeometryPolygon>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiPolygonM = GeometryGeometryM &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiPolygonM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    polygons?: Maybe<Array<Maybe<GeometryPolygonM>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiPolygonZ = GeometryGeometryZ &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiPolygonZ'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    polygons?: Maybe<Array<Maybe<GeometryPolygonZ>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryMultiPolygonZm = GeometryGeometryZm &
+  GeometryInterface & {
+    __typename?: 'GeometryMultiPolygonZM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    polygons?: Maybe<Array<Maybe<GeometryPolygonZm>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryPoint = GeometryGeometry &
+  GeometryInterface & {
+    __typename?: 'GeometryPoint'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    srid: Scalars['Int']['output']
+    x: Scalars['Float']['output']
+    y: Scalars['Float']['output']
+  }
+
+export type GeometryPointM = GeometryGeometryM &
+  GeometryInterface & {
+    __typename?: 'GeometryPointM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    srid: Scalars['Int']['output']
+    x: Scalars['Float']['output']
+    y: Scalars['Float']['output']
+  }
+
+export type GeometryPointZ = GeometryGeometryZ &
+  GeometryInterface & {
+    __typename?: 'GeometryPointZ'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    srid: Scalars['Int']['output']
+    x: Scalars['Float']['output']
+    y: Scalars['Float']['output']
+    z: Scalars['Float']['output']
+  }
+
+export type GeometryPointZm = GeometryGeometryZm &
+  GeometryInterface & {
+    __typename?: 'GeometryPointZM'
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    srid: Scalars['Int']['output']
+    x: Scalars['Float']['output']
+    y: Scalars['Float']['output']
+    z: Scalars['Float']['output']
+  }
+
+export type GeometryPolygon = GeometryGeometry &
+  GeometryInterface & {
+    __typename?: 'GeometryPolygon'
+    exterior?: Maybe<GeometryLineString>
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    interiors?: Maybe<Array<Maybe<GeometryLineString>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryPolygonM = GeometryGeometryM &
+  GeometryInterface & {
+    __typename?: 'GeometryPolygonM'
+    exterior?: Maybe<GeometryLineStringM>
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    interiors?: Maybe<Array<Maybe<GeometryLineStringM>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryPolygonZ = GeometryGeometryZ &
+  GeometryInterface & {
+    __typename?: 'GeometryPolygonZ'
+    exterior?: Maybe<GeometryLineStringZ>
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    interiors?: Maybe<Array<Maybe<GeometryLineStringZ>>>
+    srid: Scalars['Int']['output']
+  }
+
+export type GeometryPolygonZm = GeometryGeometryZm &
+  GeometryInterface & {
+    __typename?: 'GeometryPolygonZM'
+    exterior?: Maybe<GeometryLineStringZm>
+    geojson?: Maybe<Scalars['GeoJSON']['output']>
+    interiors?: Maybe<Array<Maybe<GeometryLineStringZm>>>
+    srid: Scalars['Int']['output']
+  }
 
 /** A filter to be used against Int fields. All fields are combined with a logical ‘and.’ */
 export type IntFilter = {
@@ -769,6 +1075,8 @@ export type Query = Node & {
   eventTag?: Maybe<EventTag>
   eventTagByEventIdAndTagId?: Maybe<EventTag>
   /** Reads and enables pagination through a set of `Event`. */
+  getEventsByDate?: Maybe<EventsConnection>
+  /** Reads and enables pagination through a set of `Event`. */
   getEventsByDateAndTags?: Maybe<EventsConnection>
   /** Fetches an object given its globally unique `ID`. */
   node?: Maybe<Node>
@@ -840,6 +1148,17 @@ export type QueryEventTagArgs = {
 export type QueryEventTagByEventIdAndTagIdArgs = {
   eventId: Scalars['Int']['input']
   tagId: Scalars['Int']['input']
+}
+
+/** The root query type which gives access points into the data universe. */
+export type QueryGetEventsByDateArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>
+  before?: InputMaybe<Scalars['Cursor']['input']>
+  filter?: InputMaybe<EventFilter>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  pPubDate?: InputMaybe<Scalars['String']['input']>
 }
 
 /** The root query type which gives access points into the data universe. */
@@ -1303,14 +1622,98 @@ export type DirectiveResolverFn<
 /** Mapping of interface types */
 export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> =
   {
+    GeographyGeometry: GeographyPoint
+    GeographyInterface: GeographyPoint
+    GeometryGeometry:
+      | (Omit<GeometryGeometryCollection, 'geometries'> & {
+          geometries?: Maybe<Array<Maybe<_RefType['GeometryGeometry']>>>
+        })
+      | GeometryLineString
+      | GeometryMultiLineString
+      | GeometryMultiPoint
+      | GeometryMultiPolygon
+      | GeometryPoint
+      | GeometryPolygon
+    GeometryGeometryM:
+      | (Omit<GeometryGeometryCollectionM, 'geometries'> & {
+          geometries?: Maybe<Array<Maybe<_RefType['GeometryGeometryM']>>>
+        })
+      | GeometryLineStringM
+      | GeometryMultiLineStringM
+      | GeometryMultiPointM
+      | GeometryMultiPolygonM
+      | GeometryPointM
+      | GeometryPolygonM
+    GeometryGeometryZ:
+      | (Omit<GeometryGeometryCollectionZ, 'geometries'> & {
+          geometries?: Maybe<Array<Maybe<_RefType['GeometryGeometryZ']>>>
+        })
+      | GeometryLineStringZ
+      | GeometryMultiLineStringZ
+      | GeometryMultiPointZ
+      | GeometryMultiPolygonZ
+      | GeometryPointZ
+      | GeometryPolygonZ
+    GeometryGeometryZM:
+      | (Omit<GeometryGeometryCollectionZm, 'geometries'> & {
+          geometries?: Maybe<Array<Maybe<_RefType['GeometryGeometryZM']>>>
+        })
+      | GeometryLineStringZm
+      | GeometryMultiLineStringZm
+      | GeometryMultiPointZm
+      | GeometryMultiPolygonZm
+      | GeometryPointZm
+      | GeometryPolygonZm
+    GeometryInterface:
+      | (Omit<GeometryGeometryCollection, 'geometries'> & {
+          geometries?: Maybe<Array<Maybe<_RefType['GeometryGeometry']>>>
+        })
+      | (Omit<GeometryGeometryCollectionM, 'geometries'> & {
+          geometries?: Maybe<Array<Maybe<_RefType['GeometryGeometryM']>>>
+        })
+      | (Omit<GeometryGeometryCollectionZ, 'geometries'> & {
+          geometries?: Maybe<Array<Maybe<_RefType['GeometryGeometryZ']>>>
+        })
+      | (Omit<GeometryGeometryCollectionZm, 'geometries'> & {
+          geometries?: Maybe<Array<Maybe<_RefType['GeometryGeometryZM']>>>
+        })
+      | GeometryLineString
+      | GeometryLineStringM
+      | GeometryLineStringZ
+      | GeometryLineStringZm
+      | GeometryMultiLineString
+      | GeometryMultiLineStringM
+      | GeometryMultiLineStringZ
+      | GeometryMultiLineStringZm
+      | GeometryMultiPoint
+      | GeometryMultiPointM
+      | GeometryMultiPointZ
+      | GeometryMultiPointZm
+      | GeometryMultiPolygon
+      | GeometryMultiPolygonM
+      | GeometryMultiPolygonZ
+      | GeometryMultiPolygonZm
+      | GeometryPoint
+      | GeometryPointM
+      | GeometryPointZ
+      | GeometryPointZm
+      | GeometryPolygon
+      | GeometryPolygonM
+      | GeometryPolygonZ
+      | GeometryPolygonZm
     Node:
       | Event
       | EventTag
       | (Omit<
           Query,
-          'allEvents' | 'getEventsByDateAndTags' | 'node' | 'query'
+          | 'allEvents'
+          | 'getEventsByDate'
+          | 'getEventsByDateAndTags'
+          | 'node'
+          | 'query'
         > & {
           allEvents?: Maybe<_RefType['EventsConnection']>
+          getEventsByDate?: Maybe<_RefType['EventsConnection']>
           getEventsByDateAndTags?: Maybe<_RefType['EventsConnection']>
           node?: Maybe<_RefType['Node']>
           query: _RefType['Query']
@@ -1376,6 +1779,74 @@ export type ResolversTypes = {
   EventsConnection: ResolverTypeWrapper<EventsConnection>
   EventsEdge: ResolverTypeWrapper<EventsEdge>
   EventsOrderBy: EventsOrderBy
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>
+  GeoJSON: ResolverTypeWrapper<Scalars['GeoJSON']['output']>
+  GeographyGeometry: ResolverTypeWrapper<
+    ResolversInterfaceTypes<ResolversTypes>['GeographyGeometry']
+  >
+  GeographyInterface: ResolverTypeWrapper<
+    ResolversInterfaceTypes<ResolversTypes>['GeographyInterface']
+  >
+  GeographyPoint: ResolverTypeWrapper<GeographyPoint>
+  GeometryGeometry: ResolverTypeWrapper<
+    ResolversInterfaceTypes<ResolversTypes>['GeometryGeometry']
+  >
+  GeometryGeometryCollection: ResolverTypeWrapper<
+    Omit<GeometryGeometryCollection, 'geometries'> & {
+      geometries?: Maybe<Array<Maybe<ResolversTypes['GeometryGeometry']>>>
+    }
+  >
+  GeometryGeometryCollectionM: ResolverTypeWrapper<
+    Omit<GeometryGeometryCollectionM, 'geometries'> & {
+      geometries?: Maybe<Array<Maybe<ResolversTypes['GeometryGeometryM']>>>
+    }
+  >
+  GeometryGeometryCollectionZ: ResolverTypeWrapper<
+    Omit<GeometryGeometryCollectionZ, 'geometries'> & {
+      geometries?: Maybe<Array<Maybe<ResolversTypes['GeometryGeometryZ']>>>
+    }
+  >
+  GeometryGeometryCollectionZM: ResolverTypeWrapper<
+    Omit<GeometryGeometryCollectionZm, 'geometries'> & {
+      geometries?: Maybe<Array<Maybe<ResolversTypes['GeometryGeometryZM']>>>
+    }
+  >
+  GeometryGeometryM: ResolverTypeWrapper<
+    ResolversInterfaceTypes<ResolversTypes>['GeometryGeometryM']
+  >
+  GeometryGeometryZ: ResolverTypeWrapper<
+    ResolversInterfaceTypes<ResolversTypes>['GeometryGeometryZ']
+  >
+  GeometryGeometryZM: ResolverTypeWrapper<
+    ResolversInterfaceTypes<ResolversTypes>['GeometryGeometryZM']
+  >
+  GeometryInterface: ResolverTypeWrapper<
+    ResolversInterfaceTypes<ResolversTypes>['GeometryInterface']
+  >
+  GeometryLineString: ResolverTypeWrapper<GeometryLineString>
+  GeometryLineStringM: ResolverTypeWrapper<GeometryLineStringM>
+  GeometryLineStringZ: ResolverTypeWrapper<GeometryLineStringZ>
+  GeometryLineStringZM: ResolverTypeWrapper<GeometryLineStringZm>
+  GeometryMultiLineString: ResolverTypeWrapper<GeometryMultiLineString>
+  GeometryMultiLineStringM: ResolverTypeWrapper<GeometryMultiLineStringM>
+  GeometryMultiLineStringZ: ResolverTypeWrapper<GeometryMultiLineStringZ>
+  GeometryMultiLineStringZM: ResolverTypeWrapper<GeometryMultiLineStringZm>
+  GeometryMultiPoint: ResolverTypeWrapper<GeometryMultiPoint>
+  GeometryMultiPointM: ResolverTypeWrapper<GeometryMultiPointM>
+  GeometryMultiPointZ: ResolverTypeWrapper<GeometryMultiPointZ>
+  GeometryMultiPointZM: ResolverTypeWrapper<GeometryMultiPointZm>
+  GeometryMultiPolygon: ResolverTypeWrapper<GeometryMultiPolygon>
+  GeometryMultiPolygonM: ResolverTypeWrapper<GeometryMultiPolygonM>
+  GeometryMultiPolygonZ: ResolverTypeWrapper<GeometryMultiPolygonZ>
+  GeometryMultiPolygonZM: ResolverTypeWrapper<GeometryMultiPolygonZm>
+  GeometryPoint: ResolverTypeWrapper<GeometryPoint>
+  GeometryPointM: ResolverTypeWrapper<GeometryPointM>
+  GeometryPointZ: ResolverTypeWrapper<GeometryPointZ>
+  GeometryPointZM: ResolverTypeWrapper<GeometryPointZm>
+  GeometryPolygon: ResolverTypeWrapper<GeometryPolygon>
+  GeometryPolygonM: ResolverTypeWrapper<GeometryPolygonM>
+  GeometryPolygonZ: ResolverTypeWrapper<GeometryPolygonZ>
+  GeometryPolygonZM: ResolverTypeWrapper<GeometryPolygonZm>
   ID: ResolverTypeWrapper<Scalars['ID']['output']>
   Int: ResolverTypeWrapper<Scalars['Int']['output']>
   IntFilter: IntFilter
@@ -1463,6 +1934,61 @@ export type ResolversParentTypes = {
   EventTagsEdge: EventTagsEdge
   EventsConnection: EventsConnection
   EventsEdge: EventsEdge
+  Float: Scalars['Float']['output']
+  GeoJSON: Scalars['GeoJSON']['output']
+  GeographyGeometry: ResolversInterfaceTypes<ResolversParentTypes>['GeographyGeometry']
+  GeographyInterface: ResolversInterfaceTypes<ResolversParentTypes>['GeographyInterface']
+  GeographyPoint: GeographyPoint
+  GeometryGeometry: ResolversInterfaceTypes<ResolversParentTypes>['GeometryGeometry']
+  GeometryGeometryCollection: Omit<GeometryGeometryCollection, 'geometries'> & {
+    geometries?: Maybe<Array<Maybe<ResolversParentTypes['GeometryGeometry']>>>
+  }
+  GeometryGeometryCollectionM: Omit<
+    GeometryGeometryCollectionM,
+    'geometries'
+  > & {
+    geometries?: Maybe<Array<Maybe<ResolversParentTypes['GeometryGeometryM']>>>
+  }
+  GeometryGeometryCollectionZ: Omit<
+    GeometryGeometryCollectionZ,
+    'geometries'
+  > & {
+    geometries?: Maybe<Array<Maybe<ResolversParentTypes['GeometryGeometryZ']>>>
+  }
+  GeometryGeometryCollectionZM: Omit<
+    GeometryGeometryCollectionZm,
+    'geometries'
+  > & {
+    geometries?: Maybe<Array<Maybe<ResolversParentTypes['GeometryGeometryZM']>>>
+  }
+  GeometryGeometryM: ResolversInterfaceTypes<ResolversParentTypes>['GeometryGeometryM']
+  GeometryGeometryZ: ResolversInterfaceTypes<ResolversParentTypes>['GeometryGeometryZ']
+  GeometryGeometryZM: ResolversInterfaceTypes<ResolversParentTypes>['GeometryGeometryZM']
+  GeometryInterface: ResolversInterfaceTypes<ResolversParentTypes>['GeometryInterface']
+  GeometryLineString: GeometryLineString
+  GeometryLineStringM: GeometryLineStringM
+  GeometryLineStringZ: GeometryLineStringZ
+  GeometryLineStringZM: GeometryLineStringZm
+  GeometryMultiLineString: GeometryMultiLineString
+  GeometryMultiLineStringM: GeometryMultiLineStringM
+  GeometryMultiLineStringZ: GeometryMultiLineStringZ
+  GeometryMultiLineStringZM: GeometryMultiLineStringZm
+  GeometryMultiPoint: GeometryMultiPoint
+  GeometryMultiPointM: GeometryMultiPointM
+  GeometryMultiPointZ: GeometryMultiPointZ
+  GeometryMultiPointZM: GeometryMultiPointZm
+  GeometryMultiPolygon: GeometryMultiPolygon
+  GeometryMultiPolygonM: GeometryMultiPolygonM
+  GeometryMultiPolygonZ: GeometryMultiPolygonZ
+  GeometryMultiPolygonZM: GeometryMultiPolygonZm
+  GeometryPoint: GeometryPoint
+  GeometryPointM: GeometryPointM
+  GeometryPointZ: GeometryPointZ
+  GeometryPointZM: GeometryPointZm
+  GeometryPolygon: GeometryPolygon
+  GeometryPolygonM: GeometryPolygonM
+  GeometryPolygonZ: GeometryPolygonZ
+  GeometryPolygonZM: GeometryPolygonZm
   ID: Scalars['ID']['output']
   Int: Scalars['Int']['output']
   IntFilter: IntFilter
@@ -1690,6 +2216,11 @@ export type EventResolvers<
     ContextType,
     RequireFields<EventEventTagsByEventIdArgs, 'orderBy'>
   >
+  geoLocation?: Resolver<
+    Maybe<ResolversTypes['GeographyPoint']>,
+    ParentType,
+    ContextType
+  >
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
@@ -1770,6 +2301,558 @@ export type EventsEdgeResolvers<
 > = {
   cursor?: Resolver<Maybe<ResolversTypes['Cursor']>, ParentType, ContextType>
   node?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export interface GeoJsonScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['GeoJSON'], any> {
+  name: 'GeoJSON'
+}
+
+export type GeographyGeometryResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeographyGeometry'] = ResolversParentTypes['GeographyGeometry']
+> = {
+  __resolveType: TypeResolveFn<'GeographyPoint', ParentType, ContextType>
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+}
+
+export type GeographyInterfaceResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeographyInterface'] = ResolversParentTypes['GeographyInterface']
+> = {
+  __resolveType: TypeResolveFn<'GeographyPoint', ParentType, ContextType>
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+}
+
+export type GeographyPointResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeographyPoint'] = ResolversParentTypes['GeographyPoint']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  longitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryGeometryResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryGeometry'] = ResolversParentTypes['GeometryGeometry']
+> = {
+  __resolveType: TypeResolveFn<
+    | 'GeometryGeometryCollection'
+    | 'GeometryLineString'
+    | 'GeometryMultiLineString'
+    | 'GeometryMultiPoint'
+    | 'GeometryMultiPolygon'
+    | 'GeometryPoint'
+    | 'GeometryPolygon',
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+}
+
+export type GeometryGeometryCollectionResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryGeometryCollection'] = ResolversParentTypes['GeometryGeometryCollection']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  geometries?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryGeometry']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryGeometryCollectionMResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryGeometryCollectionM'] = ResolversParentTypes['GeometryGeometryCollectionM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  geometries?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryGeometryM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryGeometryCollectionZResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryGeometryCollectionZ'] = ResolversParentTypes['GeometryGeometryCollectionZ']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  geometries?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryGeometryZ']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryGeometryCollectionZmResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryGeometryCollectionZM'] = ResolversParentTypes['GeometryGeometryCollectionZM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  geometries?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryGeometryZM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryGeometryMResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryGeometryM'] = ResolversParentTypes['GeometryGeometryM']
+> = {
+  __resolveType: TypeResolveFn<
+    | 'GeometryGeometryCollectionM'
+    | 'GeometryLineStringM'
+    | 'GeometryMultiLineStringM'
+    | 'GeometryMultiPointM'
+    | 'GeometryMultiPolygonM'
+    | 'GeometryPointM'
+    | 'GeometryPolygonM',
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+}
+
+export type GeometryGeometryZResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryGeometryZ'] = ResolversParentTypes['GeometryGeometryZ']
+> = {
+  __resolveType: TypeResolveFn<
+    | 'GeometryGeometryCollectionZ'
+    | 'GeometryLineStringZ'
+    | 'GeometryMultiLineStringZ'
+    | 'GeometryMultiPointZ'
+    | 'GeometryMultiPolygonZ'
+    | 'GeometryPointZ'
+    | 'GeometryPolygonZ',
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+}
+
+export type GeometryGeometryZmResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryGeometryZM'] = ResolversParentTypes['GeometryGeometryZM']
+> = {
+  __resolveType: TypeResolveFn<
+    | 'GeometryGeometryCollectionZM'
+    | 'GeometryLineStringZM'
+    | 'GeometryMultiLineStringZM'
+    | 'GeometryMultiPointZM'
+    | 'GeometryMultiPolygonZM'
+    | 'GeometryPointZM'
+    | 'GeometryPolygonZM',
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+}
+
+export type GeometryInterfaceResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryInterface'] = ResolversParentTypes['GeometryInterface']
+> = {
+  __resolveType: TypeResolveFn<
+    | 'GeometryGeometryCollection'
+    | 'GeometryGeometryCollectionM'
+    | 'GeometryGeometryCollectionZ'
+    | 'GeometryGeometryCollectionZM'
+    | 'GeometryLineString'
+    | 'GeometryLineStringM'
+    | 'GeometryLineStringZ'
+    | 'GeometryLineStringZM'
+    | 'GeometryMultiLineString'
+    | 'GeometryMultiLineStringM'
+    | 'GeometryMultiLineStringZ'
+    | 'GeometryMultiLineStringZM'
+    | 'GeometryMultiPoint'
+    | 'GeometryMultiPointM'
+    | 'GeometryMultiPointZ'
+    | 'GeometryMultiPointZM'
+    | 'GeometryMultiPolygon'
+    | 'GeometryMultiPolygonM'
+    | 'GeometryMultiPolygonZ'
+    | 'GeometryMultiPolygonZM'
+    | 'GeometryPoint'
+    | 'GeometryPointM'
+    | 'GeometryPointZ'
+    | 'GeometryPointZM'
+    | 'GeometryPolygon'
+    | 'GeometryPolygonM'
+    | 'GeometryPolygonZ'
+    | 'GeometryPolygonZM',
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+}
+
+export type GeometryLineStringResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryLineString'] = ResolversParentTypes['GeometryLineString']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  points?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPoint']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryLineStringMResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryLineStringM'] = ResolversParentTypes['GeometryLineStringM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  points?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPointM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryLineStringZResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryLineStringZ'] = ResolversParentTypes['GeometryLineStringZ']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  points?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPointZ']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryLineStringZmResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryLineStringZM'] = ResolversParentTypes['GeometryLineStringZM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  points?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPointZM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiLineStringResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiLineString'] = ResolversParentTypes['GeometryMultiLineString']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  lines?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryLineString']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiLineStringMResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiLineStringM'] = ResolversParentTypes['GeometryMultiLineStringM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  lines?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryLineStringM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiLineStringZResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiLineStringZ'] = ResolversParentTypes['GeometryMultiLineStringZ']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  lines?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryLineStringZ']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiLineStringZmResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiLineStringZM'] = ResolversParentTypes['GeometryMultiLineStringZM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  lines?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryLineStringZM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiPointResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiPoint'] = ResolversParentTypes['GeometryMultiPoint']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  points?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPoint']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiPointMResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiPointM'] = ResolversParentTypes['GeometryMultiPointM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  points?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPointM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiPointZResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiPointZ'] = ResolversParentTypes['GeometryMultiPointZ']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  points?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPointZ']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiPointZmResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiPointZM'] = ResolversParentTypes['GeometryMultiPointZM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  points?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPointZM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiPolygonResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiPolygon'] = ResolversParentTypes['GeometryMultiPolygon']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  polygons?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPolygon']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiPolygonMResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiPolygonM'] = ResolversParentTypes['GeometryMultiPolygonM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  polygons?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPolygonM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiPolygonZResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiPolygonZ'] = ResolversParentTypes['GeometryMultiPolygonZ']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  polygons?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPolygonZ']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryMultiPolygonZmResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryMultiPolygonZM'] = ResolversParentTypes['GeometryMultiPolygonZM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  polygons?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryPolygonZM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryPointResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryPoint'] = ResolversParentTypes['GeometryPoint']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryPointMResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryPointM'] = ResolversParentTypes['GeometryPointM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryPointZResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryPointZ'] = ResolversParentTypes['GeometryPointZ']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  z?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryPointZmResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryPointZM'] = ResolversParentTypes['GeometryPointZM']
+> = {
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  z?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryPolygonResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryPolygon'] = ResolversParentTypes['GeometryPolygon']
+> = {
+  exterior?: Resolver<
+    Maybe<ResolversTypes['GeometryLineString']>,
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  interiors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryLineString']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryPolygonMResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryPolygonM'] = ResolversParentTypes['GeometryPolygonM']
+> = {
+  exterior?: Resolver<
+    Maybe<ResolversTypes['GeometryLineStringM']>,
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  interiors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryLineStringM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryPolygonZResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryPolygonZ'] = ResolversParentTypes['GeometryPolygonZ']
+> = {
+  exterior?: Resolver<
+    Maybe<ResolversTypes['GeometryLineStringZ']>,
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  interiors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryLineStringZ']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type GeometryPolygonZmResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['GeometryPolygonZM'] = ResolversParentTypes['GeometryPolygonZM']
+> = {
+  exterior?: Resolver<
+    Maybe<ResolversTypes['GeometryLineStringZM']>,
+    ParentType,
+    ContextType
+  >
+  geojson?: Resolver<Maybe<ResolversTypes['GeoJSON']>, ParentType, ContextType>
+  interiors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GeometryLineStringZM']>>>,
+    ParentType,
+    ContextType
+  >
+  srid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
@@ -1954,6 +3037,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryEventTagByEventIdAndTagIdArgs, 'eventId' | 'tagId'>
   >
+  getEventsByDate?: Resolver<
+    Maybe<ResolversTypes['EventsConnection']>,
+    ParentType,
+    ContextType,
+    Partial<QueryGetEventsByDateArgs>
+  >
   getEventsByDateAndTags?: Resolver<
     Maybe<ResolversTypes['EventsConnection']>,
     ParentType,
@@ -2109,6 +3198,43 @@ export type Resolvers<ContextType = any> = {
   EventTagsEdge?: EventTagsEdgeResolvers<ContextType>
   EventsConnection?: EventsConnectionResolvers<ContextType>
   EventsEdge?: EventsEdgeResolvers<ContextType>
+  GeoJSON?: GraphQLScalarType
+  GeographyGeometry?: GeographyGeometryResolvers<ContextType>
+  GeographyInterface?: GeographyInterfaceResolvers<ContextType>
+  GeographyPoint?: GeographyPointResolvers<ContextType>
+  GeometryGeometry?: GeometryGeometryResolvers<ContextType>
+  GeometryGeometryCollection?: GeometryGeometryCollectionResolvers<ContextType>
+  GeometryGeometryCollectionM?: GeometryGeometryCollectionMResolvers<ContextType>
+  GeometryGeometryCollectionZ?: GeometryGeometryCollectionZResolvers<ContextType>
+  GeometryGeometryCollectionZM?: GeometryGeometryCollectionZmResolvers<ContextType>
+  GeometryGeometryM?: GeometryGeometryMResolvers<ContextType>
+  GeometryGeometryZ?: GeometryGeometryZResolvers<ContextType>
+  GeometryGeometryZM?: GeometryGeometryZmResolvers<ContextType>
+  GeometryInterface?: GeometryInterfaceResolvers<ContextType>
+  GeometryLineString?: GeometryLineStringResolvers<ContextType>
+  GeometryLineStringM?: GeometryLineStringMResolvers<ContextType>
+  GeometryLineStringZ?: GeometryLineStringZResolvers<ContextType>
+  GeometryLineStringZM?: GeometryLineStringZmResolvers<ContextType>
+  GeometryMultiLineString?: GeometryMultiLineStringResolvers<ContextType>
+  GeometryMultiLineStringM?: GeometryMultiLineStringMResolvers<ContextType>
+  GeometryMultiLineStringZ?: GeometryMultiLineStringZResolvers<ContextType>
+  GeometryMultiLineStringZM?: GeometryMultiLineStringZmResolvers<ContextType>
+  GeometryMultiPoint?: GeometryMultiPointResolvers<ContextType>
+  GeometryMultiPointM?: GeometryMultiPointMResolvers<ContextType>
+  GeometryMultiPointZ?: GeometryMultiPointZResolvers<ContextType>
+  GeometryMultiPointZM?: GeometryMultiPointZmResolvers<ContextType>
+  GeometryMultiPolygon?: GeometryMultiPolygonResolvers<ContextType>
+  GeometryMultiPolygonM?: GeometryMultiPolygonMResolvers<ContextType>
+  GeometryMultiPolygonZ?: GeometryMultiPolygonZResolvers<ContextType>
+  GeometryMultiPolygonZM?: GeometryMultiPolygonZmResolvers<ContextType>
+  GeometryPoint?: GeometryPointResolvers<ContextType>
+  GeometryPointM?: GeometryPointMResolvers<ContextType>
+  GeometryPointZ?: GeometryPointZResolvers<ContextType>
+  GeometryPointZM?: GeometryPointZmResolvers<ContextType>
+  GeometryPolygon?: GeometryPolygonResolvers<ContextType>
+  GeometryPolygonM?: GeometryPolygonMResolvers<ContextType>
+  GeometryPolygonZ?: GeometryPolygonZResolvers<ContextType>
+  GeometryPolygonZM?: GeometryPolygonZmResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   PageInfo?: PageInfoResolvers<ContextType>

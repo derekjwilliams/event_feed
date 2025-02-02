@@ -23,6 +23,10 @@ export const EVENTS_QUERY = `
         author
         title
         description
+        geoLocation {
+          longitude
+          latitude
+        }
         content
         link
         pubDate
