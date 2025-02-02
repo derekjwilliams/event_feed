@@ -142,7 +142,7 @@ function EventsList() {
       <div className="flex gap-2 flex-wrap">
         {tagsLoading && (
           <div className="space-x-2 animate-pulse">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(20)].map((_, i) => (
               <div
                 key={i}
                 className="h-8 w-20 bg-neutral-200 rounded-full inline-block"
@@ -193,9 +193,13 @@ function EventsList() {
       </div>
       {eventsLoading && !eventsData && (
         // Five empty events for loading
-        <div className="space-y-4 animate-pulse">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-32 bg-neutral-100 rounded-lg"></div>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(380px,1fr))] gap-4">
+          {/* <div className="space-y-4"> */}
+          {[...Array(10)].map((_, i) => (
+            <div
+              key={i}
+              className="h-32 bg-neutral-100 rounded-lg min-h-96"
+            ></div>
           ))}
         </div>
       )}
@@ -205,7 +209,7 @@ function EventsList() {
         </div>
       )}
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(390px,1fr))] gap-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(380px,1fr))] gap-4">
         {(eventsData?.nodes || [])
           .filter((event): event is NonNullable<typeof event> => event !== null)
           .map((event) => (

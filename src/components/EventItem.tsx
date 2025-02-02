@@ -34,8 +34,8 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
           <Image
             src={event.imageUrl}
             alt={event.title}
-            width={256}
-            height={256}
+            width={128}
+            height={128}
             className="w-32 h-32 object-cover rounded"
           />
         )}

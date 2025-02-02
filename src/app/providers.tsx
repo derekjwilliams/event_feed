@@ -8,7 +8,6 @@ export default function Providers({ children }: { children: ReactNode }) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        // Do not refetch data once it's loaded
         staleTime: 10 * MINUTE, // Data is considered fresh for 4 minutes
         gcTime: 10 * MINUTE, // Cached data remains in memory forever (or until manually cleared)
         refetchOnWindowFocus: false,
