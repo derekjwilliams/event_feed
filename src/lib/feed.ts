@@ -109,8 +109,16 @@ export const generateICS = async (
         }
         if (event.geoLocation) {
           e.geo = event.geoLocation.latitude + ';' + event.geoLocation.longitude
-          e.location =
-            event.geoLocation.latitude + ',' + event.geoLocation.longitude
+          if (event.location) {
+            e.location =
+              e.location +
+              ' - ' +
+              event.geoLocation.latitude +
+              ',' +
+              event.geoLocation.longitude
+          } else
+            e.location =
+              event.geoLocation.latitude + ',' + event.geoLocation.longitude
         }
 
         vEvents.push(e)
