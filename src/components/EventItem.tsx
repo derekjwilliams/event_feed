@@ -100,25 +100,25 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
         {(event.eventTagsByEventId.nodes.length === 1 &&
           event.eventTagsByEventId.nodes[0]?.tagByTagId?.name !== '') ||
           (event.eventTagsByEventId.nodes.length >= 2 && (
-          <div className="mt-2 gap-2">
-            {event.eventTagsByEventId.nodes
-              .filter(
-                (
-                  tag
-                ): tag is NonNullable<typeof tag> & {
-                  tagByTagId: { name: string }
-                } => !!tag && !!tag.tagByTagId
-              )
-              .map((tag, index) => (
-                <div
-                  key={index}
-                  className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100 dark:text-black"
-                >
-                  {tag.tagByTagId.name}
-                </div>
-              ))}
-          </div>
-        )}
+            <div className="mt-2 gap-2">
+              {event.eventTagsByEventId.nodes
+                .filter(
+                  (
+                    tag
+                  ): tag is NonNullable<typeof tag> & {
+                    tagByTagId: { name: string }
+                  } => !!tag && !!tag.tagByTagId
+                )
+                .map((tag, index) => (
+                  <div
+                    key={index}
+                    className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100 dark:text-black"
+                  >
+                    {tag.tagByTagId.name}
+                  </div>
+                ))}
+            </div>
+          ))}
       </div>
     </div>
   )
