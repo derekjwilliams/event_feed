@@ -40,8 +40,8 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
           />
         )}
         <div className="flex-1">
-          {event.geoLocation && (
-            <div className="float-right">
+          <div className="float-right">
+            {event.geoLocation && (
               <Link
                 target="_blank"
                 className="float-left"
@@ -49,9 +49,9 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
               >
                 <MapPin className="text-neutral-500 dark:text-neutral-200 saturate-25" />
               </Link>
-              <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
-            </div>
-          )}
+            )}
+            <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
+          </div>
           <h2 className="text-xl font-semibold">
             {event?.link ? (
               <a
