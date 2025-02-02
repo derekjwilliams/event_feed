@@ -1,6 +1,6 @@
 // Event.tsx
 import Image from 'next/image'
-import { Map } from 'lucide-react'
+import { Calendar, MapPin } from 'lucide-react'
 import { Event } from '@/types/graphql'
 import Link from 'next/link'
 
@@ -23,7 +23,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
 
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
-  const hasGeoLocation = !!event.geoLocation
+
   return (
     <div
       key={event.id}
@@ -40,6 +40,18 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
           />
         )}
         <div className="flex-1">
+          {event.geoLocation && (
+            <div className="float-right">
+              <Link
+                target="_blank"
+                className="float-left"
+                href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.latitude},${event.geoLocation?.longitude}`}
+              >
+                <MapPin className="text-neutral-500 dark:text-neutral-200 saturate-25" />
+              </Link>
+              <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
+            </div>
+          )}
           <h2 className="text-xl font-semibold">
             {event?.link ? (
               <a href={baseUrl + event.link}>{event.title}</a>
@@ -47,60 +59,40 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
               <span>{event.title}</span>
             )}
           </h2>
-          {event.eventStartDate && (
-            <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
-              {new Date(event.eventStartDate ?? '').toDateString()}
-            </h3>
-          )}
-          {eventStartTimeString !== eventEndTimeString && (
-            <h4 className="font-normal text-neutral-600 dark:text-neutral-200">
-              <span>
-                {eventStartTimeString} - {eventEndTimeString}
-              </span>
-            </h4>
-          )}
+          <div className="flex">
+            {event.eventStartDate && (
+              <div className="text-md font-semibold text-neutral-600 dark:text-neutral-200">
+                {new Date(event.eventStartDate ?? '').toDateString()}
+              </div>
+            )}
+            {eventStartTimeString !== eventEndTimeString && (
+              <div className="mx-4 text-md text-neutral-600 dark:text-neutral-200">
+                <span>
+                  {eventStartTimeString} - {eventEndTimeString}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div>
         {event.location && (
           <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
-            {hasGeoLocation && (
-              <span>
-                {' '}
-                {event.location}
-                <Link
-                  target="_blank"
-                  href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.latitude},${event.geoLocation?.longitude}`}
-                >
-                  <Map />
-                </Link>
-              </span>
-            )}
-            {!hasGeoLocation && <span> {event.location}</span>}
+            {event.location}
           </h3>
         )}
-        {!event.location && hasGeoLocation && (
-          <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
-            <Link
-              target="_blank"
-              href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.latitude},${event.geoLocation?.longitude}`}
-            >
-              <Map />
-            </Link>
-          </h3>
-        )}
-        <p className="text-neutral-600 dark:text-neutral-100 mt-2">
+        <p className="max-h-[240px] overflow-auto p-2 rounded mt-4 bg-neutral-100 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300">
           {event.description}
         </p>
-        {event.content && (
+        {/* {event.content && (
           <div className="max-h-[240px] overflow-auto p-2 rounded mt-4 bg-neutral-100 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300">
             {event.content}
           </div>
-        )}
+        )} */}
         {(event.eventTagsByEventId.nodes.length === 1 &&
           event.eventTagsByEventId.nodes[0]?.tagByTagId?.name !== '') ||
           (event.eventTagsByEventId.nodes.length >= 2 && (
-            <div className="mt-2 gap-2">
+            <div className="mt-2 flex gap-2">
               {event.eventTagsByEventId.nodes
                 .filter(
                   (

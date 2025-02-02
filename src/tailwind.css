@@ -19,3 +19,8 @@ a:hover {
 a:focus {
   outline: 2px solid #2563eb; /* Focus outline with blue color for accessibility */
 }
+
+@theme {
+  --breakpoints-iphone-portrait: 390px;
+  --breakpoints-iphone-landscape: 590px;
+}

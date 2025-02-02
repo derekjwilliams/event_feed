@@ -132,12 +132,6 @@ function EventsList() {
 
   return (
     <div className="space-y-4">
-      <a
-        href="webcal://event-feed-eta.vercel.app/api/ics"
-        className="float-right bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-      >
-        <Calendar className="h-5 w-5" />
-      </a>
       {/* Tag Filter */}
       <div className="flex gap-2 flex-wrap">
         {tagsLoading && (
@@ -190,10 +184,18 @@ function EventsList() {
             Any Tagged
           </button>
         </div>
+        <a
+          href="webcal://event-feed-eta.vercel.app/api/ics"
+          className="float-right bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+        >
+          <Calendar className="h-5 w-5" />
+        </a>
       </div>
+
       {eventsLoading && !eventsData && (
-        // Five empty events for loading
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(380px,1fr))] gap-4">
+        // Empty events for loading
+        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
+          {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(480px,1fr))] gap-4"> */}
           {/* <div className="space-y-4"> */}
           {[...Array(10)].map((_, i) => (
             <div
@@ -208,8 +210,9 @@ function EventsList() {
           Error: {eventsError?.message}
         </div>
       )}
-
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(380px,1fr))] gap-4">
+      {/* <div className="lg:grid lg:grid-cols-[repeat(auto-fit,minmax(480px,1fr))] lg:gap-4 flex flex-col"> */}
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
+        {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(480px,1fr))] gap-4"> */}
         {(eventsData?.nodes || [])
           .filter((event): event is NonNullable<typeof event> => event !== null)
           .map((event) => (
