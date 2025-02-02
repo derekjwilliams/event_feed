@@ -21,8 +21,8 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
     hour12: true, // Ensures 12-hour format
   }).format(new Date(event.eventEndDate))
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
+  // const baseUrl =
+  //   process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
 
   return (
     <div
@@ -54,7 +54,15 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
           )}
           <h2 className="text-xl font-semibold">
             {event?.link ? (
-              <a href={baseUrl + event.link}>{event.title}</a>
+              <a
+                href={
+                  (event?.baseUrl?.endsWith('/')
+                    ? event.baseUrl.slice(0, -1)
+                    : event.baseUrl) + event.link
+                }
+              >
+                {event.title}
+              </a>
             ) : (
               <span>{event.title}</span>
             )}

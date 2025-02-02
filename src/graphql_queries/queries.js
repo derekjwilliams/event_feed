@@ -27,6 +27,7 @@ export const EVENTS_QUERY = `
           longitude
           latitude
         }
+        baseUrl
         content
         link
         pubDate

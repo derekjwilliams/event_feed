@@ -12,6 +12,10 @@ const config: NextConfig = {
         protocol: 'https',
         hostname: 'd1tvaw2qn8888b.cloudfront.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'se-images.campuslabs.com',
+      },
     ],
   },
 }

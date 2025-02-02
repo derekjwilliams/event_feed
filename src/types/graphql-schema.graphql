@@ -604,6 +604,7 @@ type Event implements Node {
   eventEndDate: Datetime
   eventStartDate: Datetime
   geoLocation: GeographyPoint
+  baseUrl: String
 
   """
   Reads and enables pagination through a set of `EventTag`.
@@ -987,6 +988,8 @@ enum EventsOrderBy {
   EVENT_START_DATE_DESC
   GEO_LOCATION_ASC
   GEO_LOCATION_DESC
+  BASE_URL_ASC
+  BASE_URL_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -1064,6 +1067,11 @@ input EventCondition {
   Checks for equality with the object’s `geoLocation` field.
   """
   geoLocation: GeoJSON
+
+  """
+  Checks for equality with the object’s `baseUrl` field.
+  """
+  baseUrl: String
 }
 
 """
@@ -1134,6 +1142,11 @@ input EventFilter {
   Filter by the object’s `eventStartDate` field.
   """
   eventStartDate: DatetimeFilter
+
+  """
+  Filter by the object’s `baseUrl` field.
+  """
+  baseUrl: StringFilter
 
   """
   Checks for all expressions in this list.
@@ -1804,6 +1817,7 @@ input EventInput {
   eventEndDate: Datetime
   eventStartDate: Datetime
   geoLocation: GeoJSON
+  baseUrl: String
 }
 
 """
@@ -2019,6 +2033,7 @@ input EventPatch {
   eventEndDate: Datetime
   eventStartDate: Datetime
   geoLocation: GeoJSON
+  baseUrl: String
 }
 
 """

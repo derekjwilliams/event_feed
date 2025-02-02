@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   GraphQLResolveInfo,
   GraphQLScalarType,
@@ -320,6 +318,7 @@ export type DeleteTagPayloadTagEdgeArgs = {
 export type Event = Node & {
   __typename?: 'Event'
   author?: Maybe<Scalars['String']['output']>
+  baseUrl?: Maybe<Scalars['String']['output']>
   content?: Maybe<Scalars['String']['output']>
   createdAt?: Maybe<Scalars['Datetime']['output']>
   description?: Maybe<Scalars['String']['output']>
@@ -354,6 +353,8 @@ export type EventEventTagsByEventIdArgs = {
 export type EventCondition = {
   /** Checks for equality with the object’s `author` field. */
   author?: InputMaybe<Scalars['String']['input']>
+  /** Checks for equality with the object’s `baseUrl` field. */
+  baseUrl?: InputMaybe<Scalars['String']['input']>
   /** Checks for equality with the object’s `content` field. */
   content?: InputMaybe<Scalars['String']['input']>
   /** Checks for equality with the object’s `createdAt` field. */
@@ -388,6 +389,8 @@ export type EventFilter = {
   and?: InputMaybe<Array<EventFilter>>
   /** Filter by the object’s `author` field. */
   author?: InputMaybe<StringFilter>
+  /** Filter by the object’s `baseUrl` field. */
+  baseUrl?: InputMaybe<StringFilter>
   /** Filter by the object’s `content` field. */
   content?: InputMaybe<StringFilter>
   /** Filter by the object’s `createdAt` field. */
@@ -421,6 +424,7 @@ export type EventFilter = {
 /** An input for mutations affecting `Event` */
 export type EventInput = {
   author?: InputMaybe<Scalars['String']['input']>
+  baseUrl?: InputMaybe<Scalars['String']['input']>
   content?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['Datetime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
@@ -439,6 +443,7 @@ export type EventInput = {
 /** Represents an update to a `Event`. Fields that are set will be updated. */
 export type EventPatch = {
   author?: InputMaybe<Scalars['String']['input']>
+  baseUrl?: InputMaybe<Scalars['String']['input']>
   content?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['Datetime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
@@ -562,6 +567,8 @@ export type EventsEdge = {
 export enum EventsOrderBy {
   AuthorAsc = 'AUTHOR_ASC',
   AuthorDesc = 'AUTHOR_DESC',
+  BaseUrlAsc = 'BASE_URL_ASC',
+  BaseUrlDesc = 'BASE_URL_DESC',
   ContentAsc = 'CONTENT_ASC',
   ContentDesc = 'CONTENT_DESC',
   CreatedAtAsc = 'CREATED_AT_ASC',
@@ -2191,6 +2198,7 @@ export type EventResolvers<
   ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']
 > = {
   author?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  baseUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   createdAt?: Resolver<
     Maybe<ResolversTypes['Datetime']>,
