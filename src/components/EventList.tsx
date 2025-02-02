@@ -167,7 +167,7 @@ function EventsList() {
                   : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300'
               } ${tag.name === '' ? 'italic' : ''}`}
             >
-              {tag.name !== '' ? tag.name : 'Untagged'}
+              {tag.name}
             </button>
           ))}
 
@@ -181,7 +181,7 @@ function EventsList() {
                 : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300 italic'
             }`}
           >
-            Untagged
+            Not Tagged
           </button>
           <button
             onClick={handleToggleAnyTag}
