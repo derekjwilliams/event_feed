@@ -11,49 +11,51 @@ const pool = new Pool({
 })
 
 const db = drizzle(pool, { schema })
-interface EventWithTags {
-  eventId: number
-  eventTitle: string
-  eventDate: string
-  tags: string[]
-}
-
-async function main() {
-  const eventList = await db.select().from(events)
-  console.log('Getting all events from the database: ', eventList)
-}
 async function getEventsWithTags(date: string, tagNames: string[]) {
   // Get events after the specified date and with matching tags, collecting tags in an array
-  const result = await db
-    .select({
-      event: events,
-      tags: sql<string[]>`array_agg(${tags.name})`,
-    })
-    .from(events)
-    .innerJoin(eventTags, eq(events.id, eventTags.eventId))
-    .innerJoin(tags, eq(eventTags.tagId, tags.id))
-    .where(
-      and(
-        gt(events.eventStartDate, date),
-        exists(
-          db
-            .select()
-            .from(eventTags)
-            .innerJoin(tags, eq(eventTags.tagId, tags.id))
-            .where(
-              and(
-                eq(eventTags.eventId, events.id),
-                inArray(tags.name, tagNames)
+  let result
+  if (tagNames.length > 0) {
+    result = await db
+      .select({
+        event: events,
+        tags: sql<string[]>`array_agg(${tags.name})`,
+      })
+      .from(events)
+      .innerJoin(eventTags, eq(events.id, eventTags.eventId))
+      .innerJoin(tags, eq(eventTags.tagId, tags.id))
+      .where(
+        and(
+          gt(events.pubDate, date),
+          exists(
+            db
+              .select()
+              .from(eventTags)
+              .innerJoin(tags, eq(eventTags.tagId, tags.id))
+              .where(
+                and(
+                  eq(eventTags.eventId, events.id),
+                  inArray(tags.name, tagNames)
+                )
               )
-            )
+          )
         )
       )
-    )
-    .groupBy(events.id)
-
-  console.log('Events with tags:', result)
+      .groupBy(events.id)
+  } else {
+    result = await db
+      .select({
+        event: events,
+        tags: sql<string[]>`array_agg(${tags.name})`,
+      })
+      .from(events)
+      .innerJoin(eventTags, eq(events.id, eventTags.eventId))
+      .innerJoin(tags, eq(eventTags.tagId, tags.id))
+      .where(gt(events.pubDate, date))
+      .groupBy(events.id)
+  }
+  console.log('Events with tags:', result.length)
 }
 
 // getEventsWithTags('2025-02-01', ['conference', 'workshop'])
 
-getEventsWithTags('2021-02-01', ['Alpha Chi Omega', 'Baxter Hall'])
+getEventsWithTags('2025-04-01', [])
