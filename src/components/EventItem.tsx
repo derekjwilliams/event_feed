@@ -20,10 +20,6 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
     hour12: true, // Ensures 12-hour format
   }).format(new Date(event.eventEndDate))
 
-  let timesMatch = eventStartTimeString === eventEndTimeString
-  if (timesMatch) {
-    console.log('Matchy Matchy')
-  }
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
   return (

@@ -65,6 +65,15 @@ export const tags = pgTable(
   ]
 )
 
+//// Temporary for first experiment
+
+export const usersTable = pgTable('users', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 255 }).notNull(),
+  age: integer().notNull(),
+  email: varchar({ length: 255 }).notNull().unique(),
+})
+
 export const events = pgTable('events', {
   id: serial().primaryKey().notNull(),
   title: varchar({ length: 255 }).notNull(),
