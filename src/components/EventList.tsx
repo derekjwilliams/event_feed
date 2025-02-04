@@ -9,16 +9,8 @@ import EventItem from './EventItem'
 import { Calendar } from 'lucide-react'
 import { Tag, EventWithTags } from '@/app/events/eventTypes'
 
-interface EventListProps {
-  allTagNames: string[]
-  initialEvents: EventWithTags[]
-  initialTags: string[]
-  nextCursor: string | null
-  hasMore: boolean
-}
-
 function EventList() {
-  const pageSize = 10
+  const pageSize = 100
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -76,7 +68,6 @@ function EventList() {
     router.push(`?${params.toString()}`, { scroll: false })
   }, [selectedTags, pagination, router, searchParams])
 
-  /** ✅ Handle Next Page */
   const handleNext = () => {
     if (!eventsData?.pagination?.next_cursor) return
     setPagination((prev) => ({
@@ -87,7 +78,6 @@ function EventList() {
     }))
   }
 
-  /** ✅ Handle Previous Page */
   const handlePrevious = () => {
     if (!eventsData?.pagination?.prev_cursor) return
     setPagination((prev) => ({
@@ -98,7 +88,6 @@ function EventList() {
     }))
   }
 
-  /** ✅ Handle Tag Selection */
   const handleTagChange = (tag: string) => {
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
@@ -113,7 +102,6 @@ function EventList() {
     })
   }
 
-  /** ✅ Handle "Any Tagged" Toggle */
   const handleToggleAnyTag = () => {
     const allTags =
       tagsData?.nodes

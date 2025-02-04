@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-
+const pageSize = `${100}`
 export function useEventsQuery({
   pubDate,
   tagNames,
@@ -19,7 +19,7 @@ export function useEventsQuery({
     ],
     queryFn: async () => {
       const params = new URLSearchParams()
-      params.set('limit', '10') // Default page size
+      params.set('limit', pageSize)
       params.set('pubDate', pubDate)
       tagNames.forEach((tag) => params.append('tags', tag))
       if (pagination.after) params.set('after', pagination.after)
