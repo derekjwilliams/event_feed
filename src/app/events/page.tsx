@@ -9,7 +9,7 @@ export default async function EventsPage() {
   const defaultNumberOfEvents = 10 // Default page size
 
   // Fetch initial data on the server
-  const { result, nextCursor } = await getEventsWithTags(
+  const { result, nextCursor, hasMore } = await getEventsWithTags(
     tagNames,
     initialCursor,
     defaultNumberOfEvents,
@@ -19,15 +19,14 @@ export default async function EventsPage() {
   const allTags = await getAllTags()
 
   return (
-    <div>
-      <h1>Events (Server-Side)</h1>
-
+    <div className="p-4 m-2">
       {/* Pass fetched data to the client-side component */}
       <EventList
         allTagNames={allTags.map((tag) => tag.name)}
         initialEvents={result}
         initialTags={[]}
         nextCursor={nextCursor} // Pass the new encoded cursor
+        hasMore={hasMore}
       />
     </div>
   )

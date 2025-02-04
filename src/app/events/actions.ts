@@ -22,13 +22,18 @@ function decodeCursor(
 export async function getEventsWithTags(
   tagNames: string[] = [],
   cursor: string | null = null,
-  limit: number = 10,
+  limit: number = 10, // Default page size
   direction: 'next' | 'previous' = 'next'
-): Promise<{ result: EventWithTags[]; nextCursor: string | null }> {
+): Promise<{
+  result: EventWithTags[]
+  nextCursor: string | null
+  hasMore: boolean
+}> {
   let query
   let cursorFilter
 
   if (cursor) {
+    console.log('here, cursor: ', cursor)
     const decodedCursor = decodeCursor(cursor)
     if (decodedCursor) {
       cursorFilter = and(
@@ -88,6 +93,21 @@ export async function getEventsWithTags(
 
   const rawResult: EventWithTags[] = await query
 
+  let hasMore = false
+  if (rawResult.length === limit) {
+    // Check if there are more records after the last event
+    const lastEvent = rawResult[rawResult.length - 1]
+    const lastDate = lastEvent.event.eventStartDate
+    const nextPageCheckQuery = db
+      .select()
+      .from(events)
+      .where(gt(events.id, lastEvent.event.id))
+      .limit(1) // Only check for one record
+
+    const nextPageCheckResult = await nextPageCheckQuery
+    hasMore = nextPageCheckResult.length > 0
+  }
+
   // Convert timestamps to ISO format and generate the new cursor
   const result = rawResult.map(({ event, tags }) => ({
     event: {
@@ -114,7 +134,7 @@ export async function getEventsWithTags(
         )
       : null
 
-  return { result, nextCursor }
+  return { result, nextCursor, hasMore }
 }
 
 export async function getAllTags(): Promise<Tag[]> {
