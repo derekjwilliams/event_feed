@@ -1,12 +1,12 @@
 'use server'
 
 import { getAllTags, getEventsWithTags } from './actions' // Server action
-import EventList from '@/components/DrizzleEventList' // Client-side component
+import EventList from '@/components/EventList' // Client-side component
 
 export default async function EventsPage() {
   const initialCursor = null // Start pagination from the beginning
   const tagNames: string[] = [] // Start with no filters
-  const defaultNumberOfEvents = 10 // Default page size
+  const defaultNumberOfEvents = 100 // Default page size
 
   // Fetch initial data on the server
   const { result, nextCursor, hasMore } = await getEventsWithTags(

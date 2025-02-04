@@ -22,7 +22,7 @@ function decodeCursor(
 export async function getEventsWithTags(
   tagNames: string[] = [],
   cursor: string | null = null,
-  limit: number = 10, // Default page size
+  limit: number = 100, // Default page size
   direction: 'next' | 'previous' = 'next'
 ): Promise<{
   result: EventWithTags[]
@@ -33,7 +33,6 @@ export async function getEventsWithTags(
   let cursorFilter
 
   if (cursor) {
-    console.log('here, cursor: ', cursor)
     const decodedCursor = decodeCursor(cursor)
     if (decodedCursor) {
       cursorFilter = and(
@@ -97,7 +96,6 @@ export async function getEventsWithTags(
   if (rawResult.length === limit) {
     // Check if there are more records after the last event
     const lastEvent = rawResult[rawResult.length - 1]
-    const lastDate = lastEvent.event.eventStartDate
     const nextPageCheckQuery = db
       .select()
       .from(events)
