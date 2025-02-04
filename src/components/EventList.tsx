@@ -95,7 +95,7 @@ export default function EventList({
         selectedTags={selectedTags}
         handleTagChange={handleTagChange}
       />
-      <div className="grid grid-cols-4 gap-4">
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
         {events.map((eventTagWrapper) => (
           <EventItem key={eventTagWrapper.event.id} {...eventTagWrapper} />
         ))}
