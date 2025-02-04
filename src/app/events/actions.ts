@@ -3,7 +3,6 @@ import { and, gt, inArray, eq, sql, exists, lt, lte } from 'drizzle-orm'
 import { events, tags, eventTags } from '@/db/generated_schema'
 import { db } from '@/utils/db'
 import { EventWithTags, Tag } from '@/app/events/eventTypes'
-import { cache } from 'react'
 
 function encodeCursor(eventStartDate: string, id: number): string {
   return Buffer.from(`${eventStartDate}|${id}`).toString('base64')
@@ -20,11 +19,10 @@ function decodeCursor(
     return null
   }
 }
-
 export async function getEventsWithTags(
   tagNames: string[] = [],
   cursor: string | null = null,
-  limit: number = 10, // Default page size
+  limit: number = 100, // Default page size
   direction: 'next' | 'previous' = 'next'
 ): Promise<{
   result: EventWithTags[]
@@ -33,6 +31,7 @@ export async function getEventsWithTags(
 }> {
   let query
   let cursorFilter
+
   if (cursor) {
     const decodedCursor = decodeCursor(cursor)
     if (decodedCursor) {
