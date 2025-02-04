@@ -1,118 +1,239 @@
 'use client'
 
-import { useState } from 'react'
-import { getAllTags, getEventsWithTags } from '@/app/events/actions'
-import { EventWithTags } from '@/app/events/eventTypes'
-import TagsFilter from './TagsFilter'
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { useEventsQuery } from '@/app/hooks/useEventsQuery'
+import { useTagsQuery } from '@/app/hooks/useTagsQuery'
+import TagsFilter from '@/components/TagsFilter'
 import EventItem from './EventItem'
+import { Calendar } from 'lucide-react'
+import { Tag, EventWithTags } from '@/app/events/eventTypes'
 
-export default function EventList({
-  initialEvents,
-  nextCursor,
-  hasMore,
-}: {
+interface EventListProps {
   allTagNames: string[]
   initialEvents: EventWithTags[]
   initialTags: string[]
   nextCursor: string | null
   hasMore: boolean
-}) {
-  const pageSize = 10
-  const [events, setEvents] = useState(initialEvents)
-  const [cursor, setCursor] = useState<string | null>(nextCursor)
-  const [prevCursor, setPrevCursor] = useState<string | null>(null)
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [hasMoreEvents, setHasMoreEvents] = useState<boolean>(true)
-  const [hasPrevious, setHasPrevious] = useState<boolean>(false)
+}
 
-  const handleTagChange = async (tag: string) => {
-    if (!cursor) {
-      console.log('bad cursor?')
-      //return
+function EventList() {
+  const pageSize = 10
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  // Extract query params from URL
+  const [selectedTags, setSelectedTags] = useState<string[]>(
+    searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []
+  )
+  const [pagination, setPagination] = useState({
+    after: searchParams.get('after') || undefined,
+    before: searchParams.get('before') || undefined,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  })
+
+  // Fetch all available tags
+  const {
+    data: tagsData,
+    isLoading: tagsLoading,
+    error: tagsError,
+  } = useTagsQuery()
+
+  // Fetch events based on selectedTags and pagination
+  const {
+    data: eventsData,
+    isLoading: eventsLoading,
+    error: eventsError,
+    isError,
+  } = useEventsQuery({
+    pubDate: new Date(0).toISOString(),
+    tagNames: selectedTags,
+    pagination,
+  })
+
+  // Update URL search params when selectedTags or pagination changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (selectedTags.length > 0) {
+      params.set('tags', selectedTags.join(','))
+    } else {
+      params.delete('tags')
     }
+
+    if (pagination.after) {
+      params.set('after', pagination.after)
+      params.delete('before') // Ensure only one cursor is set at a time
+    } else if (pagination.before) {
+      params.set('before', pagination.before)
+      params.delete('after')
+    } else {
+      params.delete('after')
+      params.delete('before')
+    }
+
+    router.push(`?${params.toString()}`, { scroll: false })
+  }, [selectedTags, pagination, router, searchParams])
+
+  /** ✅ Handle Next Page */
+  const handleNext = () => {
+    if (!eventsData?.pagination?.next_cursor) return
+    setPagination((prev) => ({
+      after: eventsData.pagination.next_cursor,
+      before: undefined,
+      hasNextPage: eventsData.pagination.has_next,
+      hasPreviousPage: true, // Because we are moving forward
+    }))
+  }
+
+  /** ✅ Handle Previous Page */
+  const handlePrevious = () => {
+    if (!eventsData?.pagination?.prev_cursor) return
+    setPagination((prev) => ({
+      before: eventsData.pagination.prev_cursor,
+      after: undefined,
+      hasNextPage: true, // Assume there can be a next page
+      hasPreviousPage: eventsData.pagination.has_prev,
+    }))
+  }
+
+  /** ✅ Handle Tag Selection */
+  const handleTagChange = (tag: string) => {
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag]
+
     setSelectedTags(newTags)
-
-    // Fetch filtered events
-    const { result, nextCursor, hasMore } = await getEventsWithTags(
-      newTags,
-      null,
-      pageSize,
-      'next'
-    ) // why 'next here'?
-
-    setEvents(result)
-    setCursor(nextCursor)
-    setPrevCursor(null) // Store the current cursor as the previous cursor
-    setHasMoreEvents(hasMore)
-    setHasPrevious(false)
+    setPagination({
+      after: undefined,
+      before: undefined,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    })
   }
-  const handleNextPage = async () => {
-    console.log('handle Next Page')
-    if (!cursor) return // No cursor, can't load next page
 
-    const { result, nextCursor, hasMore } = await getEventsWithTags(
-      selectedTags,
-      cursor,
-      pageSize,
-      'next'
+  /** ✅ Handle "Any Tagged" Toggle */
+  const handleToggleAnyTag = () => {
+    const allTags =
+      tagsData?.nodes
+        ?.filter((tag: Tag) => tag && tag.name !== '') // Remove null and empty values
+        .map((tag: Tag) => tag.name) ?? []
+
+    const allSelected = allTags.every((tag: Tag) =>
+      selectedTags.includes(tag.name)
     )
 
-    setEvents(result)
-    setCursor(nextCursor) // Store the new encoded cursor
-    setPrevCursor(cursor) // Keep the current cursor as the previous one
-    setHasMoreEvents(hasMore)
-    setHasPrevious(true)
+    setSelectedTags(allSelected ? [] : allTags) // If all selected, clear; otherwise, select all
+    setPagination({
+      after: undefined,
+      before: undefined,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    })
   }
-  const handlePreviousPage = async () => {
-    if (!prevCursor) {
-      setHasPrevious(false)
-      return // No previous cursor, can't load previous page
-    }
 
-    const { result, nextCursor } = await getEventsWithTags(
-      selectedTags,
-      prevCursor,
-      pageSize,
-      'previous'
-    )
-    setEvents(result)
-    const disablePrevious = cursor === prevCursor
-    setCursor(prevCursor) // Move cursor back
-    setPrevCursor(nextCursor) // Store new previous cursor
-    setHasPrevious(!!prevCursor)
-    setHasMoreEvents(hasMore)
-    if (disablePrevious) {
-      setHasPrevious(false)
-    }
-  }
   return (
     <div className="space-y-4">
-      {/* <div>{nextCursor}</div> */}
-      <TagsFilter
-        selectedTags={selectedTags}
-        handleTagChange={handleTagChange}
-      />
+      {/* Tag Filter */}
+      <div className="flex gap-2 flex-wrap">
+        {tagsLoading && (
+          <div className="space-x-2 animate-pulse">
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="h-8 w-20 bg-neutral-200 rounded-full inline-block"
+              />
+            ))}
+          </div>
+        )}
+        {tagsError && (
+          <div className="text-red-500">
+            Error loading tags: {tagsError.message}
+          </div>
+        )}
+
+        {tagsData
+          ?.filter((tag: Tag) => tag)
+          .map((tag: Tag) => (
+            <button
+              key={tag.name}
+              onClick={() => handleTagChange(tag.name)}
+              className={`px-3 py-1 rounded-full transition-colors ${
+                selectedTags.includes(tag.name)
+                  ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
+                  : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300'
+              }`}
+            >
+              {tag.name}
+            </button>
+          ))}
+
+        <div className="ml-auto">
+          <button
+            key={''}
+            onClick={() => handleTagChange('')}
+            className={`mx-4 px-3 py-1 rounded-full transition-colors ${
+              selectedTags.includes('')
+                ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
+                : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300 italic'
+            }`}
+          >
+            Not Tagged
+          </button>
+          <button
+            onClick={handleToggleAnyTag}
+            className="px-3 py-1 rounded-full transition-colors bg-blue-600 dark:bg-amber-200  saturate-25  text-white dark:text-black"
+          >
+            Any Tagged
+          </button>
+        </div>
+
+        <a
+          href="webcal://event-feed-eta.vercel.app/api/ics"
+          className="float-right bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+        >
+          <Calendar className="h-5 w-5" />
+        </a>
+      </div>
+
+      {eventsLoading && !eventsData && (
+        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
+          {[...Array(10)].map((_, i) => (
+            <div
+              key={i}
+              className="h-32 bg-neutral-100 rounded-lg min-h-96"
+            ></div>
+          ))}
+        </div>
+      )}
+      {isError && (
+        <div className="p-4 text-red-600 bg-red-50 rounded-lg">
+          Error: {eventsError?.message}
+        </div>
+      )}
+
       <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
-        {events.map((eventTagWrapper) => (
-          <EventItem key={eventTagWrapper.event.id} {...eventTagWrapper} />
+        {(eventsData?.data || []).map((event: EventWithTags) => (
+          <EventItem key={event.event.id} event={event} />
         ))}
       </div>
 
-      <div className="mt-4 flex justify-between items-center">
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center">
         <button
-          onClick={handlePreviousPage}
-          disabled={!hasPrevious} // Disable if no previous cursor is available
+          onClick={handlePrevious}
+          disabled={!eventsData?.pagination?.has_prev || eventsLoading}
           className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
         >
           Previous
         </button>
+        {eventsLoading && (
+          <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full" />
+        )}
         <button
-          onClick={handleNextPage}
-          disabled={!hasMoreEvents}
-          // disabled={!cursor} // Disable if no next cursor is available
+          onClick={handleNext}
+          disabled={!eventsData?.pagination?.has_next || eventsLoading}
           className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
         >
           Next
@@ -121,3 +242,11 @@ export default function EventList({
     </div>
   )
 }
+
+const SuspendedEventsList = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EventList />
+  </Suspense>
+)
+
+export default SuspendedEventsList

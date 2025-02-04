@@ -1,33 +1,10 @@
-'use server'
+import SuspendedEventsList from '@/components/EventList'
 
-import { getAllTags, getEventsWithTags } from './actions' // Server action
-import EventList from '@/components/EventList' // Client-side component
-
-export default async function EventsPage() {
-  const initialCursor = null // Start pagination from the beginning
-  const tagNames: string[] = [] // Start with no filters
-  const defaultNumberOfEvents = 100 // Default page size
-
-  // Fetch initial data on the server
-  const { result, nextCursor, hasMore } = await getEventsWithTags(
-    tagNames,
-    initialCursor,
-    defaultNumberOfEvents,
-    'next'
-  )
-
-  const allTags = await getAllTags()
-
+export default function EventsPage() {
   return (
-    <div className="p-4 m-2">
-      {/* Pass fetched data to the client-side component */}
-      <EventList
-        allTagNames={allTags.map((tag) => tag.name)}
-        initialEvents={result}
-        initialTags={[]}
-        nextCursor={nextCursor} // Pass the new encoded cursor
-        hasMore={hasMore}
-      />
-    </div>
+    <main className="p-4 m-2">
+      <h1 className="text-2xl font-bold mb-4">Events</h1>
+      <SuspendedEventsList />
+    </main>
   )
 }
