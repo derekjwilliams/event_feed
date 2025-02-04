@@ -22,11 +22,12 @@ export default async function EventsPage() {
     <div className="p-4 m-2">
       {/* Pass fetched data to the client-side component */}
       <EventList
-        allTagNames={allTags.map((tag) => tag.name)}
         initialEvents={result}
+        allTagNames={allTags.map((tag) => tag.name)}
         initialTags={[]}
         nextCursor={nextCursor} // Pass the new encoded cursor
         hasMore={hasMore}
+        direction="next"
       />
     </div>
   )

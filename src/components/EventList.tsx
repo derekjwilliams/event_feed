@@ -1,110 +1,122 @@
 'use client'
-
-import { useState } from 'react'
-import { getAllTags, getEventsWithTags } from '@/app/events/actions'
-import { EventWithTags } from '@/app/events/eventTypes'
+import { useState, useEffect, useCallback } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { fetchEventsWithTags } from '@/app/events/api'
 import TagsFilter from './TagsFilter'
 import EventItem from './EventItem'
+import { EventWithTags } from '@/app/events/eventTypes'
 
 export default function EventList({
   initialEvents,
   nextCursor,
   hasMore,
+  direction = 'next',
 }: {
   allTagNames: string[]
   initialEvents: EventWithTags[]
   initialTags: string[]
   nextCursor: string | null
   hasMore: boolean
+  direction: 'next' | 'previous'
 }) {
   const pageSize = 10
-  const [events, setEvents] = useState(initialEvents)
+  const [events, setEvents] = useState<EventWithTags[]>(initialEvents)
   const [cursor, setCursor] = useState<string | null>(nextCursor)
   const [prevCursor, setPrevCursor] = useState<string | null>(null)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [hasMoreEvents, setHasMoreEvents] = useState<boolean>(true)
   const [hasPrevious, setHasPrevious] = useState<boolean>(false)
+  const queryClient = useQueryClient()
 
-  const handleTagChange = async (tag: string) => {
-    if (!cursor) {
-      console.log('bad cursor?')
-      //return
-    }
+  // Debounced tag change handler
+  const handleTagChange = (tag: string) => {
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag]
-    setSelectedTags(newTags)
 
-    // Fetch filtered events
-    const { result, nextCursor, hasMore } = await getEventsWithTags(
-      newTags,
-      null,
-      pageSize,
-      'next'
-    ) // why 'next here'?
+    setSelectedTags(newTags) // Update selected tags state
 
-    setEvents(result)
-    setCursor(nextCursor)
-    setPrevCursor(null) // Store the current cursor as the previous cursor
-    setHasMoreEvents(hasMore)
+    setPrevCursor(null) // Reset previous cursor when selecting new tags
     setHasPrevious(false)
-  }
-  const handleNextPage = async () => {
-    console.log('handle Next Page')
-    if (!cursor) return // No cursor, can't load next page
+    setHasMoreEvents(true) // Assume more results exist
+    setCursor(null) // Reset cursor
 
-    const { result, nextCursor, hasMore } = await getEventsWithTags(
-      selectedTags,
-      cursor,
-      pageSize,
-      'next'
-    )
-
-    setEvents(result)
-    setCursor(nextCursor) // Store the new encoded cursor
-    setPrevCursor(cursor) // Keep the current cursor as the previous one
-    setHasMoreEvents(hasMore)
-    setHasPrevious(true)
+    // Invalidate queries with a delay to avoid multiple requests
+    queryClient.invalidateQueries({
+      queryKey: ['events', newTags, cursor, pageSize, direction],
+    })
   }
-  const handlePreviousPage = async () => {
-    if (!prevCursor) {
-      setHasPrevious(false)
-      return // No previous cursor, can't load previous page
-    }
 
-    const { result, nextCursor } = await getEventsWithTags(
-      selectedTags,
-      prevCursor,
-      pageSize,
-      'previous'
-    )
-    setEvents(result)
-    const disablePrevious = cursor === prevCursor
-    setCursor(prevCursor) // Move cursor back
-    setPrevCursor(nextCursor) // Store new previous cursor
-    setHasPrevious(!!prevCursor)
-    setHasMoreEvents(hasMore)
-    if (disablePrevious) {
-      setHasPrevious(false)
-    }
+  // Fetch data with selected tags, cursor, and page size
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['events', selectedTags, cursor, pageSize, direction] as const,
+    queryFn: () =>
+      fetchEventsWithTags(selectedTags, cursor, pageSize, direction),
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
+    enabled: selectedTags.length > 0 || cursor !== null, // Ensure it only runs if there are selected tags or a cursor
+  })
+
+  const fetchNextPage = useMutation({
+    mutationFn: async () => {
+      if (!cursor) return null
+      return await fetchEventsWithTags(selectedTags, cursor, pageSize, 'next')
+    },
+    onSuccess: ({ result, nextCursor, hasMore }) => {
+      setEvents((prevEvents) => [...prevEvents, ...result])
+      setPrevCursor(cursor)
+      setCursor(nextCursor)
+      setHasMoreEvents(hasMore)
+      setHasPrevious(true)
+    },
+  })
+
+  const fetchPreviousPage = useMutation({
+    mutationFn: async () => {
+      if (!prevCursor) return null
+      return await fetchEventsWithTags(
+        selectedTags,
+        prevCursor,
+        pageSize,
+        'previous'
+      )
+    },
+    onSuccess: ({ result, nextCursor }) => {
+      setEvents(result)
+      setCursor(prevCursor)
+      setPrevCursor(nextCursor)
+      setHasPrevious(!!prevCursor)
+      setHasMoreEvents(true)
+    },
+  })
+
+  const handleNextPage = () => {
+    if (!cursor) return
+    fetchNextPage.mutate()
   }
+
+  const handlePreviousPage = () => {
+    if (!prevCursor) return
+    fetchPreviousPage.mutate()
+  }
+
   return (
     <div className="space-y-4">
-      {/* <div>{nextCursor}</div> */}
       <TagsFilter
         selectedTags={selectedTags}
-        handleTagChange={handleTagChange}
+        handleTagChange={handleTagChange} // Use the debounced tag handler
       />
-      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
-        {events.map((eventTagWrapper) => (
-          <EventItem key={eventTagWrapper.event.id} {...eventTagWrapper} />
-        ))}
-      </div>
-
+      {data && data.result && (
+        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
+          {data.result.map((eventTagWrapper: EventWithTags) => (
+            <EventItem key={eventTagWrapper.event.id} {...eventTagWrapper} />
+          ))}
+        </div>
+      )}
       <div className="mt-4 flex justify-between items-center">
         <button
           onClick={handlePreviousPage}
-          disabled={!hasPrevious} // Disable if no previous cursor is available
+          disabled={!hasPrevious}
           className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
         >
           Previous
@@ -112,7 +124,6 @@ export default function EventList({
         <button
           onClick={handleNextPage}
           disabled={!hasMoreEvents}
-          // disabled={!cursor} // Disable if no next cursor is available
           className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
         >
           Next

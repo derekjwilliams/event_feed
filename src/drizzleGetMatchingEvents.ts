@@ -11,6 +11,11 @@ const pool = new Pool({
 })
 
 const db = drizzle(pool, { schema })
+
+async function getTags() {
+  const result = await db.select().from(tags).orderBy(tags.name)
+  console.log(result)
+}
 async function getEventsWithTags(date: string, tagNames: string[]) {
   // Get events after the specified date and with matching tags, collecting tags in an array
   let result
@@ -57,4 +62,6 @@ async function getEventsWithTags(date: string, tagNames: string[]) {
 
 // getEventsWithTags('2025-02-01', ['conference', 'workshop'])
 
-getEventsWithTags('2025-04-01', [])
+//getEventsWithTags('2021-04-01', [])
+const result = getTags()
+console.log(result)
