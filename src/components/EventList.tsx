@@ -35,7 +35,7 @@ function EventsList() {
     error: tagsError,
   } = useTagsQuery()
 
-  // Get the evenst, independent of date, with selectedTags, and pagination settings, which we set in the useEffect
+  // Get the events, independent of date, with selectedTags, and pagination settings, which we set in the useEffect
   const {
     data: eventsData,
     isLoading: eventsLoading,

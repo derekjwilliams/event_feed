@@ -1,15 +1,47 @@
 'use server'
-import { and, gt, inArray, eq, sql, exists } from 'drizzle-orm'
+import { and, gt, inArray, eq, sql, exists, lt, lte } from 'drizzle-orm'
 import { events, tags, eventTags } from '@/db/generated_schema'
 import { db } from '@/utils/db'
 import { EventWithTags, Tag } from '@/app/events/eventTypes'
 
+function encodeCursor(eventStartDate: string, id: number): string {
+  return Buffer.from(`${eventStartDate}|${id}`).toString('base64')
+}
+
+function decodeCursor(
+  cursor: string
+): { eventStartDate: string; id: number } | null {
+  try {
+    const decoded = Buffer.from(cursor, 'base64').toString('utf-8')
+    const [eventStartDate, id] = decoded.split('|')
+    return { eventStartDate, id: parseInt(id, 10) }
+  } catch {
+    return null
+  }
+}
 export async function getEventsWithTags(
   tagNames: string[] = [],
-  cursor: string = new Date(0).toISOString(),
-  limit: number = 2 //TODO limit
+  cursor: string | null = null,
+  limit: number = 10,
+  direction: 'next' | 'previous' = 'next'
 ): Promise<{ result: EventWithTags[]; nextCursor: string | null }> {
   let query
+  let cursorFilter
+
+  if (cursor) {
+    const decodedCursor = decodeCursor(cursor)
+    if (decodedCursor) {
+      cursorFilter = and(
+        direction === 'next'
+          ? gt(events.eventStartDate, decodedCursor.eventStartDate)
+          : lte(events.eventStartDate, decodedCursor.eventStartDate),
+        direction === 'next'
+          ? gt(events.id, decodedCursor.id)
+          : lte(events.id, decodedCursor.id)
+      )
+    }
+  }
+
   if (tagNames.length > 0) {
     query = db
       .select({
@@ -21,7 +53,7 @@ export async function getEventsWithTags(
       .innerJoin(tags, eq(eventTags.tagId, tags.id))
       .where(
         and(
-          gt(events.pubDate, cursor),
+          cursorFilter ?? sql`TRUE`, // Apply cursor filter if present
           exists(
             db
               .select()
@@ -37,8 +69,8 @@ export async function getEventsWithTags(
         )
       )
       .groupBy(events.id)
-      .orderBy(events.eventStartDate)
-      .limit(2) //TODO limit
+      .orderBy(events.eventStartDate, events.id) // Order by both timestamp and ID
+      .limit(limit)
   } else {
     query = db
       .select({
@@ -48,15 +80,40 @@ export async function getEventsWithTags(
       .from(events)
       .innerJoin(eventTags, eq(events.id, eventTags.eventId))
       .innerJoin(tags, eq(eventTags.tagId, tags.id))
-      .where(gt(events.eventStartDate, cursor))
+      .where(cursorFilter ?? sql`TRUE`)
       .groupBy(events.id)
-      .orderBy(events.eventStartDate)
-      .limit(2) //TODO limit
+      .orderBy(events.eventStartDate, events.id) // Order by both timestamp and ID
+      .limit(limit)
   }
 
-  const result: EventWithTags[] = await query
+  const rawResult: EventWithTags[] = await query
+
+  // Convert timestamps to ISO format and generate the new cursor
+  const result = rawResult.map(({ event, tags }) => ({
+    event: {
+      ...event,
+      eventStartDate: event.eventStartDate
+        ? new Date(event.eventStartDate).toISOString()
+        : null,
+      pubDate: event.pubDate ? new Date(event.pubDate).toISOString() : null,
+      createdAt: event.createdAt
+        ? new Date(event.createdAt).toISOString()
+        : null,
+      updatedAt: event.updatedAt
+        ? new Date(event.updatedAt).toISOString()
+        : null,
+    },
+    tags,
+  }))
+
   const nextCursor =
-    result.length > 0 ? result[result.length - 1].event.eventStartDate : null
+    result.length > 0
+      ? encodeCursor(
+          result[result.length - 1].event.eventStartDate!,
+          result[result.length - 1].event.id
+        )
+      : null
+
   return { result, nextCursor }
 }
 

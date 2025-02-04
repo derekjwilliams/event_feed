@@ -5,7 +5,7 @@ import { getAllTags, getEventsWithTags } from '@/app/events/actions'
 import { EventWithTags } from '@/app/events/eventTypes'
 import TagsFilter from './DrizzleTagsFilter'
 
-export default function EventsList({
+export default function EventList({
   allTagNames,
   initialEvents,
   initialTags,
@@ -16,41 +16,67 @@ export default function EventsList({
   initialTags: string[]
   nextCursor: string | null
 }) {
+  const pageSize = 10
   const [currentPage, setCurrentPage] = useState(1)
   const [events, setEvents] = useState(initialEvents)
   const [cursor, setCursor] = useState<string | null>(nextCursor)
+  const [prevCursor, setPrevCursor] = useState<string | null>(null)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
-  const handleNextPage = async () => {
-    if (cursor) {
-      const { result, nextCursor: newCursor } = await getEventsWithTags(
-        selectedTags,
-        cursor,
-        2 //TODO limit
-      )
-      setEvents(result) // Update event list
-      setCursor(newCursor)
-    }
-  }
-
   const handleTagChange = async (tag: string) => {
+    if (!cursor) {
+      console.log('bad cursor?')
+      return
+    }
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag]
-    alert(JSON.stringify(newTags))
     setSelectedTags(newTags)
 
     // Fetch filtered events
-    const { result, nextCursor: newCursor } = await getEventsWithTags(
+    const { result, nextCursor } = await getEventsWithTags(
       newTags,
-      '2010-01-01',
-      10
+      cursor,
+      pageSize,
+      'next'
+    ) // why 'next here'?
+
+    setEvents(result)
+    setCursor(nextCursor)
+    setPrevCursor(cursor) // Store the current cursor as the previous cursor
+  }
+  const handleNextPage = async () => {
+    if (!cursor) return // No cursor, can't load next page
+
+    const { result, nextCursor } = await getEventsWithTags(
+      selectedTags,
+      cursor,
+      pageSize,
+      'next'
+    )
+
+    setEvents(result)
+    setCursor(nextCursor) // Store the new encoded cursor
+    setPrevCursor(cursor) // Keep the current cursor as the previous one
+  }
+  const handlePreviousPage = async () => {
+    if (!prevCursor) return // No previous cursor, can't load previous page
+
+    const { result, nextCursor } = await getEventsWithTags(
+      selectedTags,
+      prevCursor,
+      pageSize,
+      'previous'
     )
     setEvents(result)
-    setCursor(newCursor)
+    setCursor(prevCursor) // Move cursor back
+    setPrevCursor(nextCursor) // Store new previous cursor
   }
   return (
     <div>
+      <div>{`Previous Cursor: ${prevCursor}`}</div>
+      <div>{`Next Cursor: ${nextCursor}`}</div>
+      <div>{`Cursor: ${cursor}`}</div>
       <TagsFilter
         selectedTags={selectedTags}
         handleTagChange={handleTagChange}
@@ -65,20 +91,28 @@ export default function EventsList({
       <ul>
         {events.map((eventTagWrapper: EventWithTags) => (
           <li key={eventTagWrapper.event.id}>
-            <h3>
-              {eventTagWrapper.event.title} (
+            <h3 className="text-xl font-semibold">
+              {eventTagWrapper.event.id} - {eventTagWrapper.event.title} (
               {eventTagWrapper.event.eventStartDate})
             </h3>
-            <div>id: {eventTagWrapper.event.title}</div>
             <p>Tags: {eventTagWrapper.tags.join(', ')}</p>
           </li>
         ))}
       </ul>
-      {cursor && (
-        <div>
-          <button onClick={handleNextPage}>Next</button>
-        </div>
-      )}
+      <div>
+        <button
+          onClick={handlePreviousPage}
+          disabled={!prevCursor} // Disable if no previous cursor is available
+        >
+          Previous
+        </button>
+        <button
+          onClick={handleNextPage}
+          disabled={!cursor} // Disable if no next cursor is available
+        >
+          Next
+        </button>
+      </div>
     </div>
   )
 }

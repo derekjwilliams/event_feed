@@ -1,35 +1,33 @@
 'use server'
 
 import { getAllTags, getEventsWithTags } from './actions' // Server action
-
-import EventsList from '@/components/DrizzleEventList' // Client-side component
+import EventList from '@/components/DrizzleEventList' // Client-side component
 
 export default async function EventsPage() {
-  const date = new Date(0).toISOString() // Example date
-  const tagNames = ['Other', 'PNCA Campus'] // Example tags TODO empty array here
-  const defaultNumberOfEvents = 2 // TODO limit
+  const initialCursor = null // Start pagination from the beginning
+  const tagNames: string[] = [] // Start with no filters
+  const defaultNumberOfEvents = 10 // Default page size
+
   // Fetch initial data on the server
   const { result, nextCursor } = await getEventsWithTags(
     tagNames,
-    date,
-    defaultNumberOfEvents
+    initialCursor,
+    defaultNumberOfEvents,
+    'next'
   )
+
   const allTags = await getAllTags()
-  console.log('RESULT: ', allTags)
 
   return (
     <div>
-      <h1>Events, I am on the server</h1>
-      {/* <div>{`${JSON.stringify(result)}`}</div> */}
-
-      {/* Filter or static content can go here */}
+      <h1>Events (Server-Side)</h1>
 
       {/* Pass fetched data to the client-side component */}
-      <EventsList
+      <EventList
         allTagNames={allTags.map((tag) => tag.name)}
         initialEvents={result}
         initialTags={[]}
-        nextCursor={nextCursor}
+        nextCursor={nextCursor} // Pass the new encoded cursor
       />
     </div>
   )

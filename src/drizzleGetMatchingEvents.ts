@@ -53,7 +53,6 @@ async function getEventsWithTags(date: string, tagNames: string[]) {
       .where(gt(events.pubDate, date))
       .groupBy(events.id)
   }
-  console.log('Events with tags:', result.length)
 }
 
 // getEventsWithTags('2025-02-01', ['conference', 'workshop'])
