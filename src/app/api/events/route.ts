@@ -114,7 +114,6 @@ export async function GET(request: Request) {
     )
   }
 
-  // ✅ Determine if there are previous pages (`has_prev`) and generate `prev_cursor`
   let hasPrev = false
   let prevCursor: string | null = null
 
@@ -134,7 +133,6 @@ export async function GET(request: Request) {
     )
   }
 
-  // ✅ Format the response properly
   return NextResponse.json(
     {
       data: rawResult.map(({ event, tags }) => ({
