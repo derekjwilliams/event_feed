@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/utils/db'
-import { tags } from '@/db/generated_schema'
+import { tags } from '@/db/schema'
 
 export async function GET() {
   try {

@@ -2,8 +2,8 @@ import 'dotenv/config'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { and, gt, inArray, eq, sql, exists } from 'drizzle-orm'
 
-import { events, tags, eventTags } from './db/generated_schema'
-import * as schema from './db/generated_schema'
+import { events, tags, eventTags } from './db/schema'
+import * as schema from './db/schema'
 import { Pool } from 'pg'
 
 const pool = new Pool({

@@ -1,6 +1,6 @@
 'use server'
 import { and, gt, inArray, eq, sql, exists, lt, lte } from 'drizzle-orm'
-import { events, tags, eventTags } from '@/db/generated_schema'
+import { events, tags, eventTags } from '@/db/schema'
 import { db } from '@/utils/db'
 import { EventWithTags, Tag } from '@/app/events/eventTypes'
 
