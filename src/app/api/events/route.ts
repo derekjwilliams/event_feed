@@ -61,7 +61,6 @@ export async function GET(request: Request) {
   } else if (last) {
     limit = last
   }
-  console.log('LIMIT, limit = ', limit)
 
   if (tagNames.length > 0) {
     query = db
@@ -109,8 +108,6 @@ export async function GET(request: Request) {
 
   const rawResult: EventWithTags[] = await query
 
-  console.log('rawResult, rawResult.length = ', rawResult.length)
-
   let hasNext = false
   let endCursor: string | null = null
 
@@ -119,23 +116,23 @@ export async function GET(request: Request) {
     const nextPageCheckQuery = db
       .select()
       .from(events)
-      .innerJoin(eventTags, eq(events.id, eventTags.eventId))
-      .innerJoin(tags, eq(eventTags.tagId, tags.id))
       .where(
         and(
           gt(sql`(${events.id})`, sql`(${lastEvent.event.id})`),
-          exists(
-            db
-              .select()
-              .from(eventTags)
-              .innerJoin(tags, eq(eventTags.tagId, tags.id))
-              .where(
-                and(
-                  eq(eventTags.eventId, events.id),
-                  inArray(tags.name, tagNames)
-                )
+          tagNames.length > 0
+            ? exists(
+                db
+                  .select()
+                  .from(eventTags)
+                  .innerJoin(tags, eq(eventTags.tagId, tags.id))
+                  .where(
+                    and(
+                      eq(eventTags.eventId, events.id),
+                      inArray(tags.name, tagNames)
+                    )
+                  )
               )
-          )
+            : sql`TRUE`
         )
       )
       .limit(1)
@@ -156,8 +153,6 @@ export async function GET(request: Request) {
     const prevPageCheckQuery = db
       .select()
       .from(events)
-      .innerJoin(eventTags, eq(events.id, eventTags.eventId))
-      .innerJoin(tags, eq(eventTags.tagId, tags.id))
       .where(
         and(
           lt(events.id, firstEvent.event.id),
@@ -165,18 +160,20 @@ export async function GET(request: Request) {
             sql`(${events.eventStartDate})::timestamptz`,
             sql`(${firstEvent.event.eventStartDate})::timestamptz`
           ),
-          exists(
-            db
-              .select()
-              .from(eventTags)
-              .innerJoin(tags, eq(eventTags.tagId, tags.id))
-              .where(
-                and(
-                  eq(eventTags.eventId, events.id),
-                  inArray(tags.name, tagNames)
-                )
+          tagNames.length > 0
+            ? exists(
+                db
+                  .select()
+                  .from(eventTags)
+                  .innerJoin(tags, eq(eventTags.tagId, tags.id))
+                  .where(
+                    and(
+                      eq(eventTags.eventId, events.id),
+                      inArray(tags.name, tagNames)
+                    )
+                  )
               )
-          )
+            : sql`TRUE`
         )
       )
       .limit(1)
