@@ -1,29 +1,36 @@
 import { useQuery } from '@tanstack/react-query'
-const pageSize = `${100}`
-export function useEventsQuery({
+import { EventsQueryParams } from './params'
+const maxNumberToRetrieve = `${10}` // TODO
+
+//: UseQueryResult<EventsConnection>
+const useEventsQuery = ({
   pubDate,
   tagNames,
   pagination,
-}: {
-  pubDate: string
-  tagNames: string[]
-  pagination: { after?: string; before?: string }
-}) {
+}: EventsQueryParams) => {
   return useQuery({
     queryKey: [
       'events',
-      tagNames,
-      pagination.after,
-      pagination.before,
-      pubDate,
+      { pubDate, tagNames, after: pagination.after, before: pagination.before },
     ],
     queryFn: async () => {
-      const params = new URLSearchParams()
-      params.set('limit', pageSize)
+      const params = new URLSearchParams() ////
       params.set('pubDate', pubDate)
       tagNames.forEach((tag) => params.append('tags', tag))
-      if (pagination.after) params.set('after', pagination.after)
-      if (pagination.before) params.set('before', pagination.before)
+      if (pagination.after) {
+        params.set(
+          'first',
+          `${pagination.first}` ? `${pagination.first}` : maxNumberToRetrieve
+        )
+        params.set('after', pagination.after)
+      }
+      if (pagination.before) {
+        params.set(
+          'last',
+          `${pagination.last}` ? `${pagination.last}` : maxNumberToRetrieve
+        )
+        params.set('before', pagination.before)
+      }
 
       const res = await fetch(`/api/events?${params.toString()}`)
       if (!res.ok) throw new Error('Failed to fetch events')
@@ -34,3 +41,5 @@ export function useEventsQuery({
     // keepPreviousData: true, // Avoids flickering when paginating
   })
 }
+
+export default useEventsQuery

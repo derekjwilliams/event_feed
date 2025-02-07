@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { and, gt, lt, inArray, eq, sql, exists } from 'drizzle-orm'
+import { and, gt, lt, inArray, eq, sql, exists, lte } from 'drizzle-orm'
 import { events, tags, eventTags } from '@/db/generated_schema'
 import { db } from '@/utils/db'
 import { EventWithTags } from '@/app/events/eventTypes'
@@ -25,12 +25,14 @@ export async function GET(request: Request) {
   const tagNames = searchParams.getAll('tags')
   const after = searchParams.get('after') // New parameter for forward pagination
   const before = searchParams.get('before') // New parameter for backward pagination
-  const limit = Number(searchParams.get('limit')) || 100
+  const first = Number(searchParams.get('first')) || 10 // TODO use a const instead of hardcoding 10000
+  const last = Number(searchParams.get('last')) || 10 // TODO use a const instead of hardcoding 10000
 
   let query
   let cursorFilter
 
   if (after) {
+    // TODO use first here?
     const decodedCursor = decodeCursor(after)
     if (decodedCursor) {
       cursorFilter = and(
@@ -39,6 +41,7 @@ export async function GET(request: Request) {
       )
     }
   } else if (before) {
+    // TODO use last here?
     const decodedCursor = decodeCursor(before)
     if (decodedCursor) {
       cursorFilter = and(
@@ -47,6 +50,18 @@ export async function GET(request: Request) {
       )
     }
   }
+
+  let limit = 10000 // TODO use a const instead of hardcoding 10000
+  if (after && !before) {
+    limit = first
+  } else if (!after && before) {
+    limit = last
+  } else if (first) {
+    limit = first
+  } else if (last) {
+    limit = last
+  }
+  console.log('LIMIT, limit = ', limit)
 
   if (tagNames.length > 0) {
     query = db
@@ -94,45 +109,85 @@ export async function GET(request: Request) {
 
   const rawResult: EventWithTags[] = await query
 
-  // ✅ Determine if there are more pages ahead (`has_next`) and generate `next_cursor`
+  console.log('rawResult, rawResult.length = ', rawResult.length)
+
   let hasNext = false
-  let nextCursor: string | null = null
+  let endCursor: string | null = null
 
   if (rawResult.length === limit) {
     const lastEvent = rawResult[rawResult.length - 1]
     const nextPageCheckQuery = db
       .select()
       .from(events)
-      .where(gt(events.id, lastEvent.event.id))
+      .innerJoin(eventTags, eq(events.id, eventTags.eventId))
+      .innerJoin(tags, eq(eventTags.tagId, tags.id))
+      .where(
+        and(
+          gt(sql`(${events.id})`, sql`(${lastEvent.event.id})`),
+          exists(
+            db
+              .select()
+              .from(eventTags)
+              .innerJoin(tags, eq(eventTags.tagId, tags.id))
+              .where(
+                and(
+                  eq(eventTags.eventId, events.id),
+                  inArray(tags.name, tagNames)
+                )
+              )
+          )
+        )
+      )
       .limit(1)
 
     const nextPageCheckResult = await nextPageCheckQuery
     hasNext = nextPageCheckResult.length > 0
-    nextCursor = encodeCursor(
+    endCursor = encodeCursor(
       lastEvent.event.eventStartDate!,
       lastEvent.event.id
     )
   }
 
   let hasPrev = false
-  let prevCursor: string | null = null
+  let startCursor: string | null = null
 
   if (rawResult.length > 0) {
     const firstEvent = rawResult[0]
     const prevPageCheckQuery = db
       .select()
       .from(events)
-      .where(lt(events.id, firstEvent.event.id))
+      .innerJoin(eventTags, eq(events.id, eventTags.eventId))
+      .innerJoin(tags, eq(eventTags.tagId, tags.id))
+      .where(
+        and(
+          lt(events.id, firstEvent.event.id),
+          lt(
+            sql`(${events.eventStartDate})::timestamptz`,
+            sql`(${firstEvent.event.eventStartDate})::timestamptz`
+          ),
+          exists(
+            db
+              .select()
+              .from(eventTags)
+              .innerJoin(tags, eq(eventTags.tagId, tags.id))
+              .where(
+                and(
+                  eq(eventTags.eventId, events.id),
+                  inArray(tags.name, tagNames)
+                )
+              )
+          )
+        )
+      )
       .limit(1)
 
     const prevPageCheckResult = await prevPageCheckQuery
     hasPrev = prevPageCheckResult.length > 0
-    prevCursor = encodeCursor(
+    startCursor = encodeCursor(
       firstEvent.event.eventStartDate!,
       firstEvent.event.id
     )
   }
-
   return NextResponse.json(
     {
       data: rawResult.map(({ event, tags }) => ({
@@ -151,11 +206,11 @@ export async function GET(request: Request) {
         },
         tags,
       })),
-      pagination: {
-        next_cursor: nextCursor,
-        prev_cursor: prevCursor,
-        has_next: hasNext,
-        has_prev: hasPrev,
+      pageInfo: {
+        endCursor: endCursor,
+        startCursor: startCursor,
+        hasNextPage: hasNext,
+        hasPreviousPage: hasPrev,
       },
     },
     { status: 200 }

@@ -2,17 +2,16 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useEventsQuery } from '@/app/hooks/useEventsQuery'
+import useEventsQuery from '@/app/hooks/useEventsQuery'
 import { useTagsQuery } from '@/app/hooks/useTagsQuery'
-import TagsFilter from '@/components/TagsFilter'
+// import TagsFilter from '@/components/TagsFilter'/
 import EventItem from './EventItem'
 import { Calendar } from 'lucide-react'
 import { Tag, EventWithTags } from '@/app/events/eventTypes'
 
 function EventList() {
-  const pageSize = 100
   const searchParams = useSearchParams()
-  const router = useRouter()
+  // const router = useRouter()
 
   // Extract query params from URL
   const [selectedTags, setSelectedTags] = useState<string[]>(
@@ -23,6 +22,8 @@ function EventList() {
     before: searchParams.get('before') || undefined,
     hasNextPage: false,
     hasPreviousPage: false,
+    first: Number(searchParams.get('first')) || 10, //TODO
+    last: Number(searchParams.get('last')) || 10, //TODO
   })
 
   // Fetch all available tags
@@ -54,38 +55,70 @@ function EventList() {
       params.delete('tags')
     }
 
-    if (pagination.after) {
-      params.set('after', pagination.after)
-      params.delete('before') // Ensure only one cursor is set at a time
-    } else if (pagination.before) {
-      params.set('before', pagination.before)
-      params.delete('after')
+    //    debugger
+
+    // if (eventsData && eventsData.pageInfo.hasNextPage) {
+    //   if (pagination.after) {
+    //     params.set('after', pagination.after)
+    //   }
+    // } else {
+    //   params.delete('after')
+    // }
+
+    // if (pagination.after) {
+    //   params.set('after', pagination.after)
+    //   params.delete('before') // Ensure only one cursor is set at a time
+    // } else if (pagination.before) {
+    //   params.set('before', pagination.before)
+    //   params.delete('after')
+    // } else {
+    //   params.delete('after')
+    //   params.delete('before')
+    // }
+
+    if (eventsData && eventsData.pageInfo.hasNextPage) {
+      if (pagination.after) {
+        params.set('after', pagination.after)
+      }
     } else {
       params.delete('after')
+    }
+    if (eventsData && eventsData.pageInfo.hasPreviousPage) {
+      if (pagination.before) {
+        params.set('before', pagination.before)
+      }
+    } else {
       params.delete('before')
     }
-
-    router.push(`?${params.toString()}`, { scroll: false })
-  }, [selectedTags, pagination, router, searchParams])
+    window.history.replaceState({}, '', `?${params.toString()}`)
+    // router.push(`?${params.toString()}`, { scroll: false })
+  }, [selectedTags, pagination, searchParams, eventsData])
+  //[selectedTags, pagination, router, searchParams])
 
   const handleNext = () => {
-    if (!eventsData?.pagination?.next_cursor) return
-    setPagination((prev) => ({
-      after: eventsData.pagination.next_cursor,
-      before: undefined,
-      hasNextPage: eventsData.pagination.has_next,
-      hasPreviousPage: true, // Because we are moving forward
-    }))
+    const pageInfo = eventsData?.pageInfo
+    if (pageInfo?.hasNextPage) {
+      setPagination({
+        after: pageInfo.endCursor || undefined,
+        before: undefined,
+        hasNextPage: false,
+        hasPreviousPage: true,
+        first: 10, //TODO
+        last: 10, //TODO
+      })
+    }
   }
 
   const handlePrevious = () => {
-    if (!eventsData?.pagination?.prev_cursor) return
-    setPagination((prev) => ({
-      before: eventsData.pagination.prev_cursor,
+    if (!eventsData?.pageInfo?.startCursor) return
+    setPagination({
+      before: eventsData.pageInfo.startCursor,
       after: undefined,
       hasNextPage: true, // Assume there can be a next page
-      hasPreviousPage: eventsData.pagination.has_prev,
-    }))
+      hasPreviousPage: eventsData.pageInfo.hasPreviousPage,
+      first: 10, //TODO
+      last: 10, //TODO
+    })
   }
 
   const handleTagChange = (tag: string) => {
@@ -99,6 +132,8 @@ function EventList() {
       before: undefined,
       hasNextPage: false,
       hasPreviousPage: false,
+      first: 10, //TODO
+      last: 10, //TODO
     })
   }
 
@@ -118,6 +153,8 @@ function EventList() {
       before: undefined,
       hasNextPage: false,
       hasPreviousPage: false,
+      first: 10,
+      last: 10,
     })
   }
 
@@ -211,7 +248,7 @@ function EventList() {
       <div className="flex justify-between items-center">
         <button
           onClick={handlePrevious}
-          disabled={!eventsData?.pagination?.has_prev || eventsLoading}
+          disabled={!eventsData?.pageInfo?.hasPreviousPage || eventsLoading}
           className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
         >
           Previous
@@ -221,7 +258,7 @@ function EventList() {
         )}
         <button
           onClick={handleNext}
-          disabled={!eventsData?.pagination?.has_next || eventsLoading}
+          disabled={!eventsData?.pageInfo?.hasNextPage || eventsLoading}
           className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
         >
           Next
