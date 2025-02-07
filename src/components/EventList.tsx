@@ -138,24 +138,30 @@ function EventList() {
   }
 
   const handleToggleAnyTag = () => {
-    const allTags =
-      tagsData?.nodes
+    const allNonEmptyTagNames =
+      tagsData
         ?.filter((tag: Tag) => tag && tag.name !== '') // Remove null and empty values
         .map((tag: Tag) => tag.name) ?? []
 
-    const allSelected = allTags.every((tag: Tag) =>
-      selectedTags.includes(tag.name)
+    console.log(JSON.stringify(allNonEmptyTagNames, null, 2))
+
+    const areAllSelected = allNonEmptyTagNames.every((tag: string) =>
+      selectedTags.includes(tag)
     )
 
-    setSelectedTags(allSelected ? [] : allTags) // If all selected, clear; otherwise, select all
-    setPagination({
-      after: undefined,
-      before: undefined,
-      hasNextPage: false,
-      hasPreviousPage: false,
-      first: 10,
-      last: 10,
-    })
+    let newSelectedTags: string[]
+    if (areAllSelected) {
+      // Remove all non-empty tags from selectedTags
+      newSelectedTags = selectedTags.filter(
+        (tag) => !allNonEmptyTagNames.includes(tag)
+      )
+    } else {
+      // Add all non-empty tags to selectedTags, ensuring no duplicates
+      newSelectedTags = Array.from(
+        new Set([...selectedTags, ...allNonEmptyTagNames])
+      )
+    }
+    setSelectedTags(newSelectedTags)
   }
 
   return (
@@ -179,7 +185,7 @@ function EventList() {
         )}
 
         {tagsData
-          ?.filter((tag: Tag) => tag)
+          ?.filter((tag: Tag) => tag.name !== '')
           .map((tag: Tag) => (
             <button
               key={tag.name}
