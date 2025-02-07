@@ -1,5 +1,5 @@
 import { EVENTS_QUERY } from '@/graphql_queries/queries'
-import { FetchEventsVariables } from '@/queries/params'
+import { FetchEventsVariables } from '@/app/hooks/params'
 import { EventsConnection } from '@/types/graphql'
 
 export async function fetchEventsWithPagination(
