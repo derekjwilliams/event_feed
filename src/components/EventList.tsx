@@ -54,27 +54,6 @@ function EventList() {
       params.delete('tags')
     }
 
-    //    debugger
-
-    // if (eventsData && eventsData.pageInfo.hasNextPage) {
-    //   if (pagination.after) {
-    //     params.set('after', pagination.after)
-    //   }
-    // } else {
-    //   params.delete('after')
-    // }
-
-    // if (pagination.after) {
-    //   params.set('after', pagination.after)
-    //   params.delete('before') // Ensure only one cursor is set at a time
-    // } else if (pagination.before) {
-    //   params.set('before', pagination.before)
-    //   params.delete('after')
-    // } else {
-    //   params.delete('after')
-    //   params.delete('before')
-    // }
-
     if (eventsData && eventsData.pageInfo.hasNextPage) {
       if (pagination.after) {
         params.set('after', pagination.after)
@@ -90,9 +69,7 @@ function EventList() {
       params.delete('before')
     }
     window.history.replaceState({}, '', `?${params.toString()}`)
-    // router.push(`?${params.toString()}`, { scroll: false })
   }, [selectedTags, pagination, searchParams, eventsData])
-  //[selectedTags, pagination, router, searchParams])
 
   const handleNext = () => {
     const pageInfo = eventsData?.pageInfo
