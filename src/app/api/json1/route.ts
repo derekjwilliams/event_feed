@@ -13,19 +13,20 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
-    const response = await fetch(
-      'http://localhost:3000/api/events?tags=' + tagsParam,
-      {
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          'sec-fetch-mode': 'cors',
-          'Referrer-Policy': 'strict-origin-when-cross-origin',
-        },
+    let url = 'http://localhost:3000/api/events'
+    if (tagsParam) {
+      url += '?tags=' + tagsParam
+    }
+    const response = await fetch(url, {
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        'sec-fetch-mode': 'cors',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+      },
 
-        method: 'GET',
-      }
-    )
+      method: 'GET',
+    })
     const { data: events } = await response.json()
     const feed = generateFeedFromREST(events)
     const feedContent = feed.json1()
@@ -39,7 +40,7 @@ export async function GET(req: NextRequest) {
 
     let mostRecent = modifiedSinceDate
       ? modifiedSinceDate
-      : 'new Date(0).toISOString()'
+      : new Date(0).toISOString()
 
     if (pubDates.length) {
       mostRecent = pubDates.reduce((max, date) =>

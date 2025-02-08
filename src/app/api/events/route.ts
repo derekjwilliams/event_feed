@@ -4,6 +4,8 @@ import { events, tags, eventTags } from '@/db/schema'
 import { db } from '@/utils/db'
 import { EventWithTags } from '@/app/events/eventTypes'
 
+const maxNumber = 100000
+
 function encodeCursor(eventStartDate: string, id: number): string {
   return Buffer.from(`${eventStartDate}|${id}`).toString('base64')
 }
@@ -25,8 +27,8 @@ export async function GET(request: Request) {
   const tagNames = searchParams.getAll('tags')
   const after = searchParams.get('after') // New parameter for forward pagination
   const before = searchParams.get('before') // New parameter for backward pagination
-  const first = Number(searchParams.get('first')) || 10 // TODO use a const instead of hardcoding 10000
-  const last = Number(searchParams.get('last')) || 10 // TODO use a const instead of hardcoding 10000
+  const first = Number(searchParams.get('first')) || maxNumber // TODO use a const instead of hardcoding 10000
+  const last = Number(searchParams.get('last')) || maxNumber // TODO use a const instead of hardcoding 10000
 
   let query
   let cursorFilter
@@ -113,6 +115,7 @@ export async function GET(request: Request) {
 
   if (rawResult.length === limit) {
     const lastEvent = rawResult[rawResult.length - 1]
+
     const nextPageCheckQuery = db
       .select()
       .from(events)

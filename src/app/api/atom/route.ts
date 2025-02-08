@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateFeed } from '@/lib/feed'
-import { fetchEvents } from '@/queryFunctions/events'
+import { generateFeedFromREST } from '@/lib/feed'
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,28 +13,43 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
-    const tags = tagsParam ? tagsParam.split(',') : undefined
-    const events = await fetchEvents(modifiedSinceDate, tags)
+    let url = 'http://localhost:3000/api/events'
+    if (tagsParam) {
+      url += '?tags=' + tagsParam
+    }
 
-    const feed = generateFeed(events)
+    const response = await fetch(url, {
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        'sec-fetch-mode': 'cors',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+      },
+
+      method: 'GET',
+    })
+    const { data: events } = await response.json()
+
+    const feed = generateFeedFromREST(events)
     const feedContent = feed.atom1()
 
     const pubDates = []
-    for (const node of events.nodes) {
-      if (node && node.pubDate) {
-        pubDates.push(node.pubDate)
+    for (const event of events) {
+      if (event && event.pubDate) {
+        pubDates.push(event.pubDate)
       }
     }
 
     let mostRecent = modifiedSinceDate
       ? modifiedSinceDate
-      : 'new Date(0).toISOString()'
+      : new Date(0).toISOString()
 
     if (pubDates.length) {
       mostRecent = pubDates.reduce((max, date) =>
         new Date(date) > new Date(max) ? date : max
       )
     }
+
     const etag = `"${Buffer.from(feedContent)
       .toString('base64')
       .substring(0, 16)}"`
@@ -47,7 +61,7 @@ export async function GET(req: NextRequest) {
 
     // Return the RSS feed with caching headers
     const headers = new Headers({
-      'Content-Type': 'application/rss+xml',
+      'Content-Type': 'application/json',
       'Last-Modified': mostRecent,
       ETag: etag,
     })
