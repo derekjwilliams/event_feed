@@ -40,3 +40,6 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+.content-visibility-auto {
+  content-visibility: auto;
+}

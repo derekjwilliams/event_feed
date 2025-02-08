@@ -26,7 +26,7 @@ export default function EventItem({ event }: { event: EventWithTags }) {
   return (
     <div
       key={eventData.id}
-      className="p-4 bg-neutral-200 dark:bg-neutral-800 rounded-lg"
+      className="p-4 bg-neutral-200 dark:bg-neutral-800 rounded-lg content-visibility-auto"
     >
       <div className="flex gap-4">
         {eventData.imageUrl && (
