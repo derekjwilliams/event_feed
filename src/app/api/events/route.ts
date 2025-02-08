@@ -27,8 +27,8 @@ export async function GET(request: Request) {
   const tagNames = searchParams.getAll('tags')
   const after = searchParams.get('after') // New parameter for forward pagination
   const before = searchParams.get('before') // New parameter for backward pagination
-  const first = Number(searchParams.get('first')) || maxNumber // TODO use a const instead of hardcoding 10000
-  const last = Number(searchParams.get('last')) || maxNumber // TODO use a const instead of hardcoding 10000
+  const first = Number(searchParams.get('first')) || maxNumber
+  const last = Number(searchParams.get('last')) || maxNumber
 
   let query
   let cursorFilter
@@ -54,7 +54,9 @@ export async function GET(request: Request) {
   }
 
   let limit = 10000 // TODO use a const instead of hardcoding 10000
-  if (after && !before) {
+  if (!after && !before && first) {
+    limit = first
+  } else if (after && !before) {
     limit = first
   } else if (!after && before) {
     limit = last

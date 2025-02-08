@@ -8,14 +8,14 @@ const useEventsQuery = ({
   pagination,
 }: EventsQueryParams) => {
   return useQuery({
-    queryKey: [
-      'events',
-      { pubDate, tagNames, after: pagination.after, before: pagination.before },
-    ],
+    queryKey: ['events', { pubDate, tagNames, ...pagination }],
     queryFn: async () => {
       const params = new URLSearchParams() ////
       params.set('pubDate', pubDate)
       tagNames.forEach((tag) => params.append('tags', tag))
+      if (!pagination.after && !pagination.after && pagination.first) {
+        params.set('first', `${pagination.first}`)
+      }
       if (pagination.after) {
         params.set(
           'first',

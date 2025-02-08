@@ -21,8 +21,8 @@ function EventList() {
     before: searchParams.get('before') || undefined,
     hasNextPage: false,
     hasPreviousPage: false,
-    first: Number(searchParams.get('first')) || 10, //TODO
-    last: Number(searchParams.get('last')) || 10, //TODO
+    first: Number(searchParams.get('first')) || 50,
+    last: Number(searchParams.get('last')) || 50,
   })
 
   // Fetch all available tags
