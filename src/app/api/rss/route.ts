@@ -1,6 +1,5 @@
+import { generateFeedFromREST } from '@/lib/feed'
 import { NextRequest, NextResponse } from 'next/server'
-import { generateFeed } from '@/lib/feed'
-import { fetchEvents } from '@/queryFunctions/events'
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,16 +13,27 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
-    const tags = tagsParam ? tagsParam.split(',') : undefined
-    const events = await fetchEvents(modifiedSinceDate, tags)
+    const response = await fetch(
+      'http://localhost:3000/api/events?tags=' + tagsParam,
+      {
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          'sec-fetch-mode': 'cors',
+          'Referrer-Policy': 'strict-origin-when-cross-origin',
+        },
 
-    const feed = generateFeed(events)
+        method: 'GET',
+      }
+    )
+    const { data: events } = await response.json()
+    const feed = generateFeedFromREST(events)
     const feedContent = feed.rss2()
 
     const pubDates = []
-    for (const node of events.nodes) {
-      if (node && node.pubDate) {
-        pubDates.push(node.pubDate)
+    for (const event of events) {
+      if (event && event.pubDate) {
+        pubDates.push(event.pubDate)
       }
     }
 
@@ -48,7 +58,7 @@ export async function GET(req: NextRequest) {
 
     // Return the RSS feed with caching headers
     const headers = new Headers({
-      'Content-Type': 'application/rss+xml',
+      'Content-Type': 'application/json',
       'Last-Modified': mostRecent,
       ETag: etag,
     })

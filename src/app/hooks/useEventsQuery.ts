@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { EventsQueryParams } from './params'
 const maxNumberToRetrieve = `${10}` // TODO
 
-//: UseQueryResult<EventsConnection>
 const useEventsQuery = ({
   pubDate,
   tagNames,
@@ -31,7 +30,6 @@ const useEventsQuery = ({
         )
         params.set('before', pagination.before)
       }
-
       const res = await fetch(`/api/events?${params.toString()}`)
       if (!res.ok) throw new Error('Failed to fetch events')
       return res.json()

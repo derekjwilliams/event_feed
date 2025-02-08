@@ -1,28 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateICS } from '@/lib/feed'
-import { fetchEvents } from '@/queryFunctions/events'
-
-const EPOCH_START = '1970-01-01'
+import { generateICSFromREST } from '@/lib/feed'
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  // const pubDate = searchParams.get('pubDate') || '1970-01-01'
-  const tagNames = searchParams.get('tagNames')?.split(',') || []
-
   try {
-    const ifModifiedSince = req.headers.get('if-modified-since') || EPOCH_START
+    // Request headers for caching
+    const ifModifiedSince = req.headers.get('if-modified-since')
     const ifNoneMatch = req.headers.get('if-none-match')
+
     const modifiedSinceDate = ifModifiedSince
       ? new Date(ifModifiedSince).toISOString()
       : undefined
 
-    const events = await fetchEvents(modifiedSinceDate, tagNames)
-    const icsData = await generateICS(events)
+    const { searchParams } = new URL(req.url)
+    const tagsParam = searchParams.get('tags')
+    const response = await fetch(
+      'http://localhost:3000/api/events?tags=' + tagsParam,
+      {
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          'sec-fetch-mode': 'cors',
+          'Referrer-Policy': 'strict-origin-when-cross-origin',
+        },
+
+        method: 'GET',
+      }
+    )
+    const { data: events } = await response.json()
+    console.log(JSON.stringify(events, null, 2))
+    // const feed = generateFeedFromREST(events)
+    const feedContent = await generateICSFromREST(events)
 
     const pubDates = []
-    for (const node of events.nodes) {
-      if (node && node.pubDate) {
-        pubDates.push(node.pubDate)
+    for (const event of events) {
+      if (event && event.pubDate) {
+        pubDates.push(event.pubDate)
       }
     }
 
@@ -36,25 +48,35 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const etag = `"${Buffer.from(icsData).toString('base64').substring(0, 16)}"`
+    const etag = `"${Buffer.from(feedContent)
+      .toString('base64')
+      .substring(0, 16)}"`
 
     // Respond with 304 if the feed hasn't changed
     if (ifNoneMatch === etag || ifModifiedSince === mostRecent) {
       return new NextResponse(null, { status: 304 })
     }
 
+    // Return the RSS feed with caching headers
     const headers = new Headers({
-      'Content-Type': 'text/calendar',
+      'Content-Type': 'application/json',
       'Last-Modified': mostRecent,
       ETag: etag,
     })
 
-    return new NextResponse(icsData, { status: 200, headers })
+    return new NextResponse(feedContent, { status: 200, headers })
   } catch (error) {
-    console.error('Error generating ICS:', error)
-    return NextResponse.json(
-      { error: 'Failed to generate calendar file' },
-      { status: 500 }
-    )
+    console.log(error)
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { message: error.message },
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    } else {
+      return new NextResponse(JSON.stringify(error), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
   }
 }

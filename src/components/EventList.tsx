@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import useEventsQuery from '@/app/hooks/useEventsQuery'
 import { useTagsQuery } from '@/app/hooks/useTagsQuery'
-// import TagsFilter from '@/components/TagsFilter'/
 import EventItem from './EventItem'
 import { Tag, EventWithTags } from '@/app/events/eventTypes'
 import TagsFilter from './TagsFilter'
@@ -142,8 +141,6 @@ function EventList() {
       tagsData
         ?.filter((tag: Tag) => tag && tag.name !== '') // Remove null and empty values
         .map((tag: Tag) => tag.name) ?? []
-
-    console.log(JSON.stringify(allNonEmptyTagNames, null, 2))
 
     const areAllSelected = allNonEmptyTagNames.every((tag: string) =>
       selectedTags.includes(tag)
