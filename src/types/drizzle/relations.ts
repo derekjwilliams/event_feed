@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm/relations'
-import { events, eventTags, tags } from './schema'
+import { events, eventTags, tags } from '@/db/schema'
 
 export const eventTagsRelations = relations(eventTags, ({ one }) => ({
   event: one(events, {

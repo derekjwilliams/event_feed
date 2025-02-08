@@ -1,6 +1,5 @@
 import { Feed } from 'feed'
 import { Category, Extension } from 'feed/lib/typings'
-import { EventsConnection } from '@/types/graphql'
 import { generateIcsCalendar, VEvent, type VCalendar } from 'ts-ics'
 interface EventData {
   // TODO export this from api/events or other
@@ -26,7 +25,7 @@ interface EventData {
   tags: string[]
 }
 
-export function generateFeedFromREST(response: EventData[]) {
+export function generateFeed(data: EventData[]) {
   const feed = new Feed({
     title: 'Willamette Events Feed',
     description: 'Stay updated with the latest events!',
@@ -44,11 +43,8 @@ export function generateFeedFromREST(response: EventData[]) {
         process.env.ATOM_EVENTS_FEED_LINK || 'http://localhost:3000/api/atom',
     },
   })
-  console.log('generateFeedFromREST')
-  if (response) {
-    // console.log(JSON.stringify(response, null, 2))
-
-    response.forEach((item) => {
+  if (data) {
+    data.forEach((item) => {
       if (item.event) {
         const categories: Category[] = []
         item.tags.forEach((tag) => {
@@ -103,77 +99,7 @@ export function generateFeedFromREST(response: EventData[]) {
   return feed
 }
 
-export function generateFeed(events: EventsConnection) {
-  const feed = new Feed({
-    title: 'Willamette Events Feed',
-    description: 'Stay updated with the latest events!',
-    id: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
-    link: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
-    language: 'en',
-    favicon:
-      process.env.EVENTS_PAGE_FAVICON || 'http://localhost:3000/icon.png',
-    copyright: 'All rights reserved 2025, Derek J. Williams',
-    updated: new Date(),
-    generator: 'feed package',
-    feedLinks: {
-      rss: process.env.RSS_EVENTS_FEED_LINK || 'http://localhost:3000/api/rss',
-      atom:
-        process.env.ATOM_EVENTS_FEED_LINK || 'http://localhost:3000/api/atom',
-    },
-  })
-  if (events.nodes) {
-    events.nodes.forEach((event) => {
-      if (event) {
-        const categories: Category[] = []
-        event.eventTagsByEventId.nodes.forEach((node) => {
-          if (node && node.tagByTagId) {
-            categories.push({
-              name: node.tagByTagId.name,
-              domain: 'Willamette-events',
-            })
-          }
-        })
-        let title = event.title ?? ''
-        if (title && event.eventStartDate) {
-          title = title + ' - ' + new Date(event.eventStartDate).toDateString()
-        }
-
-        const startDate: Extension = {
-          name: 'startDate',
-          objects: {
-            date: event.eventStartDate,
-          },
-        }
-        // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
-        feed.addItem({
-          image:
-            event.imageUrl && event.imageUrl.trim() !== ''
-              ? event.imageUrl
-              : process.env.DEFAULT_FEED_ITEM_IMAGE_URL,
-          title: title,
-          id: event.id.toString(),
-          link: event.link ? `https://events.willamette.edu${event.link}` : '',
-          description: event.description ?? '',
-          content: event.content ?? '',
-          author: [
-            { name: event.author ?? '', email: 'events_creator@example.com' },
-          ],
-          published: event.pubDate ? new Date(event.pubDate) : undefined,
-          date: event.eventStartDate
-            ? new Date(event.eventStartDate)
-            : new Date(),
-          extensions: [startDate],
-          category: categories,
-        })
-      }
-    })
-  }
-  return feed
-}
-
-export const generateICSFromREST = async (
-  data: EventData[]
-): Promise<string> => {
+export const generateICS = async (data: EventData[]): Promise<string> => {
   let vEvents: VEvent[] = []
 
   if (data && data.length > 0) {

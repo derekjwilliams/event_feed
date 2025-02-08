@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateICSFromREST } from '@/lib/feed'
+import { generateICS } from '@/lib/feed'
 
 export async function GET(req: NextRequest) {
   try {
@@ -29,9 +29,7 @@ export async function GET(req: NextRequest) {
       method: 'GET',
     })
     const { data: events } = await response.json()
-    console.log(JSON.stringify(events, null, 2))
-    // const feed = generateFeedFromREST(events)
-    const feedContent = await generateICSFromREST(events)
+    const feedContent = await generateICS(events)
 
     const pubDates = []
     for (const event of events) {

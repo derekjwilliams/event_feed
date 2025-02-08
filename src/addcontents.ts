@@ -103,7 +103,6 @@ const fetchEventTimes = async (url: string): Promise<string[]> => {
     const length = parts.length
     const timeParts = parts[length - 1].trim().split(' –  ')
     result = timeParts
-    //console.log(JSON.stringify(timeParts, null, 2))
   } catch (error) {
     console.error(`Error fetching ${url}:`, error)
     return result
@@ -144,9 +143,7 @@ const processEvents = async () => {
     if (content) {
       // Extract event link after "https://events.willamette.edu"
       const eventLink = url.replace('https://events.willamette.edu', '')
-      // Escape single quotes in the content for SQL insertion
       const escapedContent = content.replace(/'/g, "''")
-      // Create SQL update statement
       const sqlUpdate = `UPDATE events SET content = '${escapedContent}' WHERE link = '${eventLink}';`
       sqlUpdates.push(sqlUpdate)
     }

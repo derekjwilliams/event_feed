@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateFeedFromREST } from '@/lib/feed'
+import { generateFeed } from '@/lib/feed'
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       method: 'GET',
     })
     const { data: events } = await response.json()
-    const feed = generateFeedFromREST(events)
+    const feed = generateFeed(events)
     const feedContent = feed.json1()
 
     const pubDates = []
