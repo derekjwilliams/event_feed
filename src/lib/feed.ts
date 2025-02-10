@@ -1,6 +1,7 @@
 import { Feed } from 'feed'
 import { Category, Extension } from 'feed/lib/typings'
 import { generateIcsCalendar, VEvent, type VCalendar } from 'ts-ics'
+import env from '@/env'
 interface EventData {
   // TODO export this from api/events or other
   event: {
@@ -29,18 +30,18 @@ export function generateFeed(data: EventData[]) {
   const feed = new Feed({
     title: 'Willamette Events Feed',
     description: 'Stay updated with the latest events!',
-    id: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
-    link: process.env.EVENTS_PAGE_LINK || 'http://localhost:3000/api',
+    id: env.EVENTS_PAGE_LINK,
+    link: env.EVENTS_PAGE_LINK,
     language: 'en',
-    favicon:
-      process.env.EVENTS_PAGE_FAVICON || 'http://localhost:3000/icon.png',
+    favicon: env.EVENTS_PAGE_FAVICON, // TODO verify on Vercel
     copyright: 'All rights reserved 2025, Derek J. Williams',
     updated: new Date(),
     generator: 'feed package',
     feedLinks: {
-      rss: process.env.RSS_EVENTS_FEED_LINK || 'http://localhost:3000/api/rss',
-      atom:
-        process.env.ATOM_EVENTS_FEED_LINK || 'http://localhost:3000/api/atom',
+      rss: env.RSS_EVENTS_FEED_LINK,
+      atom: env.ATOM_EVENTS_FEED_LINK,
+      ics: env.ICS_EVENTS_FEED_LINK,
+      json1: env.JSON1_EVENTS_FEED_LINK,
     },
   })
   if (data) {
@@ -109,7 +110,7 @@ export const generateICS = async (data: EventData[]): Promise<string> => {
       if (item.event) {
         const uid =
           process.env.ICS_UID ||
-          'e0bec92c-3f4b-4322-a772-a984545cab6e@event-feed-eta.vercel.app'
+          'e0bec92c-3f4b-4322-a772-a984545cab6e@event_feed.vercel.app'
 
         const start = item.event.eventStartDate
         const end = item.event.eventEndDate // TODO: fix when the DB has end dates

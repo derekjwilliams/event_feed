@@ -22,7 +22,7 @@ export default function EventItem({ event }: { event: EventWithTags }) {
     : ''
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
+    process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu' // TODO this should be in the database since we have events from multiple calendars, e.g. RISD
   return (
     <div
       key={eventData.id}
