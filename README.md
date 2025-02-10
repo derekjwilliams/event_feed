@@ -121,3 +121,7 @@ While the code may seem daunting at first, it is using canonical approaches, whi
 ### Some Tricky Bits
 
 Type safety is a very good thing, that being said, Tooling (like eslint), or building the project, catch type errors. If you run into these look at the errors carefully. I've found that LLMs like ChatGPT, Meta AI, and Deepseek can often provide useful suggestions.
+
+#### Typesafe configuration
+
+Using ZOD for typesafe configuration, see the src/env.ts file. This video has a decent description. https://youtu.be/sNh9PoM9sUE?si=HUEVx-uGDbYofWnb&t=1530
