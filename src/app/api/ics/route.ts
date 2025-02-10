@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateICS } from '@/lib/feed'
+import env from '@/env'
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
-    let url = 'http://localhost:3000/api/events'
+    let url = env.EVENTS_FEED_LINK
     if (tagsParam) {
       url += '?tags=' + tagsParam
     }
