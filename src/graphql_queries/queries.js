@@ -1,52 +1,26 @@
 export const EVENTS_QUERY = `
-  query getEventsByDateAndTags($pubDate: String!
-    $tagNames: [String!]!
-    $first: Int
-    $after: Cursor
-    $last: Int
-    $before: Cursor) {
-    getEventsByDateAndTags(
-      pPubDate: $pubDate
-      pTagNames: $tagNames
-      first: $first
-      after: $after
-      last: $last
-      before: $before) {
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      } 
-      nodes {
-        id
-        author
-        title
-        description
-        geoLocation {
-          longitude
-          latitude
-        }
-        baseUrl
-        content
-        link
-        pubDate
-        createdAt
-        updatedAt
-        imageUrl
-        eventStartDate
-        eventEndDate
-        location
-        eventTagsByEventId {
-          nodes {
-            tagByTagId {
-              name
-            }
-          }
-        }
-      } 
+  query getEventsByDateAndTags($tagNames: _text, $pubDate: String!) {
+  getEventsByDateAndTags(
+    limit: 10
+    args: {
+      p_tag_names: $tagNames,
+      p_pub_date: $pubDate
     }
-  }`
+  ) {
+    title
+    description
+    eventStartDate
+    eventEndDate
+    location
+    geoLocation
+    eventTagsAsString
+    eventTags {
+      tag {
+        name
+      }
+    }
+  }
+}`
 
 export const TAGS_QUERY = `
   query {
