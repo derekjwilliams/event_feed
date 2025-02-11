@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { EventsQueryParams } from './params'
-const maxNumberToRetrieve = `${10}` // TODO
+const maxNumberToRetrieve = `${200}` // TODO
 
 const useEventsQuery = ({
   pubDate,
