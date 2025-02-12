@@ -180,6 +180,8 @@ export type Events = Node & {
   eventStartDate?: Maybe<Scalars['timestamptz']['output']>
   /** An array relationship */
   eventTags: Array<EventTags>
+  /** Pipe separated list of tags for event */
+  eventTagsAsString?: Maybe<Scalars['String']['output']>
   /** An array relationship connection */
   eventTags_connection: EventTagsConnection
   geoLocation?: Maybe<Scalars['geography']['output']>
@@ -223,7 +225,9 @@ export type EventsBoolExp = {
   eventEndDate?: InputMaybe<TimestamptzComparisonExp>
   eventStartDate?: InputMaybe<TimestamptzComparisonExp>
   eventTags?: InputMaybe<EventTagsBoolExp>
+  eventTagsAsString?: InputMaybe<StringComparisonExp>
   geoLocation?: InputMaybe<GeographyComparisonExp>
+  id?: InputMaybe<IntComparisonExp>
   imageUrl?: InputMaybe<StringComparisonExp>
   link?: InputMaybe<StringComparisonExp>
   location?: InputMaybe<StringComparisonExp>
@@ -253,7 +257,9 @@ export type EventsOrderBy = {
   eventEndDate?: InputMaybe<OrderBy>
   eventStartDate?: InputMaybe<OrderBy>
   eventTagsAggregate?: InputMaybe<EventTagsAggregateOrderBy>
+  eventTagsAsString?: InputMaybe<OrderBy>
   geoLocation?: InputMaybe<OrderBy>
+  id?: InputMaybe<OrderBy>
   imageUrl?: InputMaybe<OrderBy>
   link?: InputMaybe<OrderBy>
   location?: InputMaybe<OrderBy>
@@ -277,6 +283,8 @@ export enum EventsSelectColumn {
   EventStartDate = 'eventStartDate',
   /** column name */
   GeoLocation = 'geoLocation',
+  /** column name */
+  Id = 'id',
   /** column name */
   ImageUrl = 'imageUrl',
   /** column name */
@@ -933,6 +941,11 @@ export type EventsResolvers<
     ParentType,
     ContextType,
     Partial<EventsEventTagsArgs>
+  >
+  eventTagsAsString?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
   >
   eventTags_connection?: Resolver<
     ResolversTypes['EventTagsConnection'],

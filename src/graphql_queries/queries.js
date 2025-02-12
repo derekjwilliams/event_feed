@@ -72,7 +72,7 @@ query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!)  @cached(ttl: 
 // }
 
 export const TAGS_QUERY = `
-query {
+query @cached(ttl: 300) {
   tagsConnection {
     edges {
       node {
