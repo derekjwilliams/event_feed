@@ -59,7 +59,9 @@ function EventList() {
         params.set('after', pagination.after)
       }
     } else {
-      params.delete('after')
+      if (!pagination.after) {
+        params.delete('after')
+      }
     }
     if (eventsData && eventsData.pageInfo.hasPreviousPage) {
       if (pagination.before) {
@@ -67,6 +69,9 @@ function EventList() {
       }
     } else {
       params.delete('before')
+      if (!pagination.after) {
+        params.delete('after')
+      }
     }
     window.history.replaceState({}, '', `?${params.toString()}`)
   }, [selectedTags, pagination, searchParams, eventsData])
