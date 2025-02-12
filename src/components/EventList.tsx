@@ -9,6 +9,8 @@ import { Calendar } from 'lucide-react'
 import EventItem from '@/components/EventItem'
 import { TagsEdge } from '@/types/graphql'
 
+// Feature - Implement as React Server Components to further improve performance and lower server load
+
 function EventsList() {
   const searchParams = useSearchParams()
   const [selectedTags, setSelectedTags] = useState<string[]>(
