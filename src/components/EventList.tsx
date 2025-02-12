@@ -53,7 +53,9 @@ function EventsList() {
         params.set('after', pagination.after)
       }
     } else {
-      params.delete('after')
+      if (!pagination.after) {
+        params.delete('after')
+      }
     }
     if (eventsData && eventsData.pageInfo.hasPreviousPage) {
       if (pagination.before) {
@@ -61,6 +63,9 @@ function EventsList() {
       }
     } else {
       params.delete('before')
+      if (!pagination.after) {
+        params.delete('after')
+      }
     }
     window.history.replaceState({}, '', `?${params.toString()}`)
   }, [selectedTags, pagination, searchParams, eventsData])
@@ -71,21 +76,21 @@ function EventsList() {
       setPagination({
         after: pageInfo.endCursor || undefined,
         before: undefined,
-        hasNextPage: false,
-        hasPreviousPage: true,
+        hasNextPage: pageInfo?.hasNextPage,
+        hasPreviousPage: pageInfo?.hasPreviousPage,
       })
     }
   }
 
   const handlePrevious = () => {
     if (!eventsData) return
-    const { hasPreviousPage, startCursor } = eventsData.pageInfo
-    if (hasPreviousPage) {
+    const pageInfo = eventsData.pageInfo
+    if (pageInfo?.hasPreviousPage) {
       setPagination({
-        before: startCursor || undefined,
+        before: pageInfo.startCursor || undefined,
         after: undefined,
-        hasNextPage: true,
-        hasPreviousPage: false,
+        hasNextPage: pageInfo?.hasNextPage,
+        hasPreviousPage: pageInfo?.hasPreviousPage,
       })
     }
   }

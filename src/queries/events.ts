@@ -8,6 +8,19 @@ const useEventsQuery = ({
   tagNames,
   pagination,
 }: EventsQueryParams): UseQueryResult<EventsConnection> => {
+  // handle edge cases
+  if (pagination.last && pagination.first) {
+    pagination.last = undefined
+  }
+  if (pagination.after && pagination.before) {
+    if (pagination.last) {
+      pagination.after = undefined
+    } else if (pagination.first) {
+      pagination.before = undefined
+    } else {
+      pagination.before = undefined
+    }
+  }
   const queryResult = useQuery({
     queryKey: [
       'events',
@@ -24,9 +37,9 @@ const useEventsQuery = ({
       fetchEventsWithPagination({
         pubDate,
         tagNames,
-        first: !pagination.before ? 125 : undefined,
+        first: !pagination.before ? 50 : undefined,
         after: pagination.after,
-        last: pagination.before ? 125 : undefined,
+        last: pagination.before ? 50 : undefined,
         before: pagination.before,
       }),
     placeholderData: (previous) => previous,
