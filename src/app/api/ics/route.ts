@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateICS } from '@/lib/feed'
-import { fetchEvents } from '@/queryFunctions/events'
+import { fetchEventsWithPagination } from '@/queryFunctions/events'
 
 const EPOCH_START = '1970-01-01'
 
@@ -13,16 +13,24 @@ export async function GET(req: NextRequest) {
     const ifNoneMatch = req.headers.get('if-none-match')
     const modifiedSinceDate = ifModifiedSince
       ? new Date(ifModifiedSince).toISOString()
-      : undefined
+      : new Date(0).toISOString()
 
-    const events = await fetchEvents(new Date(0).toISOString(), tagNames)
+    const events = await fetchEventsWithPagination({
+      pubDate: modifiedSinceDate,
+      tagNames: [], // tags
+      first: 200, //TODO, increase as needed
+      after: undefined,
+      last: undefined,
+      before: undefined,
+    })
 
     const icsData = await generateICS(events)
 
     const pubDates = []
-    for (const node of events.nodes) {
-      if (node && node.pubDate) {
-        pubDates.push(node.pubDate)
+
+    for (const edge of (await events).edges) {
+      if (edge.node && edge.node.pubDate) {
+        pubDates.push(edge.node.pubDate)
       }
     }
 

@@ -21,47 +21,58 @@ export function generateFeed(events: EventsConnection) {
         process.env.ATOM_EVENTS_FEED_LINK || 'http://localhost:3000/api/atom',
     },
   })
-  if (events.nodes) {
-    events.nodes.forEach((event) => {
-      if (event) {
+  if (events.edges) {
+    events.edges.forEach((edge) => {
+      if (edge) {
         const categories: Category[] = []
-        event.eventTagsByEventId.nodes.forEach((node) => {
-          if (node && node.tagByTagId) {
+
+        edge.node.eventTags.forEach((node) => {
+          if (node && node.tag) {
             categories.push({
-              name: node.tagByTagId.name,
+              name: node.tag.name,
               domain: 'Willamette-events',
             })
           }
         })
-        let title = event.title ?? ''
-        if (title && event.eventStartDate) {
-          title = title + ' - ' + new Date(event.eventStartDate).toDateString()
+        let title = edge.node.title ?? ''
+        if (title && edge.node.eventStartDate) {
+          title =
+            title + ' - ' + new Date(edge.node.eventStartDate).toDateString()
         }
 
         const startDate: Extension = {
           name: 'startAndEndTimes',
           objects: {
-            start: event.eventStartDate,
-            end: event.eventEndDate ? event.eventEndDate : event.eventStartDate,
+            start: edge.node.eventStartDate,
+            end: edge.node.eventEndDate
+              ? edge.node.eventEndDate
+              : edge.node.eventStartDate,
           },
         }
         // TODO fixup this feed item, e.g. id, link, feedLinks are all incorrect
         feed.addItem({
           image:
-            event.imageUrl && event.imageUrl.trim() !== ''
-              ? event.imageUrl
+            edge.node.imageUrl && edge.node.imageUrl.trim() !== ''
+              ? edge.node.imageUrl
               : process.env.DEFAULT_FEED_ITEM_IMAGE_URL,
           title: title,
-          id: event.id.toString(),
-          link: event.link ? `https://events.willamette.edu${event.link}` : '',
-          description: event.description ?? '',
-          content: event.content ?? '',
+          id: edge.node.id.toString(),
+          link: edge.node.link
+            ? `https://events.willamette.edu${edge.node.link}`
+            : '',
+          description: edge.node.description ?? '',
+          content: edge.node.content ?? '',
           author: [
-            { name: event.author ?? '', email: 'events_creator@example.com' },
+            {
+              name: edge.node.author ?? '',
+              email: 'events_creator@example.com',
+            },
           ],
-          published: event.pubDate ? new Date(event.pubDate) : undefined,
-          date: event.eventStartDate
-            ? new Date(event.eventStartDate)
+          published: edge.node.pubDate
+            ? new Date(edge.node.pubDate)
+            : undefined,
+          date: edge.node.eventStartDate
+            ? new Date(edge.node.eventStartDate)
             : new Date(),
           extensions: [startDate],
           category: categories,
@@ -77,49 +88,56 @@ export const generateICS = async (
 ): Promise<string> => {
   let vEvents: VEvent[] = []
 
-  if (events.nodes && events.nodes.length > 0) {
+  if (events.edges && events.edges.length > 0) {
     vEvents = []
 
-    events.nodes.forEach((event) => {
+    events.edges.forEach((edge) => {
       if (event) {
         const uid =
           process.env.NEXT_PUBLIC_ICS_UID ||
           'e5486a1f-5a6d-44c3-83b3-4a3a4f5f6e7@event-feed-willamette.vercel'
 
-        const start = event.eventStartDate
-          ? new Date(event.eventStartDate)
+        const start = edge.node.eventStartDate
+          ? new Date(edge.node.eventStartDate)
           : new Date()
-        const end = event.eventEndDate
-          ? new Date(event.eventEndDate)
+        const end = edge.node.eventEndDate
+          ? new Date(edge.node.eventEndDate)
           : new Date()
 
-        const categories = event.eventTagsByEventId.nodes
-          .filter((tag) => tag && tag.tagByTagId && tag.tagByTagId.name)
-          .map((tag) => tag!.tagByTagId!.name as string)
+        const categories = edge.node.eventTags
+          .filter((eventTag) => eventTag && eventTag.tag && eventTag.tag.name)
+          .map((eventTag) => eventTag!.tag!.name as string)
 
         const e: VEvent = {
           start: { date: start },
           stamp: { date: start },
           end: { date: end },
-          summary: event.title,
-          description: event.description ?? '',
-          uid: uid + `/${event.link}`,
-          url: event.link ? `https://events.willamette.edu${event.link}` : '',
+          summary: edge.node.title,
+          description: edge.node.description ?? '',
+          uid: uid + `/${edge.node.link}`,
+          url: edge.node.link
+            ? `https://events.willamette.edu${edge.node.link}`
+            : '',
           categories: categories,
         }
-        if (event.geoLocation) {
-          e.geo = event.geoLocation.latitude + ';' + event.geoLocation.longitude
-          if (event.location) {
+        if (edge.node.geoLocation) {
+          e.geo =
+            edge.node.geoLocation.coordinates[1] +
+            ';' +
+            edge.node.geoLocation.coordinates[0]
+          if (edge.node.location) {
             e.location =
               e.location +
               ' - ' +
-              event.geoLocation.latitude +
+              edge.node.geoLocation.coordinates[1] +
               ',' +
-              event.geoLocation.longitude
+              edge.node.geoLocation.coordinates[0]
           } else
             e.location =
-              event.geoLocation.latitude + ',' + event.geoLocation.longitude
-        } else if (event.location) {
+              edge.node.geoLocation.coordinates[1] +
+              ',' +
+              edge.node.geoLocation.coordinates[0]
+        } else if (edge.node.location) {
           e.location = e.location
         }
         vEvents.push(e)

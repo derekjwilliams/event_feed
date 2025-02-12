@@ -7,7 +7,7 @@ import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
 import { Calendar } from 'lucide-react'
 import EventItem from '@/components/EventItem'
-import { Tag } from '@/types/graphql'
+import { Tags, TagsEdge } from '@/types/graphql'
 
 function EventsList() {
   const searchParams = useSearchParams()
@@ -48,46 +48,47 @@ function EventsList() {
     } else {
       params.delete('tags')
     }
-    if (eventsData && eventsData.pageInfo.hasNextPage) {
-      if (pagination.after) {
-        params.set('after', pagination.after)
-      }
-    } else {
-      params.delete('after')
-    }
-    if (eventsData && eventsData.pageInfo.hasPreviousPage) {
-      if (pagination.before) {
-        params.set('before', pagination.before)
-      }
-    } else {
-      params.delete('before')
-    }
-    window.history.replaceState({}, '', `?${params.toString()}`)
+    // if (eventsData && eventsData.pageInfo.hasNextPage) {
+    //   if (pagination.after) {
+    //     params.set('after', pagination.after)
+    //   }
+    // } else {
+    //   params.delete('after')
+    // }
+    // if (eventsData && eventsData.pageInfo.hasPreviousPage) {
+    //   if (pagination.before) {
+    //     params.set('before', pagination.before)
+    //   }
+    // } else {
+    //   params.delete('before')
+    // }
+    // window.history.replaceState({}, '', `?${params.toString()}`)
+    // }, [selectedTags, pagination, searchParams, eventsData])
   }, [selectedTags, pagination, searchParams, eventsData])
 
   const handleNext = () => {
-    const pageInfo = eventsData?.pageInfo
-    if (pageInfo?.hasNextPage) {
-      setPagination({
-        after: pageInfo.endCursor || undefined,
-        before: undefined,
-        hasNextPage: false,
-        hasPreviousPage: true,
-      })
-    }
+    // const pageInfo = eventsData?.pageInfo
+    // if (pageInfo?.hasNextPage) {
+    //   setPagination({
+    //     after: pageInfo.endCursor || undefined,
+    //     before: undefined,
+    //     hasNextPage: false,
+    //     hasPreviousPage: true,
+    //   })
+    // }
   }
 
   const handlePrevious = () => {
-    if (!eventsData) return
-    const { hasPreviousPage, startCursor } = eventsData.pageInfo
-    if (hasPreviousPage) {
-      setPagination({
-        before: startCursor || undefined,
-        after: undefined,
-        hasNextPage: true,
-        hasPreviousPage: false,
-      })
-    }
+    // if (!eventsData) return
+    // const { hasPreviousPage, startCursor } = eventsData.pageInfo
+    // if (hasPreviousPage) {
+    //   setPagination({
+    //     before: startCursor || undefined,
+    //     after: undefined,
+    //     hasNextPage: true,
+    //     hasPreviousPage: false,
+    //   })
+    // }
   }
 
   const handleTagChange = (tag: string) => {
@@ -106,9 +107,11 @@ function EventsList() {
   const handleToggleAnyTag = () => {
     // Get all non-empty tag names from tagsData.nodes (filter out null and empty strings)
     const allNonEmptyTagNames =
-      tagsData?.nodes
-        ?.filter((tag): tag is Tag => !!tag && tag.name !== '')
-        .map((tag) => tag.name) ?? []
+      tagsData?.edges
+        ?.filter(
+          (edge): edge is TagsEdge => !!edge.node && edge.node.name !== ''
+        )
+        .map((edge) => edge.node.name) ?? []
 
     // Check if every non-empty tag is currently selected
     const areAllSelected = allNonEmptyTagNames.every((tag) =>
@@ -149,19 +152,19 @@ function EventsList() {
             Error loading tags: {tagsError.message}
           </div>
         )}
-        {tagsData?.nodes
-          ?.filter((tag): tag is NonNullable<typeof tag> => !!tag)
-          .map((tag) => (
+        {tagsData?.edges
+          ?.filter((edge): edge is NonNullable<typeof edge> => !!edge)
+          .map((edge) => (
             <button
-              key={tag.name}
-              onClick={() => handleTagChange(tag.name)}
+              key={edge.node.name}
+              onClick={() => handleTagChange(edge.node.name)}
               className={`px-3 py-1 rounded-full transition-colors ${
-                selectedTags.includes(tag.name)
+                selectedTags.includes(edge.node.name)
                   ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
                   : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300'
-              } ${tag.name === '' ? 'italic' : ''}`}
+              } ${edge.node.name === '' ? 'italic' : ''}`}
             >
-              {tag.name}
+              {edge.node.name}
             </button>
           ))}
 
@@ -195,8 +198,6 @@ function EventsList() {
       {eventsLoading && !eventsData && (
         // Empty events for loading
         <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
-          {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(480px,1fr))] gap-4"> */}
-          {/* <div className="space-y-4"> */}
           {[...Array(10)].map((_, i) => (
             <div
               key={i}
@@ -205,18 +206,17 @@ function EventsList() {
           ))}
         </div>
       )}
+
       {isError && (
         <div className="p-4 text-red-600 bg-red-50 rounded-lg">
           Error: {eventsError?.message}
         </div>
       )}
-      {/* <div className="lg:grid lg:grid-cols-[repeat(auto-fit,minmax(480px,1fr))] lg:gap-4 flex flex-col"> */}
       <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
-        {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(480px,1fr))] gap-4"> */}
-        {(eventsData?.nodes || [])
-          .filter((event): event is NonNullable<typeof event> => event !== null)
-          .map((event) => (
-            <EventItem key={event.id} event={event} />
+        {(eventsData?.edges || [])
+          .filter((edge): edge is NonNullable<typeof edge> => edge !== null)
+          .map((edge, index) => (
+            <EventItem key={index} event={edge.node} />
           ))}{' '}
       </div>
 

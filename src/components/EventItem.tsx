@@ -1,10 +1,10 @@
 // Event.tsx
 import Image from 'next/image'
 import { Calendar, MapPin } from 'lucide-react'
-import { Event } from '@/types/graphql'
+import { Events } from '@/types/graphql'
 import Link from 'next/link'
 
-const EventItem: React.FC<{ event: Event }> = ({ event }) => {
+const EventItem: React.FC<{ event: Events }> = ({ event }) => {
   const eventTimeZone = 'America/Los_Angeles' // Event's time zone
 
   const eventStartTimeString = new Intl.DateTimeFormat('en-US', {
@@ -45,7 +45,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
               <Link
                 target="_blank"
                 className="float-left"
-                href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.latitude},${event.geoLocation?.longitude}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.coordinates[1]},${event.geoLocation?.coordinates[0]}`}
               >
                 <MapPin className="text-neutral-500 dark:text-neutral-200 saturate-25" />
               </Link>
@@ -97,24 +97,23 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
             {event.content}
           </div>
         )} */}
-        {(event.eventTagsByEventId.nodes.length === 1 &&
-          event.eventTagsByEventId.nodes[0]?.tagByTagId?.name !== '') ||
-          (event.eventTagsByEventId.nodes.length >= 2 && (
+        {(event.eventTags.length === 1 && event.eventTags[0].tag.name !== '') ||
+          (event.eventTags.length >= 2 && (
             <div className="mt-2 flex gap-2">
-              {event.eventTagsByEventId.nodes
+              {event.eventTags
                 .filter(
                   (
-                    tag
-                  ): tag is NonNullable<typeof tag> & {
+                    eventTag
+                  ): eventTag is NonNullable<typeof eventTag> & {
                     tagByTagId: { name: string }
-                  } => !!tag && !!tag.tagByTagId
+                  } => !!eventTag && eventTag.tag.name !== ''
                 )
-                .map((tag, index) => (
+                .map((eventTag, index) => (
                   <div
                     key={index}
                     className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100 dark:text-black"
                   >
-                    {tag.tagByTagId.name}
+                    {eventTag.tag.name}
                   </div>
                 ))}
             </div>

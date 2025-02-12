@@ -2,6 +2,8 @@ export interface EventsQueryParams {
   pubDate: string
   tagNames: string[]
   pagination: {
+    first?: number
+    last?: number
     after?: string
     before?: string
     hasNextPage: boolean

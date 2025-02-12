@@ -2,12 +2,35 @@ import { EVENTS_QUERY } from '@/graphql_queries/queries'
 import { FetchEventsVariables } from '@/queries/params'
 import { EventsConnection } from '@/types/graphql'
 
+function convertToHasuraTagString(tags: string[]): string {
+  return `{${tags
+    .map((tag) => {
+      // Escape double quotes by doubling them (Postgres rule)
+      const escapedTag = tag.replace(/"/g, '""')
+
+      // Add quotes around tags containing commas, spaces, or special characters
+      if (
+        tag.includes(',') ||
+        tag.includes(' ') ||
+        tag.includes('"') ||
+        tag.includes('\\')
+      ) {
+        return `"${escapedTag}"`
+      }
+      return escapedTag
+    })
+    .join(',')}}`
+}
+
 export async function fetchEventsWithPagination(
   variables: FetchEventsVariables
 ): Promise<EventsConnection> {
+  const hasuraCompatibleTags: string = convertToHasuraTagString(
+    variables.tagNames
+  )
   const response = await fetch(
     process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ||
-      'https://event-graphql.vercel.app/graphql',
+      'https://vital-aphid-95.hasura.app/v1beta1/relay',
     {
       method: 'POST',
       headers: {
@@ -17,7 +40,7 @@ export async function fetchEventsWithPagination(
         query: EVENTS_QUERY,
         variables: {
           pubDate: variables.pubDate,
-          tagNames: variables.tagNames,
+          tagNames: hasuraCompatibleTags,
           first: variables.first,
           after: variables.after,
           last: variables.last,
@@ -30,18 +53,21 @@ export async function fetchEventsWithPagination(
   if (!response.ok) {
     throw new Error('Failed to fetch events')
   }
+
   const { data, errors } = await response.json()
 
   if (errors) {
     throw new Error(errors[0].message)
   }
-  return data?.getEventsByDateAndTags || []
+
+  return data?.getEventsByDateAndTags_connection || []
 }
 
 export async function fetchEvents(
   pubDate?: string,
   tagNames: string[] = []
 ): Promise<EventsConnection> {
+  const hasuraCompatibleTags: string = convertToHasuraTagString(tagNames)
   const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
   if (GRAPHQL_ENDPOINT === '') {
     throw new Error(
@@ -61,7 +87,7 @@ export async function fetchEvents(
     },
     body: JSON.stringify({
       query: EVENTS_QUERY,
-      variables: { pubDate, tagNames },
+      variables: { pubDate, hasuraCompatibleTags },
     }),
     method: 'POST',
   })
@@ -71,5 +97,6 @@ export async function fetchEvents(
     )
   }
   const { data } = await response.json()
-  return data?.getEventsByDateAndTags || []
+
+  return data?.getEventsByDateAndTags_connection || []
 }

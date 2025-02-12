@@ -4461,8 +4461,6 @@ $('.list-events article').each((_, element) => {
   events.push({ title, link, description, date, location, imageUrl, tags })
 })
 
-// console.log(JSON.stringify(events, null, 2))
-
 interface EventData {
   title: string
   link: string

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateFeed } from '@/lib/feed'
-import { fetchEvents } from '@/queryFunctions/events'
+import { fetchEventsWithPagination } from '@/queryFunctions/events'
 
 export async function GET(req: NextRequest) {
   try {
@@ -8,22 +8,30 @@ export async function GET(req: NextRequest) {
     const ifModifiedSince = req.headers.get('if-modified-since')
     const ifNoneMatch = req.headers.get('if-none-match')
 
-    const modifiedSinceDate = ifModifiedSince
-      ? new Date(ifModifiedSince).toISOString()
-      : undefined
-
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
     const tags = tagsParam ? tagsParam.split(',') : undefined
-    const events = await fetchEvents(modifiedSinceDate, tags)
+    const modifiedSinceDate = ifModifiedSince
+      ? new Date(ifModifiedSince).toISOString()
+      : new Date(0).toISOString()
+
+    const events = await fetchEventsWithPagination({
+      pubDate: modifiedSinceDate,
+      tagNames: tags || [], // tags
+      first: 200, //TODO, increase as needed
+      after: undefined,
+      last: undefined,
+      before: undefined,
+    })
 
     const feed = generateFeed(events)
     const feedContent = feed.json1()
 
     const pubDates = []
-    for (const node of events.nodes) {
-      if (node && node.pubDate) {
-        pubDates.push(node.pubDate)
+
+    for (const edge of (await events).edges) {
+      if (edge.node && edge.node.pubDate) {
+        pubDates.push(edge.node.pubDate)
       }
     }
 
@@ -48,7 +56,7 @@ export async function GET(req: NextRequest) {
 
     // Return the RSS feed with caching headers
     const headers = new Headers({
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/rss+xml',
       'Last-Modified': mostRecent,
       ETag: etag,
     })
