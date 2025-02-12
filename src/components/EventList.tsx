@@ -7,7 +7,7 @@ import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
 import { Calendar } from 'lucide-react'
 import EventItem from '@/components/EventItem'
-import { Tags, TagsEdge } from '@/types/graphql'
+import { TagsEdge } from '@/types/graphql'
 
 function EventsList() {
   const searchParams = useSearchParams()
@@ -48,47 +48,46 @@ function EventsList() {
     } else {
       params.delete('tags')
     }
-    // if (eventsData && eventsData.pageInfo.hasNextPage) {
-    //   if (pagination.after) {
-    //     params.set('after', pagination.after)
-    //   }
-    // } else {
-    //   params.delete('after')
-    // }
-    // if (eventsData && eventsData.pageInfo.hasPreviousPage) {
-    //   if (pagination.before) {
-    //     params.set('before', pagination.before)
-    //   }
-    // } else {
-    //   params.delete('before')
-    // }
-    // window.history.replaceState({}, '', `?${params.toString()}`)
-    // }, [selectedTags, pagination, searchParams, eventsData])
+    if (eventsData && eventsData.pageInfo.hasNextPage) {
+      if (pagination.after) {
+        params.set('after', pagination.after)
+      }
+    } else {
+      params.delete('after')
+    }
+    if (eventsData && eventsData.pageInfo.hasPreviousPage) {
+      if (pagination.before) {
+        params.set('before', pagination.before)
+      }
+    } else {
+      params.delete('before')
+    }
+    window.history.replaceState({}, '', `?${params.toString()}`)
   }, [selectedTags, pagination, searchParams, eventsData])
 
   const handleNext = () => {
-    // const pageInfo = eventsData?.pageInfo
-    // if (pageInfo?.hasNextPage) {
-    //   setPagination({
-    //     after: pageInfo.endCursor || undefined,
-    //     before: undefined,
-    //     hasNextPage: false,
-    //     hasPreviousPage: true,
-    //   })
-    // }
+    const pageInfo = eventsData?.pageInfo
+    if (pageInfo?.hasNextPage) {
+      setPagination({
+        after: pageInfo.endCursor || undefined,
+        before: undefined,
+        hasNextPage: false,
+        hasPreviousPage: true,
+      })
+    }
   }
 
   const handlePrevious = () => {
-    // if (!eventsData) return
-    // const { hasPreviousPage, startCursor } = eventsData.pageInfo
-    // if (hasPreviousPage) {
-    //   setPagination({
-    //     before: startCursor || undefined,
-    //     after: undefined,
-    //     hasNextPage: true,
-    //     hasPreviousPage: false,
-    //   })
-    // }
+    if (!eventsData) return
+    const { hasPreviousPage, startCursor } = eventsData.pageInfo
+    if (hasPreviousPage) {
+      setPagination({
+        before: startCursor || undefined,
+        after: undefined,
+        hasNextPage: true,
+        hasPreviousPage: false,
+      })
+    }
   }
 
   const handleTagChange = (tag: string) => {

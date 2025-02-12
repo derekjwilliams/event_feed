@@ -3,9 +3,17 @@ query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!, $first:Int, $l
   getEventsByDateAndTags_connection(
     first: $first
     after: $after
+    last: $last
+    before: $before
     orderBy: {eventStartDate: ASC}
     args: {p_tag_names: $tagNames, p_pub_date: $pubDate}
   ) {
+    pageInfo {
+      endCursor
+      startCursor
+      hasNextPage
+      hasPreviousPage
+    }
     edges {
       node {
         id
@@ -17,32 +25,7 @@ query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!, $first:Int, $l
         location
         geoLocation
         pubDate
-        eventTags {
-          tag {
-            name
-          }
-        }
-      }
-    }
-  }
-}
-`
-export const EVENTS_QUERY_EXAMPLE_WITH_AFTER = `
-query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!)  @cached(ttl: 300) {
-  getEventsByDateAndTags_connection(
-    first: 10
-    orderBy: {eventStartDate: ASC}
-    after: "eyJldmVudF9zdGFydF9kYXRlIiA6ICIyMDI1LTAxLTAzVDAwOjAwOjAwKzAwOjAwIiwgImlkIiA6IDMxMH0="
-    args: {p_tag_names: $tagNames, p_pub_date: $pubDate}
-  ) {
-    edges {
-      node {
-        title
-        description
-        eventStartDate
-        eventEndDate
-        location
-        geoLocation
+        eventTagsAsString
         eventTags {
           tag {
             name
