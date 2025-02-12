@@ -1,6 +1,6 @@
 export const EVENTS_QUERY = `
 
-query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!, $first:Int, $last:Int, $after:String, $before:String) {
+query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!, $first:Int, $last:Int, $after:String, $before:String) @cached(ttl: 300) {
   getEventsByDateAndTags_connection(
     first: $first
     after: $after
