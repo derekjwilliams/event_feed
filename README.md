@@ -70,7 +70,26 @@ See [Example Query](#example-graphql-query)
 
 ## Download the Calendar (ICS) Data
 
-Open browser to http://localhost:3000/api/ics, this will start a download of the calendar data, it should be about 40kB in size.
+Open browser to http://localhost:3000/api/ics, this will start a download of the calendar data, it should be about 40kB in size. Use an incognito window to get a complete calendar; this is becasue the ics endpoint examines the `if-modified-since` and `if-none-match` headers to determine which events to return.
+
+### cURL for Full Calendar from ICS endpoint
+
+```bash
+curl 'http://localhost:3000/api/ics' \
+  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
+  -H 'Accept-Language: en-US,en;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Referer: http://localhost:3000/' \
+  -H 'Sec-Fetch-Dest: document' \
+  -H 'Sec-Fetch-Mode: navigate' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'Sec-Fetch-User: ?1' \
+  -H 'Upgrade-Insecure-Requests: 1' \
+  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
+  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "macOS"'
+```
 
 ## View the RSS Data
 
@@ -261,7 +280,7 @@ The GraphQL queries used by the queryFunctions in `src/queryFunctions` can be fo
 
 This code does not directly use Postgraphile, however it is dependent on a service that does use Postgraphile, that can be found in this repo: https://github.com/derekjwilliams/event_graphql
 
-This is a bit of overhead, and provides little benefit for the feed endpoints (ics, rss, atom, and json1), however it does provide benefits to the user interface client components, for example EventList. Since the application, and contained api endpoints, do not mutate Events the lack of normalized caching in TanStack Query does not have a performance impact. Other libraries, like Apollo, do support normalized caching. However, Apollo historically has not worked well with Next.js.
+This is a bit of overhead, and provides little benefit for the feed endpoints (ics, rss, atom, and json1), however it does provide benefits to the user interface client components, for example EventsList. Since the application, and contained api endpoints, do not mutate Events the lack of normalized caching in TanStack Query does not have a performance impact. Other libraries, like Apollo, do support normalized caching. However, Apollo historically has not worked well with Next.js.
 
 Other notes on this topic:
 

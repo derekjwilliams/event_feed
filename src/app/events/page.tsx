@@ -1,4 +1,4 @@
-import SuspendedEventsList from '@/components/EventList'
+import SuspendedEventsList from '@/components/EventsList'
 
 export default function EventsPage() {
   return (

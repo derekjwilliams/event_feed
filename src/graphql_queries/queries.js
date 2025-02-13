@@ -18,6 +18,7 @@ query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!, $first:Int, $l
       node {
         id
         title
+        link
         description
         eventStartDate
         eventEndDate
@@ -26,11 +27,6 @@ query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!, $first:Int, $l
         geoLocation
         pubDate
         eventTagsAsString
-        eventTags {
-          tag {
-            name
-          }
-        }
       }
     }
   }

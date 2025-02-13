@@ -37,9 +37,13 @@ const useEventsQuery = ({
       fetchEventsWithPagination({
         pubDate,
         tagNames,
-        first: !pagination.before ? 50 : undefined,
+        first: !pagination.before
+          ? Number(process.env.EVENT_LIST_PAGE_SIZE) || 200
+          : undefined,
         after: pagination.after,
-        last: pagination.before ? 50 : undefined,
+        last: pagination.before
+          ? Number(process.env.EVENT_LIST_PAGE_SIZE) || 200
+          : undefined,
         before: pagination.before,
       }),
     placeholderData: (previous) => previous,
