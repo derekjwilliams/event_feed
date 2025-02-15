@@ -97,23 +97,20 @@ const EventItem: React.FC<{ event: Events }> = ({ event }) => {
             {event.content}
           </div>
         )} */}
-        {(event.eventTags.length === 1 && event.eventTags[0].tag.name !== '') ||
-          (event.eventTags.length >= 2 && (
+        {(event.eventTagsAsString?.split('|').length === 1 &&
+          event.eventTagsAsString?.split('|')[0] !== '') ||
+          (event.eventTagsAsString &&
+            event.eventTagsAsString.split('|')?.length >= 2 && (
             <div className="mt-2 flex gap-2">
-              {event.eventTags
-                .filter(
-                  (
-                    eventTag
-                  ): eventTag is NonNullable<typeof eventTag> & {
-                    tagByTagId: { name: string }
-                  } => !!eventTag && eventTag.tag.name !== ''
-                )
-                .map((eventTag, index) => (
+                {event.eventTagsAsString
+                  ?.split('|')
+                  .filter((tagname) => tagname !== '')
+                  .map((tagname, index) => (
                   <div
                     key={index}
                     className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100 dark:text-black"
                   >
-                    {eventTag.tag.name}
+                      {tagname}
                   </div>
                 ))}
             </div>

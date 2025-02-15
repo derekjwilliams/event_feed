@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "graphql_schema": "dotenv -e .env -- sh -c 'gq \"$GRAPHQL_ENDPOINT\" --introspect > ./src/generated/graphql-schema.graphql'",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "generate": "npm run graphql_schema && npm run codegen"
   },
   "dependencies": {
     "@tanstack/query-core": "^5.65.0",
@@ -39,6 +41,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "19.0.0-beta-27714ef-20250124",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "eslint-plugin-react-compiler": "19.0.0-beta-27714ef-20250124",

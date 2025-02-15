@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     const events = await fetchEventsWithPagination({
       pubDate: modifiedSinceDate,
       tagNames: tags || [], // tags
-      first: 200, //TODO, increase as needed
+      first: Number(process.env.EVENT_LIST_PAGE_SIZE) || 200, //TODO, change as needed
       after: undefined,
       last: undefined,
       before: undefined,

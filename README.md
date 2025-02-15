@@ -70,7 +70,24 @@ See [Example Query](#example-graphql-query)
 
 ## Download the Calendar (ICS) Data
 
-Open browser to http://localhost:3000/api/ics, this will start a download of the calendar data, it should be about 40kB in size.
+Open browser to http://localhost:3000/api/ics, this will start a download of the calendar data, it should be about 40kB in size. Use an incognito window to get a complete calendar; this is becasue the ics endpoint examines the `if-modified-since` and `if-none-match` headers to determine which events to return.
+### cURL for Full Calendar from ICS endpoint
+```bash
+curl 'http://localhost:3000/api/ics' \
+  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
+  -H 'Accept-Language: en-US,en;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Referer: http://localhost:3000/' \
+  -H 'Sec-Fetch-Dest: document' \
+  -H 'Sec-Fetch-Mode: navigate' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'Sec-Fetch-User: ?1' \
+  -H 'Upgrade-Insecure-Requests: 1' \
+  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
+  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "macOS"'
+```
 
 ## View the RSS Data
 
@@ -257,19 +274,38 @@ To ensure type safety the code using the types found in which are generated in t
 
 The GraphQL queries used by the queryFunctions in `src/queryFunctions` can be found in src/graphql_queries/queries.js
 
-### GraphQL EndPoint, Postgraphile, and TanStack
+### GraphQL Service
 
-This code does not directly use Postgraphile, however it is dependent on a service that does use Postgraphile, that can be found in this repo: https://github.com/derekjwilliams/event_graphql
+This code uses Hasura cloud service to obtain event data.
+The `package.json` file contains scripts to download the schema from the GraphQL endpoint, e.g. Hasura, and to generate the typescript types
 
-This is a bit of overhead, and provides little benefit for the feed endpoints (ics, rss, atom, and json1), however it does provide benefits to the user interface client components, for example EventList. Since the application, and contained api endpoints, do not mutate Events the lack of normalized caching in TanStack Query does not have a performance impact. Other libraries, like Apollo, do support normalized caching. However, Apollo historically has not worked well with Next.js.
+#### Download the Schema
 
-Other notes on this topic:
+```bash
+pnpm graphql_schema
+```
 
-- It may make sense to provide a GraphQL endpoint in the application, e.g. using Postgraphile, However doing this in Next.js has been problematic. This should be revisited
+This generates the file `./src/generated/graphql-schema.graphql`.
+#### Generate the Types
+```bash
+pnpm codegen
+```
+This generates the file `./src/generated/graphql.ts` which contains the typescript definitions. This uses the codegen.ts file to specify what graphql plugins to use, e.g.
 
-- [Drizzle-orm](https://www.npmjs.com/package/drizzle-orm) may be a better choice, especially for the api endpoints. Drizzle-orm is widely used, well respected, and well documented. Drizzle-orm has been added to package.json. The generated drizzle types are in `src/types/drizzle/schema.ts` and `src/types/drizzle/relations.ts`, and the `drizzle.config.ts` is in the root of the project. There is a `drizzle` branch on github where this work will take place.
+```TypeScript
+plugins: [
+        'typescript',
+        'typescript-resolvers',
+        'typescript-operations',
+        'typescript-react-query',
+      ],
+```
 
-- Good Reading https://tanstack.com/query/latest/docs/framework/react/graphql
+#### Download the Schema then Generate the Types
+To do both (download schema then generate the types):
+```bash
+pnpm generate
+```
 
 ### Some Tricky Bits
 

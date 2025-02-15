@@ -25,11 +25,10 @@ export function generateFeed(events: EventsConnection) {
     events.edges.forEach((edge) => {
       if (edge) {
         const categories: Category[] = []
-
-        edge.node.eventTags.forEach((node) => {
-          if (node && node.tag) {
+        edge.node.eventTagsAsString?.split('|').forEach((tagname) => {
+          if (tagname || tagname === '') {
             categories.push({
-              name: node.tag.name,
+              name: tagname,
               domain: 'Willamette-events',
             })
           }
@@ -92,10 +91,10 @@ export const generateICS = async (
     vEvents = []
 
     events.edges.forEach((edge) => {
-      if (event) {
+      if (edge) {
         const uid =
           process.env.NEXT_PUBLIC_ICS_UID ||
-          'e5486a1f-5a6d-44c3-83b3-4a3a4f5f6e7@event-feed-willamette.vercel'
+          'e5486a1f-5a6d-44c3-83b3-4a3a4f5f6e7@event-feed'
 
         const start = edge.node.eventStartDate
           ? new Date(edge.node.eventStartDate)
@@ -104,9 +103,11 @@ export const generateICS = async (
           ? new Date(edge.node.eventEndDate)
           : new Date()
 
-        const categories = edge.node.eventTags
-          .filter((eventTag) => eventTag && eventTag.tag && eventTag.tag.name)
-          .map((eventTag) => eventTag!.tag!.name as string)
+        const categories = edge.node.eventTagsAsString
+          ? edge.node.eventTagsAsString.split('|')
+          : []
+              .filter((tagname) => tagname || tagname === '')
+              .map((tagname) => tagname)
 
         const e: VEvent = {
           start: { date: start },
@@ -114,7 +115,8 @@ export const generateICS = async (
           end: { date: end },
           summary: edge.node.title,
           description: edge.node.description ?? '',
-          uid: uid + `/${edge.node.link}`,
+          uid:
+            uid + `/${edge.node.link ? edge.node.link.replace(/^\//, '') : ''}`,
           url: edge.node.link
             ? `https://events.willamette.edu${edge.node.link}`
             : '',
