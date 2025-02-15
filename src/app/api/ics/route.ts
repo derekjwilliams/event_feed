@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const ifNoneMatch = req.headers.get('if-none-match')
     const modifiedSinceDate = ifModifiedSince
       ? new Date(ifModifiedSince).toISOString()
-      : new Date(0).toISOString()
+      : new Date(0).toISOString().split('T')[0]
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
     const tags = tagsParam ? tagsParam.split(',') : undefined
@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
 
     let mostRecent = modifiedSinceDate
       ? modifiedSinceDate
-      : 'new Date(0).toISOString()'
+      : new Date(0).toISOString().split('T')[0]
 
     if (pubDates.length) {
       mostRecent = pubDates.reduce((max, date) =>

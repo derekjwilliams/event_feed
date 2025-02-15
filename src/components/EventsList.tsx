@@ -37,7 +37,7 @@ function EventsList() {
     error: eventsError,
     isError,
   } = useEventsQuery({
-    pubDate: new Date(0).toISOString(),
+    pubDate: new Date(0).toISOString().split('T')[0],
     tagNames: selectedTags,
     pagination,
   })

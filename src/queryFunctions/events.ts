@@ -75,7 +75,7 @@ export async function fetchEvents(
     )
   }
   if (!pubDate) {
-    pubDate = new Date(0).toISOString() //'1970-01-01T00:00:00+00:00, for returning all events
+    pubDate = '1970-01-01T00:00:00+00:00'
   }
 
   const response = await fetch(GRAPHQL_ENDPOINT, {

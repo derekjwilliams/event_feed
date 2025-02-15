@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const tags = tagsParam ? tagsParam.split(',') : undefined
     const modifiedSinceDate = ifModifiedSince
       ? new Date(ifModifiedSince).toISOString()
-      : new Date(0).toISOString()
+      : new Date(0).toISOString().split('T')[0]
 
     const events = await fetchEventsWithPagination({
       pubDate: modifiedSinceDate,
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 
     let mostRecent = modifiedSinceDate
       ? modifiedSinceDate
-      : 'new Date(0).toISOString()'
+      : new Date(0).toISOString().split('T')[0]
 
     if (pubDates.length) {
       mostRecent = pubDates.reduce((max, date) =>
