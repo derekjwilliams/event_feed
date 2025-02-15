@@ -3,18 +3,12 @@ schema {
   subscription: subscription_root
 }
 
-"""
-whether this query should be cached (Hasura Cloud only)
-"""
+"""whether this query should be cached (Hasura Cloud only)"""
 directive @cached(
-  """
-  measured in seconds
-  """
+  """measured in seconds"""
   ttl: Int! = 60
 
-  """
-  refresh the cache entry
-  """
+  """refresh the cache entry"""
   refresh: Boolean! = false
 ) on QUERY
 
@@ -22,16 +16,12 @@ directive @cached(
 columns and relationships of "event_tags"
 """
 type EventTags implements Node {
-  """
-  An object relationship
-  """
+  """An object relationship"""
   event: Events!
   eventId: Int!
   id: ID!
 
-  """
-  An object relationship
-  """
+  """An object relationship"""
   tag: Tags!
   tagId: Int!
 }
@@ -103,9 +93,7 @@ input EventTagsMinOrderBy {
   tagId: OrderBy
 }
 
-"""
-Ordering options when selecting data from "event_tags".
-"""
+"""Ordering options when selecting data from "event_tags"."""
 input EventTagsOrderBy {
   event: EventsOrderBy
   eventId: OrderBy
@@ -117,14 +105,10 @@ input EventTagsOrderBy {
 select columns of table "event_tags"
 """
 enum EventTagsSelectColumn {
-  """
-  column name
-  """
+  """column name"""
   eventId
 
-  """
-  column name
-  """
+  """column name"""
   tagId
 }
 
@@ -195,63 +179,41 @@ type Events implements Node {
   eventEndDate: timestamptz
   eventStartDate: timestamptz
 
-  """
-  An array relationship
-  """
+  """An array relationship"""
   eventTags(
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventTagsSelectColumn!]
 
-    """
-    limit the number of rows returned
-    """
+    """limit the number of rows returned"""
     limit: Int
 
-    """
-    skip the first n rows. Use only with order_by
-    """
+    """skip the first n rows. Use only with order_by"""
     offset: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventTagsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventTagsBoolExp
   ): [EventTags!]!
 
-  """
-  Pipe separated list of tags for event
-  """
+  """Pipe separated list of tags for event"""
   eventTagsAsString: String
 
-  """
-  An array relationship connection
-  """
+  """An array relationship connection"""
   eventTags_connection(
     after: String
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventTagsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventTagsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventTagsBoolExp
   ): EventTagsConnection!
   geoLocation: geography
@@ -300,9 +262,7 @@ type EventsEdge {
   node: Events!
 }
 
-"""
-Ordering options when selecting data from "events".
-"""
+"""Ordering options when selecting data from "events"."""
 input EventsOrderBy {
   author: OrderBy
   baseUrl: OrderBy
@@ -325,69 +285,43 @@ input EventsOrderBy {
 select columns of table "events"
 """
 enum EventsSelectColumn {
-  """
-  column name
-  """
+  """column name"""
   author
 
-  """
-  column name
-  """
+  """column name"""
   baseUrl
 
-  """
-  column name
-  """
+  """column name"""
   content
 
-  """
-  column name
-  """
+  """column name"""
   description
 
-  """
-  column name
-  """
+  """column name"""
   eventEndDate
 
-  """
-  column name
-  """
+  """column name"""
   eventStartDate
 
-  """
-  column name
-  """
+  """column name"""
   geoLocation
 
-  """
-  column name
-  """
+  """column name"""
   id
 
-  """
-  column name
-  """
+  """column name"""
   imageUrl
 
-  """
-  column name
-  """
+  """column name"""
   link
 
-  """
-  column name
-  """
+  """column name"""
   location
 
-  """
-  column name
-  """
+  """column name"""
   pubDate
 
-  """
-  column name
-  """
+  """column name"""
   title
 }
 
@@ -410,14 +344,10 @@ input GeographyComparisonExp {
   _neq: geography
   _nin: [geography!]
 
-  """
-  is the column within a given distance from the given geography value
-  """
+  """is the column within a given distance from the given geography value"""
   _stDWithin: st_d_within_geography_input
 
-  """
-  does the column spatially intersect the given geography value
-  """
+  """does the column spatially intersect the given geography value"""
   _stIntersects: geography
 }
 
@@ -440,29 +370,19 @@ input GeometryComparisonExp {
   _neq: geometry
   _nin: [geometry!]
 
-  """
-  is the column within a given 3D distance from the given geometry value
-  """
+  """is the column within a given 3D distance from the given geometry value"""
   _st3dDWithin: st_d_within_input
 
-  """
-  does the column spatially intersect the given geometry value in 3D
-  """
+  """does the column spatially intersect the given geometry value in 3D"""
   _st3dIntersects: geometry
 
-  """
-  does the column contain the given geometry value
-  """
+  """does the column contain the given geometry value"""
   _stContains: geometry
 
-  """
-  does the column cross the given geometry value
-  """
+  """does the column cross the given geometry value"""
   _stCrosses: geometry
 
-  """
-  is the column within a given distance from the given geometry value
-  """
+  """is the column within a given distance from the given geometry value"""
   _stDWithin: st_d_within_input
 
   """
@@ -470,9 +390,7 @@ input GeometryComparisonExp {
   """
   _stEquals: geometry
 
-  """
-  does the column spatially intersect the given geometry value
-  """
+  """does the column spatially intersect the given geometry value"""
   _stIntersects: geometry
 
   """
@@ -485,9 +403,7 @@ input GeometryComparisonExp {
   """
   _stTouches: geometry
 
-  """
-  is the column contained in the given geometry value
-  """
+  """is the column contained in the given geometry value"""
   _stWithin: geometry
 }
 
@@ -506,48 +422,30 @@ input IntComparisonExp {
   _nin: [Int!]
 }
 
-"""
-An object with globally unique ID
-"""
+"""An object with globally unique ID"""
 interface Node {
-  """
-  A globally unique identifier
-  """
+  """A globally unique identifier"""
   id: ID!
 }
 
-"""
-column ordering options
-"""
+"""column ordering options"""
 enum OrderBy {
-  """
-  in ascending order, nulls last
-  """
+  """in ascending order, nulls last"""
   ASC
 
-  """
-  in ascending order, nulls first
-  """
+  """in ascending order, nulls first"""
   ASC_NULLS_FIRST
 
-  """
-  in ascending order, nulls last
-  """
+  """in ascending order, nulls last"""
   ASC_NULLS_LAST
 
-  """
-  in descending order, nulls first
-  """
+  """in descending order, nulls first"""
   DESC
 
-  """
-  in descending order, nulls first
-  """
+  """in descending order, nulls first"""
   DESC_NULLS_FIRST
 
-  """
-  in descending order, nulls last
-  """
+  """in descending order, nulls last"""
   DESC_NULLS_LAST
 }
 
@@ -566,9 +464,7 @@ input StringComparisonExp {
   _gt: String
   _gte: String
 
-  """
-  does the column match the given case-insensitive pattern
-  """
+  """does the column match the given case-insensitive pattern"""
   _ilike: String
   _in: [String!]
 
@@ -578,17 +474,13 @@ input StringComparisonExp {
   _iregex: String
   _isNull: Boolean
 
-  """
-  does the column match the given pattern
-  """
+  """does the column match the given pattern"""
   _like: String
   _lt: String
   _lte: String
   _neq: String
 
-  """
-  does the column NOT match the given case-insensitive pattern
-  """
+  """does the column NOT match the given case-insensitive pattern"""
   _nilike: String
   _nin: [String!]
 
@@ -597,9 +489,7 @@ input StringComparisonExp {
   """
   _niregex: String
 
-  """
-  does the column NOT match the given pattern
-  """
+  """does the column NOT match the given pattern"""
   _nlike: String
 
   """
@@ -607,9 +497,7 @@ input StringComparisonExp {
   """
   _nregex: String
 
-  """
-  does the column NOT match the given SQL regular expression
-  """
+  """does the column NOT match the given SQL regular expression"""
   _nsimilar: String
 
   """
@@ -617,9 +505,7 @@ input StringComparisonExp {
   """
   _regex: String
 
-  """
-  does the column match the given SQL regular expression
-  """
+  """does the column match the given SQL regular expression"""
   _similar: String
 }
 
@@ -630,58 +516,38 @@ type Tags implements Node {
   id: ID!
   name: String!
 
-  """
-  An array relationship
-  """
+  """An array relationship"""
   tagEvents(
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventTagsSelectColumn!]
 
-    """
-    limit the number of rows returned
-    """
+    """limit the number of rows returned"""
     limit: Int
 
-    """
-    skip the first n rows. Use only with order_by
-    """
+    """skip the first n rows. Use only with order_by"""
     offset: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventTagsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventTagsBoolExp
   ): [EventTags!]!
 
-  """
-  An array relationship connection
-  """
+  """An array relationship connection"""
   tagEvents_connection(
     after: String
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventTagsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventTagsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventTagsBoolExp
   ): EventTagsConnection!
 }
@@ -711,9 +577,7 @@ type TagsEdge {
   node: Tags!
 }
 
-"""
-Ordering options when selecting data from "tags".
-"""
+"""Ordering options when selecting data from "tags"."""
 input TagsOrderBy {
   id: OrderBy
   name: OrderBy
@@ -724,14 +588,10 @@ input TagsOrderBy {
 select columns of table "tags"
 """
 enum TagsSelectColumn {
-  """
-  column name
-  """
+  """column name"""
   id
 
-  """
-  column name
-  """
+  """column name"""
   name
 }
 
@@ -771,21 +631,15 @@ type query_root {
     after: String
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventTagsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventTagsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventTagsBoolExp
   ): EventTagsConnection!
 
@@ -796,21 +650,15 @@ type query_root {
     after: String
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventsBoolExp
   ): EventsConnection!
 
@@ -826,27 +674,19 @@ type query_root {
     args: getEventsByDateAndTagsArgs!
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventsBoolExp
   ): EventsConnection!
   node(
-    """
-    A globally unique id
-    """
+    """A globally unique id"""
     id: ID!
   ): Node
 
@@ -857,21 +697,15 @@ type query_root {
     after: String
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [TagsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [TagsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: TagsBoolExp
   ): TagsConnection!
 }
@@ -895,21 +729,15 @@ type subscription_root {
     after: String
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventTagsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventTagsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventTagsBoolExp
   ): EventTagsConnection!
 
@@ -920,21 +748,15 @@ type subscription_root {
     after: String
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventsBoolExp
   ): EventsConnection!
 
@@ -950,27 +772,19 @@ type subscription_root {
     args: getEventsByDateAndTagsArgs!
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [EventsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [EventsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: EventsBoolExp
   ): EventsConnection!
   node(
-    """
-    A globally unique id
-    """
+    """A globally unique id"""
     id: ID!
   ): Node
 
@@ -981,23 +795,18 @@ type subscription_root {
     after: String
     before: String
 
-    """
-    distinct select on columns
-    """
+    """distinct select on columns"""
     distinctOn: [TagsSelectColumn!]
     first: Int
     last: Int
 
-    """
-    sort the rows by one or more columns
-    """
+    """sort the rows by one or more columns"""
     orderBy: [TagsOrderBy!]
 
-    """
-    filter the rows returned
-    """
+    """filter the rows returned"""
     where: TagsBoolExp
   ): TagsConnection!
 }
 
 scalar timestamptz
+
