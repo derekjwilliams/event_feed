@@ -34,10 +34,9 @@ export async function handleFeedRequest(
     const feedContent = feedFormatter(feed)
 
     const pubDates = []
-
-    for (const edge of (await events).edges) {
-      if (edge.node && edge.node.pubDate) {
-        pubDates.push(edge.node.pubDate)
+    for (const node of events.nodes) {
+      if (node && node.pubDate) {
+        pubDates.push(node.pubDate)
       }
     }
 
