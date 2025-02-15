@@ -27,10 +27,9 @@ export async function GET(req: NextRequest) {
     const feedContent = await generateICS(events)
 
     const pubDates = []
-
-    for (const edge of (await events).edges) {
-      if (edge.node && edge.node.pubDate) {
-        pubDates.push(edge.node.pubDate)
+    for (const node of events.nodes) {
+      if (node && node.pubDate) {
+        pubDates.push(node.pubDate)
       }
     }
 
