@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "graphql_schema": "dotenv -e .env -- sh -c 'gq \"$GRAPHQL_ENDPOINT\" --introspect > ./src/generated/graphql-schema.graphql'",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "generate": "npm run graphql_schema && npm run codegen"
   },
   "dependencies": {
     "@tanstack/query-core": "^5.65.0",

@@ -1,0 +1,810 @@
+schema {
+  query: query_root
+  subscription: subscription_root
+}
+
+"""whether this query should be cached (Hasura Cloud only)"""
+directive @cached(
+  """measured in seconds"""
+  ttl: Int! = 60
+
+  """refresh the cache entry"""
+  refresh: Boolean! = false
+) on QUERY
+
+"""
+columns and relationships of "event_tags"
+"""
+type EventTags implements Node {
+  """An object relationship"""
+  event: Events!
+  eventId: Int!
+  id: ID!
+
+  """An object relationship"""
+  tag: Tags!
+  tagId: Int!
+}
+
+"""
+order by aggregate values of table "event_tags"
+"""
+input EventTagsAggregateOrderBy {
+  avg: EventTagsAvgOrderBy
+  count: OrderBy
+  max: EventTagsMaxOrderBy
+  min: EventTagsMinOrderBy
+  stddev: EventTagsStddevOrderBy
+  stddevPop: EventTagsStddevPopOrderBy
+  stddevSamp: EventTagsStddevSampOrderBy
+  sum: EventTagsSumOrderBy
+  varPop: EventTagsVarPopOrderBy
+  varSamp: EventTagsVarSampOrderBy
+  variance: EventTagsVarianceOrderBy
+}
+
+"""
+order by avg() on columns of table "event_tags"
+"""
+input EventTagsAvgOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+Boolean expression to filter rows from the table "event_tags". All fields are combined with a logical 'AND'.
+"""
+input EventTagsBoolExp {
+  _and: [EventTagsBoolExp!]
+  _not: EventTagsBoolExp
+  _or: [EventTagsBoolExp!]
+  event: EventsBoolExp
+  eventId: IntComparisonExp
+  tag: TagsBoolExp
+  tagId: IntComparisonExp
+}
+
+"""
+A Relay connection object on "event_tags"
+"""
+type EventTagsConnection {
+  edges: [EventTagsEdge!]!
+  pageInfo: PageInfo!
+}
+
+type EventTagsEdge {
+  cursor: String!
+  node: EventTags!
+}
+
+"""
+order by max() on columns of table "event_tags"
+"""
+input EventTagsMaxOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+order by min() on columns of table "event_tags"
+"""
+input EventTagsMinOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""Ordering options when selecting data from "event_tags"."""
+input EventTagsOrderBy {
+  event: EventsOrderBy
+  eventId: OrderBy
+  tag: TagsOrderBy
+  tagId: OrderBy
+}
+
+"""
+select columns of table "event_tags"
+"""
+enum EventTagsSelectColumn {
+  """column name"""
+  eventId
+
+  """column name"""
+  tagId
+}
+
+"""
+order by stddev() on columns of table "event_tags"
+"""
+input EventTagsStddevOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+order by stddevPop() on columns of table "event_tags"
+"""
+input EventTagsStddevPopOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+order by stddevSamp() on columns of table "event_tags"
+"""
+input EventTagsStddevSampOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+order by sum() on columns of table "event_tags"
+"""
+input EventTagsSumOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+order by varPop() on columns of table "event_tags"
+"""
+input EventTagsVarPopOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+order by varSamp() on columns of table "event_tags"
+"""
+input EventTagsVarSampOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+order by variance() on columns of table "event_tags"
+"""
+input EventTagsVarianceOrderBy {
+  eventId: OrderBy
+  tagId: OrderBy
+}
+
+"""
+columns and relationships of "events"
+"""
+type Events implements Node {
+  author: String
+  baseUrl: String
+  content: String
+  description: String
+  eventEndDate: timestamptz
+  eventStartDate: timestamptz
+
+  """An array relationship"""
+  eventTags(
+    """distinct select on columns"""
+    distinctOn: [EventTagsSelectColumn!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventTagsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventTagsBoolExp
+  ): [EventTags!]!
+
+  """Pipe separated list of tags for event"""
+  eventTagsAsString: String
+
+  """An array relationship connection"""
+  eventTags_connection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventTagsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventTagsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventTagsBoolExp
+  ): EventTagsConnection!
+  geoLocation: geography
+  id: ID!
+  imageUrl: String
+  link: String
+  location: String
+  pubDate: timestamptz
+  title: String!
+}
+
+"""
+Boolean expression to filter rows from the table "events". All fields are combined with a logical 'AND'.
+"""
+input EventsBoolExp {
+  _and: [EventsBoolExp!]
+  _not: EventsBoolExp
+  _or: [EventsBoolExp!]
+  author: StringComparisonExp
+  baseUrl: StringComparisonExp
+  content: StringComparisonExp
+  description: StringComparisonExp
+  eventEndDate: TimestamptzComparisonExp
+  eventStartDate: TimestamptzComparisonExp
+  eventTags: EventTagsBoolExp
+  eventTagsAsString: StringComparisonExp
+  geoLocation: GeographyComparisonExp
+  id: IntComparisonExp
+  imageUrl: StringComparisonExp
+  link: StringComparisonExp
+  location: StringComparisonExp
+  pubDate: TimestamptzComparisonExp
+  title: StringComparisonExp
+}
+
+"""
+A Relay connection object on "events"
+"""
+type EventsConnection {
+  edges: [EventsEdge!]!
+  pageInfo: PageInfo!
+}
+
+type EventsEdge {
+  cursor: String!
+  node: Events!
+}
+
+"""Ordering options when selecting data from "events"."""
+input EventsOrderBy {
+  author: OrderBy
+  baseUrl: OrderBy
+  content: OrderBy
+  description: OrderBy
+  eventEndDate: OrderBy
+  eventStartDate: OrderBy
+  eventTagsAggregate: EventTagsAggregateOrderBy
+  eventTagsAsString: OrderBy
+  geoLocation: OrderBy
+  id: OrderBy
+  imageUrl: OrderBy
+  link: OrderBy
+  location: OrderBy
+  pubDate: OrderBy
+  title: OrderBy
+}
+
+"""
+select columns of table "events"
+"""
+enum EventsSelectColumn {
+  """column name"""
+  author
+
+  """column name"""
+  baseUrl
+
+  """column name"""
+  content
+
+  """column name"""
+  description
+
+  """column name"""
+  eventEndDate
+
+  """column name"""
+  eventStartDate
+
+  """column name"""
+  geoLocation
+
+  """column name"""
+  id
+
+  """column name"""
+  imageUrl
+
+  """column name"""
+  link
+
+  """column name"""
+  location
+
+  """column name"""
+  pubDate
+
+  """column name"""
+  title
+}
+
+input GeographyCastExp {
+  geometry: GeometryComparisonExp
+}
+
+"""
+Boolean expression to compare columns of type "geography". All fields are combined with logical 'AND'.
+"""
+input GeographyComparisonExp {
+  _cast: GeographyCastExp
+  _eq: geography
+  _gt: geography
+  _gte: geography
+  _in: [geography!]
+  _isNull: Boolean
+  _lt: geography
+  _lte: geography
+  _neq: geography
+  _nin: [geography!]
+
+  """is the column within a given distance from the given geography value"""
+  _stDWithin: st_d_within_geography_input
+
+  """does the column spatially intersect the given geography value"""
+  _stIntersects: geography
+}
+
+input GeometryCastExp {
+  geography: GeographyComparisonExp
+}
+
+"""
+Boolean expression to compare columns of type "geometry". All fields are combined with logical 'AND'.
+"""
+input GeometryComparisonExp {
+  _cast: GeometryCastExp
+  _eq: geometry
+  _gt: geometry
+  _gte: geometry
+  _in: [geometry!]
+  _isNull: Boolean
+  _lt: geometry
+  _lte: geometry
+  _neq: geometry
+  _nin: [geometry!]
+
+  """is the column within a given 3D distance from the given geometry value"""
+  _st3dDWithin: st_d_within_input
+
+  """does the column spatially intersect the given geometry value in 3D"""
+  _st3dIntersects: geometry
+
+  """does the column contain the given geometry value"""
+  _stContains: geometry
+
+  """does the column cross the given geometry value"""
+  _stCrosses: geometry
+
+  """is the column within a given distance from the given geometry value"""
+  _stDWithin: st_d_within_input
+
+  """
+  is the column equal to given geometry value (directionality is ignored)
+  """
+  _stEquals: geometry
+
+  """does the column spatially intersect the given geometry value"""
+  _stIntersects: geometry
+
+  """
+  does the column 'spatially overlap' (intersect but not completely contain) the given geometry value
+  """
+  _stOverlaps: geometry
+
+  """
+  does the column have atleast one point in common with the given geometry value
+  """
+  _stTouches: geometry
+
+  """is the column contained in the given geometry value"""
+  _stWithin: geometry
+}
+
+"""
+Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
+"""
+input IntComparisonExp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _isNull: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
+}
+
+"""An object with globally unique ID"""
+interface Node {
+  """A globally unique identifier"""
+  id: ID!
+}
+
+"""column ordering options"""
+enum OrderBy {
+  """in ascending order, nulls last"""
+  ASC
+
+  """in ascending order, nulls first"""
+  ASC_NULLS_FIRST
+
+  """in ascending order, nulls last"""
+  ASC_NULLS_LAST
+
+  """in descending order, nulls first"""
+  DESC
+
+  """in descending order, nulls first"""
+  DESC_NULLS_FIRST
+
+  """in descending order, nulls last"""
+  DESC_NULLS_LAST
+}
+
+type PageInfo {
+  endCursor: String!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String!
+}
+
+"""
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+"""
+input StringComparisonExp {
+  _eq: String
+  _gt: String
+  _gte: String
+
+  """does the column match the given case-insensitive pattern"""
+  _ilike: String
+  _in: [String!]
+
+  """
+  does the column match the given POSIX regular expression, case insensitive
+  """
+  _iregex: String
+  _isNull: Boolean
+
+  """does the column match the given pattern"""
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+
+  """does the column NOT match the given case-insensitive pattern"""
+  _nilike: String
+  _nin: [String!]
+
+  """
+  does the column NOT match the given POSIX regular expression, case insensitive
+  """
+  _niregex: String
+
+  """does the column NOT match the given pattern"""
+  _nlike: String
+
+  """
+  does the column NOT match the given POSIX regular expression, case sensitive
+  """
+  _nregex: String
+
+  """does the column NOT match the given SQL regular expression"""
+  _nsimilar: String
+
+  """
+  does the column match the given POSIX regular expression, case sensitive
+  """
+  _regex: String
+
+  """does the column match the given SQL regular expression"""
+  _similar: String
+}
+
+"""
+columns and relationships of "tags"
+"""
+type Tags implements Node {
+  id: ID!
+  name: String!
+
+  """An array relationship"""
+  tagEvents(
+    """distinct select on columns"""
+    distinctOn: [EventTagsSelectColumn!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventTagsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventTagsBoolExp
+  ): [EventTags!]!
+
+  """An array relationship connection"""
+  tagEvents_connection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventTagsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventTagsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventTagsBoolExp
+  ): EventTagsConnection!
+}
+
+"""
+Boolean expression to filter rows from the table "tags". All fields are combined with a logical 'AND'.
+"""
+input TagsBoolExp {
+  _and: [TagsBoolExp!]
+  _not: TagsBoolExp
+  _or: [TagsBoolExp!]
+  id: IntComparisonExp
+  name: StringComparisonExp
+  tagEvents: EventTagsBoolExp
+}
+
+"""
+A Relay connection object on "tags"
+"""
+type TagsConnection {
+  edges: [TagsEdge!]!
+  pageInfo: PageInfo!
+}
+
+type TagsEdge {
+  cursor: String!
+  node: Tags!
+}
+
+"""Ordering options when selecting data from "tags"."""
+input TagsOrderBy {
+  id: OrderBy
+  name: OrderBy
+  tagEventsAggregate: EventTagsAggregateOrderBy
+}
+
+"""
+select columns of table "tags"
+"""
+enum TagsSelectColumn {
+  """column name"""
+  id
+
+  """column name"""
+  name
+}
+
+"""
+Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'.
+"""
+input TimestamptzComparisonExp {
+  _eq: timestamptz
+  _gt: timestamptz
+  _gte: timestamptz
+  _in: [timestamptz!]
+  _isNull: Boolean
+  _lt: timestamptz
+  _lte: timestamptz
+  _neq: timestamptz
+  _nin: [timestamptz!]
+}
+
+scalar _text
+
+scalar geography
+
+scalar geometry
+
+input getEventsByDateAndTagsArgs {
+  p_pub_date: String
+  p_tag_names: _text
+}
+
+type query_root {
+  """
+  fetch data from the table: "event_tags"
+  """
+  eventTagsConnection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventTagsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventTagsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventTagsBoolExp
+  ): EventTagsConnection!
+
+  """
+  fetch data from the table: "events"
+  """
+  eventsConnection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventsBoolExp
+  ): EventsConnection!
+
+  """
+  execute function "get_events_by_date_and_tags" which returns "events"
+  """
+  getEventsByDateAndTags_connection(
+    after: String
+
+    """
+    input parameters for function "getEventsByDateAndTags"
+    """
+    args: getEventsByDateAndTagsArgs!
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventsBoolExp
+  ): EventsConnection!
+  node(
+    """A globally unique id"""
+    id: ID!
+  ): Node
+
+  """
+  fetch data from the table: "tags"
+  """
+  tagsConnection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [TagsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [TagsOrderBy!]
+
+    """filter the rows returned"""
+    where: TagsBoolExp
+  ): TagsConnection!
+}
+
+input st_d_within_geography_input {
+  distance: Float!
+  from: geography!
+  use_spheroid: Boolean = true
+}
+
+input st_d_within_input {
+  distance: Float!
+  from: geometry!
+}
+
+type subscription_root {
+  """
+  fetch data from the table: "event_tags"
+  """
+  eventTagsConnection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventTagsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventTagsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventTagsBoolExp
+  ): EventTagsConnection!
+
+  """
+  fetch data from the table: "events"
+  """
+  eventsConnection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventsBoolExp
+  ): EventsConnection!
+
+  """
+  execute function "get_events_by_date_and_tags" which returns "events"
+  """
+  getEventsByDateAndTags_connection(
+    after: String
+
+    """
+    input parameters for function "getEventsByDateAndTags"
+    """
+    args: getEventsByDateAndTagsArgs!
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventsBoolExp
+  ): EventsConnection!
+  node(
+    """A globally unique id"""
+    id: ID!
+  ): Node
+
+  """
+  fetch data from the table: "tags"
+  """
+  tagsConnection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [TagsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [TagsOrderBy!]
+
+    """filter the rows returned"""
+    where: TagsBoolExp
+  ): TagsConnection!
+}
+
+scalar timestamptz
+

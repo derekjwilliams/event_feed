@@ -276,17 +276,13 @@ To ensure type safety the code using the types found in which are generated in t
 
 The GraphQL queries used by the queryFunctions in `src/queryFunctions` can be found in src/graphql_queries/queries.js
 
-### GraphQL EndPoint, Postgraphile, and TanStack
+### GraphQL Service
 
-This code does not directly use Postgraphile, however it is dependent on a service that does use Postgraphile, that can be found in this repo: https://github.com/derekjwilliams/event_graphql
-
-This is a bit of overhead, and provides little benefit for the feed endpoints (ics, rss, atom, and json1), however it does provide benefits to the user interface client components, for example EventsList. Since the application, and contained api endpoints, do not mutate Events the lack of normalized caching in TanStack Query does not have a performance impact. Other libraries, like Apollo, do support normalized caching. However, Apollo historically has not worked well with Next.js.
+This code uses Hasura cloud service to obtain event data.
 
 Other notes on this topic:
 
-- It may make sense to provide a GraphQL endpoint in the application, e.g. using Postgraphile, However doing this in Next.js has been problematic. This should be revisited
-
-- [Drizzle-orm](https://www.npmjs.com/package/drizzle-orm) may be a better choice, especially for the api endpoints. Drizzle-orm is widely used, well respected, and well documented. Drizzle-orm has been added to package.json. The generated drizzle types are in `src/types/drizzle/schema.ts` and `src/types/drizzle/relations.ts`, and the `drizzle.config.ts` is in the root of the project. There is a `drizzle` branch on github where this work will take place.
+- It may make sense to provide a GraphQL endpoint in the application, e.g. using Postgraphile, However doing this in Next.js has been problematic. This should be revisited.
 
 - Good Reading https://tanstack.com/query/latest/docs/framework/react/graphql
 
