@@ -280,11 +280,40 @@ The GraphQL queries used by the queryFunctions in `src/queryFunctions` can be fo
 
 This code uses Hasura cloud service to obtain event data.
 
-Other notes on this topic:
+The `package.json` file contains scripts to download the schema from the GraphQL endpoint, e.g. Hasura, and to generate the typescript types
 
-- It may make sense to provide a GraphQL endpoint in the application, e.g. using Postgraphile, However doing this in Next.js has been problematic. This should be revisited.
+#### Download the Schema
 
-- Good Reading https://tanstack.com/query/latest/docs/framework/react/graphql
+```bash
+npm graphql_schema
+```
+
+This generates the file `./src/generated/graphql-schema.graphql`.
+
+#### Generate the Types
+
+```bash
+npm codegen
+```
+
+This generates the file `./src/generated/graphql.ts` which contains the typescript definitions. This uses the codegen.ts file to specify what graphql plugins to use, e.g.
+
+```TypeScript
+plugins: [
+        'typescript',
+        'typescript-resolvers',
+        'typescript-operations',
+        'typescript-react-query',
+      ],
+```
+
+#### Download the Schema then Generate the Types
+
+To do both (download schema then generate the types):
+
+```bash
+npm generate
+```
 
 ### Some Tricky Bits
 
