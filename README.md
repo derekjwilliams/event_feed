@@ -285,7 +285,7 @@ The `package.json` file contains scripts to download the schema from the GraphQL
 #### Download the Schema
 
 ```bash
-npm graphql_schema
+pnpm graphql_schema
 ```
 
 This generates the file `./src/generated/graphql-schema.graphql`.
@@ -293,7 +293,7 @@ This generates the file `./src/generated/graphql-schema.graphql`.
 #### Generate the Types
 
 ```bash
-npm codegen
+pnpm codegen
 ```
 
 This generates the file `./src/generated/graphql.ts` which contains the typescript definitions. This uses the codegen.ts file to specify what graphql plugins to use, e.g.
@@ -312,7 +312,7 @@ plugins: [
 To do both (download schema then generate the types):
 
 ```bash
-npm generate
+pnpm generate
 ```
 
 ### Some Tricky Bits
