@@ -612,6 +612,13 @@ input TimestamptzComparisonExp {
 
 scalar _text
 
+input eventsByDateAndTagsArgs {
+  p_date_window_end: timestamptz
+  p_date_window_start: timestamptz
+  p_pub_date: timestamptz
+  p_tag_names: _text
+}
+
 scalar geography
 
 scalar geometry
@@ -642,6 +649,30 @@ type query_root {
     """filter the rows returned"""
     where: EventTagsBoolExp
   ): EventTagsConnection!
+
+  """
+  execute function "events_by_date_and_tags" which returns "events"
+  """
+  eventsByDateAndTags_connection(
+    after: String
+
+    """
+    input parameters for function "eventsByDateAndTags"
+    """
+    args: eventsByDateAndTagsArgs!
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventsBoolExp
+  ): EventsConnection!
 
   """
   fetch data from the table: "events"
@@ -740,6 +771,30 @@ type subscription_root {
     """filter the rows returned"""
     where: EventTagsBoolExp
   ): EventTagsConnection!
+
+  """
+  execute function "events_by_date_and_tags" which returns "events"
+  """
+  eventsByDateAndTags_connection(
+    after: String
+
+    """
+    input parameters for function "eventsByDateAndTags"
+    """
+    args: eventsByDateAndTagsArgs!
+    before: String
+
+    """distinct select on columns"""
+    distinctOn: [EventsSelectColumn!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [EventsOrderBy!]
+
+    """filter the rows returned"""
+    where: EventsBoolExp
+  ): EventsConnection!
 
   """
   fetch data from the table: "events"

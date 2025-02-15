@@ -62,7 +62,7 @@ export async function fetchEventsWithPagination(
     throw new Error(errors[0].message)
   }
 
-  return data?.getEventsByDateAndTags_connection || []
+  return data?.eventsByDateAndTags_connection || []
 }
 
 export async function fetchEvents(

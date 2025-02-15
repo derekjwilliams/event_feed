@@ -110,21 +110,28 @@ For the GraphQL Server. A GraphiQL user interface is running at https://event-gr
 Place this query into the main query pane, don't forget to add the variables in the QUERY VARIABLES pane, get those [here](#query-variables). You should have something similar to [this](#graqhiql-user-interface-image) in your browser.
 
 ```gql
-query GetEventsByDateAndTags(
+query EventsByDateAndTags(
   $tagNames: _text
-  $pubDate: String!
+  $pubDate: timestamptz!
   $first: Int
   $last: Int
   $after: String
   $before: String
+  $dateWindowStart: timestamptz!
+  $dateWindowEnd: timestamptz!
 ) {
-  getEventsByDateAndTags_connection(
+  eventsByDateAndTags_connection(
     first: $first
     after: $after
     last: $last
     before: $before
     orderBy: { eventStartDate: ASC }
-    args: { p_tag_names: $tagNames, p_pub_date: $pubDate }
+    args: {
+      p_tag_names: $tagNames
+      p_pub_date: $pubDate
+      p_date_window_start: $dateWindowStart
+      p_date_window_end: $dateWindowEnd
+    }
   ) {
     pageInfo {
       endCursor
@@ -155,15 +162,17 @@ query GetEventsByDateAndTags(
 
 ```json
 {
-  "first": 1,
+  "first": 2,
   "pubDate": "2025-02-01",
+  "dateWindowStart": "2021-02-01",
+  "dateWindowEnd": "2026-02-01",
   "tagNames": "{Salem Campus}"
 }
 ```
 
 ### GraqhiQL User Interface Image
 
-![Image](https://github.com/user-attachments/assets/eb2f9533-8c80-4ce8-be67-c228a4f2ec22)
+![Image](https://github.com/user-attachments/assets/afc8ae44-2348-4e3a-adba-176a8a1a2e47)
 
 ## Feed Endpoints
 
