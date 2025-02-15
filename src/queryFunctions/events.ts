@@ -25,6 +25,7 @@ function convertToHasuraTagString(tags: string[]): string {
 export async function fetchEventsWithPagination(
   variables: FetchEventsVariables
 ): Promise<EventsConnection> {
+  console.log(JSON.stringify(variables))
   const hasuraCompatibleTags: string = convertToHasuraTagString(
     variables.tagNames
   )
@@ -57,6 +58,7 @@ export async function fetchEventsWithPagination(
   const { data, errors } = await response.json()
 
   if (errors) {
+    console.log(JSON.stringify(errors, null, 2))
     throw new Error(errors[0].message)
   }
 

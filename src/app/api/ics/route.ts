@@ -2,19 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { generateICS } from '@/lib/feed'
 import { fetchEventsWithPagination } from '@/queryFunctions/events'
 
-const EPOCH_START = '1970-01-01'
+const EPOCH_START = new Date(0).toISOString().split('T')[0]
 
 export async function GET(req: NextRequest) {
   try {
-    const ifModifiedSince = req.headers.get('if-modified-since') || EPOCH_START
+    // Request headers for caching
+    const ifModifiedSince = req.headers.get('if-modified-since')
     const ifNoneMatch = req.headers.get('if-none-match')
-    const modifiedSinceDate = ifModifiedSince
-      ? new Date(ifModifiedSince).toISOString()
-      : new Date(0).toISOString().split('T')[0]
     const { searchParams } = new URL(req.url)
     const tagsParam = searchParams.get('tags')
     const tags = tagsParam ? tagsParam.split(',') : undefined
-
+    const modifiedSinceDate = ifModifiedSince
+      ? new Date(ifModifiedSince).toISOString()
+      : new Date(0).toISOString().split('T')[0]
     const events = await fetchEventsWithPagination({
       pubDate: modifiedSinceDate,
       tagNames: tags || [], // tags
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       before: undefined,
     })
 
-    const icsData = await generateICS(events)
+    const feedContent = await generateICS(events)
 
     const pubDates = []
 
@@ -44,13 +44,15 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const etag = `"${Buffer.from(icsData).toString('base64').substring(0, 16)}"`
+    const etag = `"${Buffer.from(feedContent)
+      .toString('base64')
+      .substring(0, 16)}"`
 
     // Respond with 304 if the feed hasn't changed
     if (ifNoneMatch === etag || ifModifiedSince === mostRecent) {
       return new NextResponse(null, { status: 304 })
     }
-
+    // Return the feed with caching headers
     const headers = new Headers({
       'Content-Type': 'text/calendar',
       'Last-Modified': mostRecent,
@@ -58,13 +60,20 @@ export async function GET(req: NextRequest) {
       ETag: etag,
     })
 
-    return new NextResponse(icsData, { status: 200, headers })
+    return new NextResponse(feedContent, { status: 200, headers })
   } catch (error) {
-    console.error('Error generating ICS:', error)
-    return NextResponse.json(
-      { error: 'Failed to generate calendar file' },
-      { status: 500 }
-    )
+    console.log(error)
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { message: error.message },
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    } else {
+      return new NextResponse(JSON.stringify(error), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
   }
 }
 // NOTE: curl for ICS curl

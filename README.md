@@ -71,7 +71,9 @@ See [Example Query](#example-graphql-query)
 ## Download the Calendar (ICS) Data
 
 Open browser to http://localhost:3000/api/ics, this will start a download of the calendar data, it should be about 40kB in size. Use an incognito window to get a complete calendar; this is becasue the ics endpoint examines the `if-modified-since` and `if-none-match` headers to determine which events to return.
+
 ### cURL for Full Calendar from ICS endpoint
+
 ```bash
 curl 'http://localhost:3000/api/ics' \
   -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
@@ -108,44 +110,41 @@ For the GraphQL Server. A GraphiQL user interface is running at https://event-gr
 Place this query into the main query pane, don't forget to add the variables in the QUERY VARIABLES pane, get those [here](#query-variables). You should have something similar to [this](#graqhiql-user-interface-image) in your browser.
 
 ```gql
-query getEventsByDateAndTags(
+query GetEventsByDateAndTags(
+  $tagNames: _text
   $pubDate: String!
-  $tagNames: [String!]!
   $first: Int
-  $after: Cursor
+  $last: Int
+  $after: String
+  $before: String
 ) {
-  getEventsByDateAndTags(
-    pPubDate: $pubDate
-    pTagNames: $tagNames
+  getEventsByDateAndTags_connection(
     first: $first
     after: $after
+    last: $last
+    before: $before
+    orderBy: { eventStartDate: ASC }
+    args: { p_tag_names: $tagNames, p_pub_date: $pubDate }
   ) {
     pageInfo {
+      endCursor
+      startCursor
       hasNextPage
       hasPreviousPage
-      startCursor
-      endCursor
     }
-
-    nodes {
-      id
-      author
-      title
-      description
-      content
-      link
-      pubDate
-      createdAt
-      updatedAt
-      imageUrl
-      eventStartDate
-      eventEndDate
-      eventTagsByEventId {
-        nodes {
-          tagByTagId {
-            name
-          }
-        }
+    edges {
+      node {
+        id
+        title
+        link
+        description
+        eventStartDate
+        eventEndDate
+        imageUrl
+        location
+        geoLocation
+        pubDate
+        eventTagsAsString
       }
     }
   }
@@ -156,16 +155,15 @@ query getEventsByDateAndTags(
 
 ```json
 {
-  "pubDate": "2017-01-01",
-  "tagNames": ["Housing"],
   "first": 1,
-  "after": "WyJuYXR1cmFsIiwxXQ=="
+  "pubDate": "2025-02-01",
+  "tagNames": "{Salem Campus}"
 }
 ```
 
 ### GraqhiQL User Interface Image
 
-![Image](https://github.com/user-attachments/assets/a9d5b333-6a20-4168-b38b-689b4efc7b69)
+![Image](https://github.com/user-attachments/assets/eb2f9533-8c80-4ce8-be67-c228a4f2ec22)
 
 ## Feed Endpoints
 
@@ -286,10 +284,13 @@ pnpm graphql_schema
 ```
 
 This generates the file `./src/generated/graphql-schema.graphql`.
+
 #### Generate the Types
+
 ```bash
 pnpm codegen
 ```
+
 This generates the file `./src/generated/graphql.ts` which contains the typescript definitions. This uses the codegen.ts file to specify what graphql plugins to use, e.g.
 
 ```TypeScript
@@ -302,7 +303,9 @@ plugins: [
 ```
 
 #### Download the Schema then Generate the Types
+
 To do both (download schema then generate the types):
+
 ```bash
 pnpm generate
 ```
