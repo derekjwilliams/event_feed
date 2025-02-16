@@ -101,20 +101,20 @@ const EventItem: React.FC<{ event: Events }> = ({ event }) => {
           event.eventTagsAsString?.split('|')[0] !== '') ||
           (event.eventTagsAsString &&
             event.eventTagsAsString.split('|')?.length >= 2 && (
-              <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex gap-2">
                 {event.eventTagsAsString
                   ?.split('|')
                   .filter((tagname) => tagname !== '')
                   .map((tagname, index) => (
-                    <div
-                      key={index}
-                      className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100 dark:text-black"
-                    >
+                  <div
+                    key={index}
+                    className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100 dark:text-black"
+                  >
                       {tagname}
-                    </div>
-                  ))}
-              </div>
-            ))}
+                  </div>
+                ))}
+            </div>
+          ))}
       </div>
     </div>
   )

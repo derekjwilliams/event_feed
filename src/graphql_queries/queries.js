@@ -1,4 +1,38 @@
 export const EVENTS_QUERY = `
+query EventsByDateAndTags($tagNames: _text, $pubDate: timestamptz!, $first:Int, $last:Int, $after:String, $before:String, $dateWindowStart: timestamptz, $dateWindowEnd: timestamptz) @cached(ttl: 300) {
+  eventsByDateAndTags_connection(
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+    orderBy: {eventStartDate: ASC}
+    args: {p_tag_names: $tagNames, p_pub_date: $pubDate}
+  ) {
+    pageInfo {
+      endCursor
+      startCursor
+      hasNextPage
+      hasPreviousPage
+    }
+    edges {
+      node {
+        id
+        title
+        link
+        description
+        eventStartDate
+        eventEndDate
+        imageUrl
+        location
+        geoLocation
+        pubDate
+        eventTagsAsString
+      }
+    }
+  }
+}`
+
+export const DEPRECATED_EVENTS_QUERY = `
 query GetEventsByDateAndTags($tagNames: _text, $pubDate: String!, $first:Int, $last:Int, $after:String, $before:String) @cached(ttl: 300) {
   getEventsByDateAndTags_connection(
     first: $first

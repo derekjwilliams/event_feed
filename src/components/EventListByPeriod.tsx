@@ -11,7 +11,7 @@ import { TagsEdge } from '@/types/graphql'
 
 // Feature - Implement as React Server Components to further improve performance and lower server load
 // This is most easily done by
-function EventsMonth() {
+function EventListByPeriod() {
   const searchParams = useSearchParams()
   const [selectedTags, setSelectedTags] = useState<string[]>(
     searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []
@@ -252,7 +252,7 @@ function EventsMonth() {
 }
 const SuspendedEventsList = () => (
   <Suspense fallback={<div>Loading...</div>}>
-    <EventsList />
+    <EventListByPeriod />
   </Suspense>
 )
 

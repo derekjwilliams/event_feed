@@ -514,6 +514,13 @@ export type TimestamptzComparisonExp = {
   _nin?: InputMaybe<Array<Scalars['timestamptz']['input']>>
 }
 
+export type EventsByDateAndTagsArgs = {
+  p_date_window_end?: InputMaybe<Scalars['timestamptz']['input']>
+  p_date_window_start?: InputMaybe<Scalars['timestamptz']['input']>
+  p_pub_date?: InputMaybe<Scalars['timestamptz']['input']>
+  p_tag_names?: InputMaybe<Scalars['_text']['input']>
+}
+
 export type GetEventsByDateAndTagsArgs = {
   p_date_window_end?: InputMaybe<Scalars['String']['input']>
   p_date_window_start?: InputMaybe<Scalars['String']['input']>
@@ -525,6 +532,8 @@ export type Query_Root = {
   __typename?: 'query_root'
   /** fetch data from the table: "event_tags" */
   eventTagsConnection: EventTagsConnection
+  /** execute function "events_by_date_and_tags" which returns "events" */
+  eventsByDateAndTags_connection: EventsConnection
   /** fetch data from the table: "events" */
   eventsConnection: EventsConnection
   /** execute function "get_events_by_date_and_tags" which returns "events" */
@@ -542,6 +551,17 @@ export type Query_RootEventTagsConnectionArgs = {
   last?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Array<EventTagsOrderBy>>
   where?: InputMaybe<EventTagsBoolExp>
+}
+
+export type Query_RootEventsByDateAndTags_ConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  args: EventsByDateAndTagsArgs
+  before?: InputMaybe<Scalars['String']['input']>
+  distinctOn?: InputMaybe<Array<EventsSelectColumn>>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<EventsOrderBy>>
+  where?: InputMaybe<EventsBoolExp>
 }
 
 export type Query_RootEventsConnectionArgs = {
@@ -594,6 +614,8 @@ export type Subscription_Root = {
   __typename?: 'subscription_root'
   /** fetch data from the table: "event_tags" */
   eventTagsConnection: EventTagsConnection
+  /** execute function "events_by_date_and_tags" which returns "events" */
+  eventsByDateAndTags_connection: EventsConnection
   /** fetch data from the table: "events" */
   eventsConnection: EventsConnection
   /** execute function "get_events_by_date_and_tags" which returns "events" */
@@ -611,6 +633,17 @@ export type Subscription_RootEventTagsConnectionArgs = {
   last?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Array<EventTagsOrderBy>>
   where?: InputMaybe<EventTagsBoolExp>
+}
+
+export type Subscription_RootEventsByDateAndTags_ConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  args: EventsByDateAndTagsArgs
+  before?: InputMaybe<Scalars['String']['input']>
+  distinctOn?: InputMaybe<Array<EventsSelectColumn>>
+  first?: InputMaybe<Scalars['Int']['input']>
+  last?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<EventsOrderBy>>
+  where?: InputMaybe<EventsBoolExp>
 }
 
 export type Subscription_RootEventsConnectionArgs = {
@@ -806,6 +839,7 @@ export type ResolversTypes = {
   TagsSelectColumn: TagsSelectColumn
   TimestamptzComparisonExp: TimestamptzComparisonExp
   _text: ResolverTypeWrapper<Scalars['_text']['output']>
+  eventsByDateAndTagsArgs: EventsByDateAndTagsArgs
   geography: ResolverTypeWrapper<Scalars['geography']['output']>
   geometry: ResolverTypeWrapper<Scalars['geometry']['output']>
   getEventsByDateAndTagsArgs: GetEventsByDateAndTagsArgs
@@ -859,6 +893,7 @@ export type ResolversParentTypes = {
   TagsOrderBy: TagsOrderBy
   TimestamptzComparisonExp: TimestamptzComparisonExp
   _text: Scalars['_text']['output']
+  eventsByDateAndTagsArgs: EventsByDateAndTagsArgs
   geography: Scalars['geography']['output']
   geometry: Scalars['geometry']['output']
   getEventsByDateAndTagsArgs: GetEventsByDateAndTagsArgs
@@ -1077,6 +1112,12 @@ export type Query_RootResolvers<
     ContextType,
     Partial<Query_RootEventTagsConnectionArgs>
   >
+  eventsByDateAndTags_connection?: Resolver<
+    ResolversTypes['EventsConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<Query_RootEventsByDateAndTags_ConnectionArgs, 'args'>
+  >
   eventsConnection?: Resolver<
     ResolversTypes['EventsConnection'],
     ParentType,
@@ -1113,6 +1154,13 @@ export type Subscription_RootResolvers<
     ParentType,
     ContextType,
     Partial<Subscription_RootEventTagsConnectionArgs>
+  >
+  eventsByDateAndTags_connection?: SubscriptionResolver<
+    ResolversTypes['EventsConnection'],
+    'eventsByDateAndTags_connection',
+    ParentType,
+    ContextType,
+    RequireFields<Subscription_RootEventsByDateAndTags_ConnectionArgs, 'args'>
   >
   eventsConnection?: SubscriptionResolver<
     ResolversTypes['EventsConnection'],

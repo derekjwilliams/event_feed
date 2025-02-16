@@ -110,44 +110,48 @@ For the GraphQL Server. A GraphiQL user interface is running at https://event-gr
 Place this query into the main query pane, don't forget to add the variables in the QUERY VARIABLES pane, get those [here](#query-variables). You should have something similar to [this](#graqhiql-user-interface-image) in your browser.
 
 ```gql
-query getEventsByDateAndTags(
-  $pubDate: String!
-  $tagNames: [String!]!
+query EventsByDateAndTags(
+  $tagNames: _text
+  $pubDate: timestamptz!
   $first: Int
-  $after: Cursor
+  $last: Int
+  $after: String
+  $before: String
+  $dateWindowStart: timestamptz!
+  $dateWindowEnd: timestamptz!
 ) {
-  getEventsByDateAndTags(
-    pPubDate: $pubDate
-    pTagNames: $tagNames
+  eventsByDateAndTags_connection(
     first: $first
     after: $after
+    last: $last
+    before: $before
+    orderBy: { eventStartDate: ASC }
+    args: {
+      p_tag_names: $tagNames
+      p_pub_date: $pubDate
+      p_date_window_start: $dateWindowStart
+      p_date_window_end: $dateWindowEnd
+    }
   ) {
     pageInfo {
+      endCursor
+      startCursor
       hasNextPage
       hasPreviousPage
-      startCursor
-      endCursor
     }
-
-    nodes {
-      id
-      author
-      title
-      description
-      content
-      link
-      pubDate
-      createdAt
-      updatedAt
-      imageUrl
-      eventStartDate
-      eventEndDate
-      eventTagsByEventId {
-        nodes {
-          tagByTagId {
-            name
-          }
-        }
+    edges {
+      node {
+        id
+        title
+        link
+        description
+        eventStartDate
+        eventEndDate
+        imageUrl
+        location
+        geoLocation
+        pubDate
+        eventTagsAsString
       }
     }
   }
@@ -158,16 +162,17 @@ query getEventsByDateAndTags(
 
 ```json
 {
-  "pubDate": "2017-01-01",
-  "tagNames": ["Housing"],
-  "first": 1,
-  "after": "WyJuYXR1cmFsIiwxXQ=="
+  "first": 2,
+  "pubDate": "2025-02-01",
+  "dateWindowStart": "2021-02-01",
+  "dateWindowEnd": "2026-02-01",
+  "tagNames": "{Salem Campus}"
 }
 ```
 
 ### GraqhiQL User Interface Image
 
-![Image](https://github.com/user-attachments/assets/a9d5b333-6a20-4168-b38b-689b4efc7b69)
+![Image](https://github.com/user-attachments/assets/afc8ae44-2348-4e3a-adba-176a8a1a2e47)
 
 ## Feed Endpoints
 
@@ -279,7 +284,6 @@ The GraphQL queries used by the queryFunctions in `src/queryFunctions` can be fo
 ### GraphQL Service
 
 This code uses Hasura cloud service to obtain event data.
-
 The `package.json` file contains scripts to download the schema from the GraphQL endpoint, e.g. Hasura, and to generate the typescript types
 
 #### Download the Schema
@@ -342,3 +346,66 @@ However, TypeScript does not infer the type of event after the filter. This mean
 #### Return Values from the fetch Query Functions
 
 In the query function in `src/functionQueries/tags.ts` we have `return data?.allTags || null`, this is typesafe because the returned type is `Query['allTags']`. Note, this was not done in `src/functionQueries/events.ts` because of the more complex nature of the type, but it should be revisited.
+
+## Hasura Locally
+
+Hasura must be run in a docker. The steps below assume Docker is already installed, and a running PostgreSQL server.
+
+### Steps
+
+Install Hasura cli:
+
+```bash
+brew install hasura-cli
+```
+
+From your development directory run `hasura init`, for example:
+
+```bash
+development % hasura init
+```
+
+This will prompt for a project directory, enter `events' (or similar), it will then respond with short instructions:
+
+```bash
+? Name of project directory ? events
+INFO directory created. execute the following commands to continue:
+
+  cd events
+```
+
+### Create Required Files
+
+In the events directory from the previous step, create a `docker-compose.yml` file and a `.env` file
+
+#### docker-compose.yml Contents
+
+```yaml
+services:
+  graphql-engine:
+    image: hasura/graphql-engine:latest
+    ports:
+      - '8080:8080'
+    restart: always
+    env_file: .env
+```
+
+#### .env Contents
+
+```
+HASURA_GRAPHQL_DATABASE_URL=postgres://[user]:[password]@host.docker.internal:5432/events
+HASURA_GRAPHQL_ENABLE_CONSOLE=true
+HASURA_GRAPHQL_DEV_MODE=true  # Remove or set to false in production
+HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,query-log,webhook-log
+HASURA_GRAPHQL_ADMIN_SECRET=yoursupersecretpassword
+```
+
+Change [user] and [password] to match your PostgreSQL credentials
+
+### Start The Hasura Server
+
+```bash
+docker compose up
+```
+
+Then navigate to the Hasura UI at http://localhost:8080/console

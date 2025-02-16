@@ -25,6 +25,7 @@ function convertToHasuraTagString(tags: string[]): string {
 export async function fetchEventsWithPagination(
   variables: FetchEventsVariables
 ): Promise<EventsConnection> {
+  console.log(JSON.stringify(variables))
   const hasuraCompatibleTags: string = convertToHasuraTagString(
     variables.tagNames
   )
@@ -57,10 +58,11 @@ export async function fetchEventsWithPagination(
   const { data, errors } = await response.json()
 
   if (errors) {
+    console.log(JSON.stringify(errors, null, 2))
     throw new Error(errors[0].message)
   }
 
-  return data?.getEventsByDateAndTags_connection || []
+  return data?.eventsByDateAndTags_connection || []
 }
 
 export async function fetchEvents(
@@ -75,7 +77,7 @@ export async function fetchEvents(
     )
   }
   if (!pubDate) {
-    pubDate = new Date(0).toISOString() //'1970-01-01T00:00:00+00:00, for returning all events
+    pubDate = '1970-01-01T00:00:00+00:00'
   }
 
   const response = await fetch(GRAPHQL_ENDPOINT, {
