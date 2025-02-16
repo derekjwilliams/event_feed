@@ -362,7 +362,7 @@ brew install hasura-cli
 From your development directory run `hasura init`, for example:
 
 ```bash
-development % hasura init
+development %> hasura init
 ```
 
 This will prompt for a project directory, enter `events' (or similar), it will then respond with short instructions:
@@ -402,10 +402,16 @@ HASURA_GRAPHQL_ADMIN_SECRET=yoursupersecretpassword
 
 Change [user] and [password] to match your PostgreSQL credentials
 
-### Start The Hasura Server
+### Start The Hasura Docker
 
 ```bash
 docker compose up
 ```
 
 Then navigate to the Hasura UI at http://localhost:8080/console
+
+### Stop the Hasura Docker
+
+```bash
+docker compose down
+```
