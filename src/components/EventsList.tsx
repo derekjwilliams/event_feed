@@ -76,21 +76,21 @@ function EventsList() {
       setPagination({
         after: pageInfo.endCursor || undefined,
         before: undefined,
-        hasNextPage: false,
-        hasPreviousPage: true,
+        hasNextPage: pageInfo?.hasNextPage,
+        hasPreviousPage: pageInfo?.hasPreviousPage,
       })
     }
   }
 
   const handlePrevious = () => {
     if (!eventsData) return
-    const { hasPreviousPage, startCursor } = eventsData.pageInfo
-    if (hasPreviousPage) {
+    const pageInfo = eventsData.pageInfo
+    if (pageInfo?.hasPreviousPage) {
       setPagination({
-        before: startCursor || undefined,
+        before: pageInfo.startCursor || undefined,
         after: undefined,
-        hasNextPage: true,
-        hasPreviousPage: false,
+        hasNextPage: pageInfo?.hasNextPage,
+        hasPreviousPage: pageInfo?.hasPreviousPage,
       })
     }
   }
