@@ -398,6 +398,8 @@ HASURA_GRAPHQL_ENABLE_CONSOLE=true
 HASURA_GRAPHQL_DEV_MODE=true  # Remove or set to false in production
 HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,query-log,webhook-log
 HASURA_GRAPHQL_ADMIN_SECRET=yoursupersecretpassword
+HASURA_GRAPHQL_UNAUTHORIZED_ROLE=guest
+HASURA_GRAPHQL_EXPERIMENTAL_FEATURES=naming_convention
 ```
 
 Change [user] and [password] to match your PostgreSQL credentials
@@ -414,4 +416,28 @@ Then navigate to the Hasura UI at http://localhost:8080/console
 
 ```bash
 docker compose down
+```
+
+### Configure Hasura
+
+Using the Hausra console enable tracking of columns add computed field eventTagsAsString
+
+Here is the function definition for the computed field, found on this page
+
+http://localhost:8080/console/data/default/schema/public/tables/events/modify, click the button labeled `Add a new computed field`
+
+```sql
+CREATE OR REPLACE FUNCTION public.get_event_tags(p_event events)
+ RETURNS text
+ LANGUAGE sql
+ STABLE
+AS $function$
+  SELECT COALESCE(
+    string_agg(t.name, '|' ORDER BY t.name),
+    ''
+  )
+  FROM tags t
+  JOIN event_tags et ON t.id = et.tag_id
+  WHERE et.event_id = p_event.id
+$function$
 ```
