@@ -346,3 +346,72 @@ However, TypeScript does not infer the type of event after the filter. This mean
 #### Return Values from the fetch Query Functions
 
 In the query function in `src/functionQueries/tags.ts` we have `return data?.allTags || null`, this is typesafe because the returned type is `Query['allTags']`. Note, this was not done in `src/functionQueries/events.ts` because of the more complex nature of the type, but it should be revisited.
+
+## Hasura Locally
+
+Hasura must be run in a docker. The steps below assume Docker is already installed, and a running PostgreSQL server.
+
+### Steps
+
+Install Hasura cli:
+
+```bash
+brew install hasura-cli
+```
+
+From your development directory run `hasura init`, for example:
+
+```bash
+development %> hasura init
+```
+
+This will prompt for a project directory, enter `events' (or similar), it will then respond with short instructions:
+
+```bash
+? Name of project directory ? events
+INFO directory created. execute the following commands to continue:
+
+  cd events
+```
+
+### Create Required Files
+
+In the events directory from the previous step, create a `docker-compose.yml` file and a `.env` file
+
+#### docker-compose.yml Contents
+
+```yaml
+services:
+  graphql-engine:
+    image: hasura/graphql-engine:latest
+    ports:
+      - '8080:8080'
+    restart: always
+    env_file: .env
+```
+
+#### .env Contents
+
+```
+HASURA_GRAPHQL_DATABASE_URL=postgres://[user]:[password]@host.docker.internal:5432/events
+HASURA_GRAPHQL_ENABLE_CONSOLE=true
+HASURA_GRAPHQL_DEV_MODE=true  # Remove or set to false in production
+HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,query-log,webhook-log
+HASURA_GRAPHQL_ADMIN_SECRET=yoursupersecretpassword
+```
+
+Change [user] and [password] to match your PostgreSQL credentials
+
+### Start The Hasura Docker
+
+```bash
+docker compose up
+```
+
+Then navigate to the Hasura UI at http://localhost:8080/console
+
+### Stop the Hasura Docker
+
+```bash
+docker compose down
+```
