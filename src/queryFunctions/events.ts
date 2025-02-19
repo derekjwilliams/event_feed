@@ -37,22 +37,22 @@ export async function fetchEventsWithPagination(
   }
   return data?.getEventsByDateAndTags || []
 }
-
+// TODO USE NEXT_PUBLIC_GRAPHQL_ENDPOINT?
 export async function fetchEvents(
   pubDate?: string,
   tagNames: string[] = []
 ): Promise<EventsConnection> {
-  const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || ''
-  if (GRAPHQL_ENDPOINT === '') {
+  const graphqlEndpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || ''
+  if (graphqlEndpoint === '') {
     throw new Error(
-      `No GRAPHQL_ENDPOINT environment variable not found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`
+      `No NEXT_PUBLIC_GRAPHQL_ENDPOINT environment variable not found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`
     )
   }
   if (!pubDate) {
     pubDate = new Date(0).toISOString() //'1970-01-01T00:00:00+00:00, for returning all events
   }
 
-  const response = await fetch(GRAPHQL_ENDPOINT, {
+  const response = await fetch(graphqlEndpoint, {
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
