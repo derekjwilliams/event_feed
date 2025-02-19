@@ -1,3 +1,4 @@
+const eventTagsElementName = 'tagsString'
 export const EVENTS_QUERY = `
   query getEventsByDateAndTags($pubDate: String!
     $tagNames: [String!]!
@@ -24,10 +25,6 @@ export const EVENTS_QUERY = `
           author
           title
           description
-          geoLocation {
-            longitude
-            latitude
-          }
           baseUrl
           content
           link
@@ -38,7 +35,11 @@ export const EVENTS_QUERY = `
           eventStartDate
           eventEndDate
           location
-          tagsString
+          geoLocation {
+            longitude
+            latitude
+          }
+          ${eventTagsElementName}
         }
       }
     }

@@ -3,9 +3,12 @@ import Image from 'next/image'
 import { Calendar, MapPin } from 'lucide-react'
 import { Event } from '@/types/graphql'
 import Link from 'next/link'
+import MapLink from './ui/MapLink'
 
 const EventItem: React.FC<{ event: Event }> = ({ event }) => {
   const eventTimeZone = 'America/Los_Angeles' // Event's time zone
+  const locationLatitude = event.geoLocation?.latitude
+  const locationLongitude = event.geoLocation?.longitude
 
   const eventStartTimeString = new Intl.DateTimeFormat('en-US', {
     hour: 'numeric',
@@ -20,9 +23,6 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
     timeZone: eventTimeZone, // Forces display in event's local time
     hour12: true, // Ensures 12-hour format
   }).format(new Date(event.eventEndDate))
-
-  // const baseUrl =
-  //   process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
 
   return (
     <div
@@ -41,15 +41,16 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
         )}
         <div className="flex-1">
           <div className="float-right">
-            {event.geoLocation && (
-              <Link
-                target="_blank"
-                className="float-left"
-                href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.latitude},${event.geoLocation?.longitude}`}
-              >
-                <MapPin className="text-neutral-500 dark:text-neutral-200 saturate-25" />
-              </Link>
-            )}
+            {locationLatitude !== undefined &&
+              locationLongitude !== undefined && (
+                <MapLink
+                  target="_blank"
+                  className="float-left"
+                  latitude={locationLatitude}
+                  longitude={locationLongitude}
+                ></MapLink>
+              )}
+
             <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
           </div>
           <h2 className="text-xl font-semibold">
