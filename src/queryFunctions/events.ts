@@ -5,6 +5,7 @@ import { EventsConnection } from '@/types/graphql'
 export async function fetchEventsWithPagination(
   variables: FetchEventsVariables
 ): Promise<EventsConnection> {
+  //GRAPHQL_ENDPOINT replaced by NEXT_PUBLIC_GRAPHQL_ENDPOINT
   const graphqlEndpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || ''
   if (graphqlEndpoint === '') {
     throw new Error(
