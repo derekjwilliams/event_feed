@@ -216,54 +216,6 @@ export type DeleteEventPayloadEventEdgeArgs = {
   orderBy?: InputMaybe<Array<EventsOrderBy>>
 }
 
-/** All input for the `deleteEventTagByEventIdAndTagId` mutation. */
-export type DeleteEventTagByEventIdAndTagIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>
-  eventId: Scalars['Int']['input']
-  tagId: Scalars['Int']['input']
-}
-
-/** All input for the `deleteEventTag` mutation. */
-export type DeleteEventTagInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>
-  /** The globally unique `ID` which will identify a single `EventTag` to be deleted. */
-  nodeId: Scalars['ID']['input']
-}
-
-/** The output of our delete `EventTag` mutation. */
-export type DeleteEventTagPayload = {
-  __typename?: 'DeleteEventTagPayload'
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']['output']>
-  deletedEventTagId?: Maybe<Scalars['ID']['output']>
-  /** Reads a single `Event` that is related to this `EventTag`. */
-  eventByEventId?: Maybe<Event>
-  /** The `EventTag` that was deleted by this mutation. */
-  eventTag?: Maybe<EventTag>
-  /** An edge for our `EventTag`. May be used by Relay 1. */
-  eventTagEdge?: Maybe<EventTagsEdge>
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>
-  /** Reads a single `Tag` that is related to this `EventTag`. */
-  tagByTagId?: Maybe<Tag>
-}
-
-/** The output of our delete `EventTag` mutation. */
-export type DeleteEventTagPayloadEventTagEdgeArgs = {
-  orderBy?: InputMaybe<Array<EventTagsOrderBy>>
-}
-
 /** All input for the `deleteTagById` mutation. */
 export type DeleteTagByIdInput = {
   /**
@@ -328,6 +280,7 @@ export type Event = Node & {
   eventStartDate?: Maybe<Scalars['Datetime']['output']>
   /** Reads and enables pagination through a set of `EventTag`. */
   eventTagsByEventId: EventTagsConnection
+  full?: Maybe<Scalars['String']['output']>
   geoLocation?: Maybe<GeographyPoint>
   id: Scalars['Int']['output']
   imageUrl?: Maybe<Scalars['String']['output']>
@@ -336,6 +289,7 @@ export type Event = Node & {
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID']['output']
   pubDate?: Maybe<Scalars['Datetime']['output']>
+  tagsString?: Maybe<Scalars['String']['output']>
   title: Scalars['String']['output']
   updatedAt?: Maybe<Scalars['Datetime']['output']>
 }
@@ -403,6 +357,8 @@ export type EventFilter = {
   eventEndDate?: InputMaybe<DatetimeFilter>
   /** Filter by the object’s `eventStartDate` field. */
   eventStartDate?: InputMaybe<DatetimeFilter>
+  /** Filter by the object’s `full` field. */
+  full?: InputMaybe<StringFilter>
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<IntFilter>
   /** Filter by the object’s `imageUrl` field. */
@@ -417,6 +373,8 @@ export type EventFilter = {
   or?: InputMaybe<Array<EventFilter>>
   /** Filter by the object’s `pubDate` field. */
   pubDate?: InputMaybe<DatetimeFilter>
+  /** Filter by the object’s `tagsString` field. */
+  tagsString?: InputMaybe<StringFilter>
   /** Filter by the object’s `title` field. */
   title?: InputMaybe<StringFilter>
   /** Filter by the object’s `updatedAt` field. */
@@ -461,13 +419,11 @@ export type EventPatch = {
   updatedAt?: InputMaybe<Scalars['Datetime']['input']>
 }
 
-export type EventTag = Node & {
+export type EventTag = {
   __typename?: 'EventTag'
   /** Reads a single `Event` that is related to this `EventTag`. */
   eventByEventId?: Maybe<Event>
   eventId: Scalars['Int']['output']
-  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
-  nodeId: Scalars['ID']['output']
   /** Reads a single `Tag` that is related to this `EventTag`. */
   tagByTagId?: Maybe<Tag>
   tagId: Scalars['Int']['output']
@@ -504,12 +460,6 @@ export type EventTagInput = {
   tagId: Scalars['Int']['input']
 }
 
-/** Represents an update to a `EventTag`. Fields that are set will be updated. */
-export type EventTagPatch = {
-  eventId?: InputMaybe<Scalars['Int']['input']>
-  tagId?: InputMaybe<Scalars['Int']['input']>
-}
-
 /** A connection to a list of `EventTag` values. */
 export type EventTagsConnection = {
   __typename?: 'EventTagsConnection'
@@ -537,8 +487,6 @@ export enum EventTagsOrderBy {
   EventIdAsc = 'EVENT_ID_ASC',
   EventIdDesc = 'EVENT_ID_DESC',
   Natural = 'NATURAL',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   TagIdAsc = 'TAG_ID_ASC',
   TagIdDesc = 'TAG_ID_DESC',
 }
@@ -940,10 +888,6 @@ export type Mutation = {
   deleteEvent?: Maybe<DeleteEventPayload>
   /** Deletes a single `Event` using a unique key. */
   deleteEventById?: Maybe<DeleteEventPayload>
-  /** Deletes a single `EventTag` using its globally unique id. */
-  deleteEventTag?: Maybe<DeleteEventTagPayload>
-  /** Deletes a single `EventTag` using a unique key. */
-  deleteEventTagByEventIdAndTagId?: Maybe<DeleteEventTagPayload>
   /** Deletes a single `Tag` using its globally unique id. */
   deleteTag?: Maybe<DeleteTagPayload>
   /** Deletes a single `Tag` using a unique key. */
@@ -954,10 +898,6 @@ export type Mutation = {
   updateEvent?: Maybe<UpdateEventPayload>
   /** Updates a single `Event` using a unique key and a patch. */
   updateEventById?: Maybe<UpdateEventPayload>
-  /** Updates a single `EventTag` using its globally unique id and a patch. */
-  updateEventTag?: Maybe<UpdateEventTagPayload>
-  /** Updates a single `EventTag` using a unique key and a patch. */
-  updateEventTagByEventIdAndTagId?: Maybe<UpdateEventTagPayload>
   /** Updates a single `Tag` using its globally unique id and a patch. */
   updateTag?: Maybe<UpdateTagPayload>
   /** Updates a single `Tag` using a unique key and a patch. */
@@ -992,16 +932,6 @@ export type MutationDeleteEventByIdArgs = {
 }
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteEventTagArgs = {
-  input: DeleteEventTagInput
-}
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteEventTagByEventIdAndTagIdArgs = {
-  input: DeleteEventTagByEventIdAndTagIdInput
-}
-
-/** The root mutation type which contains root level fields which mutate data. */
 export type MutationDeleteTagArgs = {
   input: DeleteTagInput
 }
@@ -1024,16 +954,6 @@ export type MutationUpdateEventArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateEventByIdArgs = {
   input: UpdateEventByIdInput
-}
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateEventTagArgs = {
-  input: UpdateEventTagInput
-}
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateEventTagByEventIdAndTagIdArgs = {
-  input: UpdateEventTagByEventIdAndTagIdInput
 }
 
 /** The root mutation type which contains root level fields which mutate data. */
@@ -1082,11 +1002,8 @@ export type Query = Node & {
   /** Reads a single `Event` using its globally unique `ID`. */
   event?: Maybe<Event>
   eventById?: Maybe<Event>
-  /** Reads a single `EventTag` using its globally unique `ID`. */
-  eventTag?: Maybe<EventTag>
-  eventTagByEventIdAndTagId?: Maybe<EventTag>
   /** Reads and enables pagination through a set of `Event`. */
-  getEventsByDate?: Maybe<EventsConnection>
+  eventsByDateAndTags?: Maybe<EventsConnection>
   /** Reads and enables pagination through a set of `Event`. */
   getEventsByDateAndTags?: Maybe<EventsConnection>
   /** Fetches an object given its globally unique `ID`. */
@@ -1151,25 +1068,17 @@ export type QueryEventByIdArgs = {
 }
 
 /** The root query type which gives access points into the data universe. */
-export type QueryEventTagArgs = {
-  nodeId: Scalars['ID']['input']
-}
-
-/** The root query type which gives access points into the data universe. */
-export type QueryEventTagByEventIdAndTagIdArgs = {
-  eventId: Scalars['Int']['input']
-  tagId: Scalars['Int']['input']
-}
-
-/** The root query type which gives access points into the data universe. */
-export type QueryGetEventsByDateArgs = {
+export type QueryEventsByDateAndTagsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>
   before?: InputMaybe<Scalars['Cursor']['input']>
   filter?: InputMaybe<EventFilter>
   first?: InputMaybe<Scalars['Int']['input']>
   last?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  pPubDate?: InputMaybe<Scalars['String']['input']>
+  pDateWindowEnd?: InputMaybe<Scalars['Datetime']['input']>
+  pDateWindowStart?: InputMaybe<Scalars['Datetime']['input']>
+  pPubDate?: InputMaybe<Scalars['Datetime']['input']>
+  pTagNames?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>
 }
 
 /** The root query type which gives access points into the data universe. */
@@ -1180,6 +1089,8 @@ export type QueryGetEventsByDateAndTagsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   last?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
+  pDateWindowEnd?: InputMaybe<Scalars['String']['input']>
+  pDateWindowStart?: InputMaybe<Scalars['String']['input']>
   pPubDate?: InputMaybe<Scalars['String']['input']>
   pTagNames?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>
 }
@@ -1414,57 +1325,6 @@ export type UpdateEventPayload = {
 /** The output of our update `Event` mutation. */
 export type UpdateEventPayloadEventEdgeArgs = {
   orderBy?: InputMaybe<Array<EventsOrderBy>>
-}
-
-/** All input for the `updateEventTagByEventIdAndTagId` mutation. */
-export type UpdateEventTagByEventIdAndTagIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>
-  eventId: Scalars['Int']['input']
-  /** An object where the defined keys will be set on the `EventTag` being updated. */
-  eventTagPatch: EventTagPatch
-  tagId: Scalars['Int']['input']
-}
-
-/** All input for the `updateEventTag` mutation. */
-export type UpdateEventTagInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>
-  /** An object where the defined keys will be set on the `EventTag` being updated. */
-  eventTagPatch: EventTagPatch
-  /** The globally unique `ID` which will identify a single `EventTag` to be updated. */
-  nodeId: Scalars['ID']['input']
-}
-
-/** The output of our update `EventTag` mutation. */
-export type UpdateEventTagPayload = {
-  __typename?: 'UpdateEventTagPayload'
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']['output']>
-  /** Reads a single `Event` that is related to this `EventTag`. */
-  eventByEventId?: Maybe<Event>
-  /** The `EventTag` that was updated by this mutation. */
-  eventTag?: Maybe<EventTag>
-  /** An edge for our `EventTag`. May be used by Relay 1. */
-  eventTagEdge?: Maybe<EventTagsEdge>
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>
-  /** Reads a single `Tag` that is related to this `EventTag`. */
-  tagByTagId?: Maybe<Tag>
-}
-
-/** The output of our update `EventTag` mutation. */
-export type UpdateEventTagPayloadEventTagEdgeArgs = {
-  orderBy?: InputMaybe<Array<EventTagsOrderBy>>
 }
 
 /** All input for the `updateTagById` mutation. */
@@ -1714,17 +1574,16 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> =
       | GeometryPolygonZm
     Node:
       | Event
-      | EventTag
       | (Omit<
           Query,
           | 'allEvents'
-          | 'getEventsByDate'
+          | 'eventsByDateAndTags'
           | 'getEventsByDateAndTags'
           | 'node'
           | 'query'
         > & {
           allEvents?: Maybe<_RefType['EventsConnection']>
-          getEventsByDate?: Maybe<_RefType['EventsConnection']>
+          eventsByDateAndTags?: Maybe<_RefType['EventsConnection']>
           getEventsByDateAndTags?: Maybe<_RefType['EventsConnection']>
           node?: Maybe<_RefType['Node']>
           query: _RefType['Query']
@@ -1761,13 +1620,6 @@ export type ResolversTypes = {
       query?: Maybe<ResolversTypes['Query']>
     }
   >
-  DeleteEventTagByEventIdAndTagIdInput: DeleteEventTagByEventIdAndTagIdInput
-  DeleteEventTagInput: DeleteEventTagInput
-  DeleteEventTagPayload: ResolverTypeWrapper<
-    Omit<DeleteEventTagPayload, 'query'> & {
-      query?: Maybe<ResolversTypes['Query']>
-    }
-  >
   DeleteTagByIdInput: DeleteTagByIdInput
   DeleteTagByNameInput: DeleteTagByNameInput
   DeleteTagInput: DeleteTagInput
@@ -1783,7 +1635,6 @@ export type ResolversTypes = {
   EventTagCondition: EventTagCondition
   EventTagFilter: EventTagFilter
   EventTagInput: EventTagInput
-  EventTagPatch: EventTagPatch
   EventTagsConnection: ResolverTypeWrapper<EventTagsConnection>
   EventTagsEdge: ResolverTypeWrapper<EventTagsEdge>
   EventTagsOrderBy: EventTagsOrderBy
@@ -1882,13 +1733,6 @@ export type ResolversTypes = {
       query?: Maybe<ResolversTypes['Query']>
     }
   >
-  UpdateEventTagByEventIdAndTagIdInput: UpdateEventTagByEventIdAndTagIdInput
-  UpdateEventTagInput: UpdateEventTagInput
-  UpdateEventTagPayload: ResolverTypeWrapper<
-    Omit<UpdateEventTagPayload, 'query'> & {
-      query?: Maybe<ResolversTypes['Query']>
-    }
-  >
   UpdateTagByIdInput: UpdateTagByIdInput
   UpdateTagByNameInput: UpdateTagByNameInput
   UpdateTagInput: UpdateTagInput
@@ -1920,11 +1764,6 @@ export type ResolversParentTypes = {
   DeleteEventPayload: Omit<DeleteEventPayload, 'query'> & {
     query?: Maybe<ResolversParentTypes['Query']>
   }
-  DeleteEventTagByEventIdAndTagIdInput: DeleteEventTagByEventIdAndTagIdInput
-  DeleteEventTagInput: DeleteEventTagInput
-  DeleteEventTagPayload: Omit<DeleteEventTagPayload, 'query'> & {
-    query?: Maybe<ResolversParentTypes['Query']>
-  }
   DeleteTagByIdInput: DeleteTagByIdInput
   DeleteTagByNameInput: DeleteTagByNameInput
   DeleteTagInput: DeleteTagInput
@@ -1940,7 +1779,6 @@ export type ResolversParentTypes = {
   EventTagCondition: EventTagCondition
   EventTagFilter: EventTagFilter
   EventTagInput: EventTagInput
-  EventTagPatch: EventTagPatch
   EventTagsConnection: EventTagsConnection
   EventTagsEdge: EventTagsEdge
   EventsConnection: EventsConnection
@@ -2019,11 +1857,6 @@ export type ResolversParentTypes = {
   UpdateEventByIdInput: UpdateEventByIdInput
   UpdateEventInput: UpdateEventInput
   UpdateEventPayload: Omit<UpdateEventPayload, 'query'> & {
-    query?: Maybe<ResolversParentTypes['Query']>
-  }
-  UpdateEventTagByEventIdAndTagIdInput: UpdateEventTagByEventIdAndTagIdInput
-  UpdateEventTagInput: UpdateEventTagInput
-  UpdateEventTagPayload: Omit<UpdateEventTagPayload, 'query'> & {
     query?: Maybe<ResolversParentTypes['Query']>
   }
   UpdateTagByIdInput: UpdateTagByIdInput
@@ -2139,41 +1972,6 @@ export type DeleteEventPayloadResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
-export type DeleteEventTagPayloadResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['DeleteEventTagPayload'] = ResolversParentTypes['DeleteEventTagPayload']
-> = {
-  clientMutationId?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  deletedEventTagId?: Resolver<
-    Maybe<ResolversTypes['ID']>,
-    ParentType,
-    ContextType
-  >
-  eventByEventId?: Resolver<
-    Maybe<ResolversTypes['Event']>,
-    ParentType,
-    ContextType
-  >
-  eventTag?: Resolver<
-    Maybe<ResolversTypes['EventTag']>,
-    ParentType,
-    ContextType
-  >
-  eventTagEdge?: Resolver<
-    Maybe<ResolversTypes['EventTagsEdge']>,
-    ParentType,
-    ContextType,
-    RequireFields<DeleteEventTagPayloadEventTagEdgeArgs, 'orderBy'>
-  >
-  query?: Resolver<Maybe<ResolversTypes['Query']>, ParentType, ContextType>
-  tagByTagId?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
-}
-
 export type DeleteTagPayloadResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['DeleteTagPayload'] = ResolversParentTypes['DeleteTagPayload']
@@ -2228,6 +2026,7 @@ export type EventResolvers<
     ContextType,
     RequireFields<EventEventTagsByEventIdArgs, 'orderBy'>
   >
+  full?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   geoLocation?: Resolver<
     Maybe<ResolversTypes['GeographyPoint']>,
     ParentType,
@@ -2239,6 +2038,11 @@ export type EventResolvers<
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   nodeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   pubDate?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>
+  tagsString?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   updatedAt?: Resolver<
     Maybe<ResolversTypes['Datetime']>,
@@ -2258,7 +2062,6 @@ export type EventTagResolvers<
     ContextType
   >
   eventId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-  nodeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   tagByTagId?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType>
   tagId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
@@ -2902,18 +2705,6 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationDeleteEventByIdArgs, 'input'>
   >
-  deleteEventTag?: Resolver<
-    Maybe<ResolversTypes['DeleteEventTagPayload']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeleteEventTagArgs, 'input'>
-  >
-  deleteEventTagByEventIdAndTagId?: Resolver<
-    Maybe<ResolversTypes['DeleteEventTagPayload']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeleteEventTagByEventIdAndTagIdArgs, 'input'>
-  >
   deleteTag?: Resolver<
     Maybe<ResolversTypes['DeleteTagPayload']>,
     ParentType,
@@ -2944,18 +2735,6 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationUpdateEventByIdArgs, 'input'>
   >
-  updateEventTag?: Resolver<
-    Maybe<ResolversTypes['UpdateEventTagPayload']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationUpdateEventTagArgs, 'input'>
-  >
-  updateEventTagByEventIdAndTagId?: Resolver<
-    Maybe<ResolversTypes['UpdateEventTagPayload']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationUpdateEventTagByEventIdAndTagIdArgs, 'input'>
-  >
   updateTag?: Resolver<
     Maybe<ResolversTypes['UpdateTagPayload']>,
     ParentType,
@@ -2981,7 +2760,7 @@ export type NodeResolvers<
   ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']
 > = {
   __resolveType: TypeResolveFn<
-    'Event' | 'EventTag' | 'Query' | 'Tag',
+    'Event' | 'Query' | 'Tag',
     ParentType,
     ContextType
   >
@@ -3037,23 +2816,11 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryEventByIdArgs, 'id'>
   >
-  eventTag?: Resolver<
-    Maybe<ResolversTypes['EventTag']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryEventTagArgs, 'nodeId'>
-  >
-  eventTagByEventIdAndTagId?: Resolver<
-    Maybe<ResolversTypes['EventTag']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryEventTagByEventIdAndTagIdArgs, 'eventId' | 'tagId'>
-  >
-  getEventsByDate?: Resolver<
+  eventsByDateAndTags?: Resolver<
     Maybe<ResolversTypes['EventsConnection']>,
     ParentType,
     ContextType,
-    Partial<QueryGetEventsByDateArgs>
+    Partial<QueryEventsByDateAndTagsArgs>
   >
   getEventsByDateAndTags?: Resolver<
     Maybe<ResolversTypes['EventsConnection']>,
@@ -3145,36 +2912,6 @@ export type UpdateEventPayloadResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
-export type UpdateEventTagPayloadResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['UpdateEventTagPayload'] = ResolversParentTypes['UpdateEventTagPayload']
-> = {
-  clientMutationId?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  eventByEventId?: Resolver<
-    Maybe<ResolversTypes['Event']>,
-    ParentType,
-    ContextType
-  >
-  eventTag?: Resolver<
-    Maybe<ResolversTypes['EventTag']>,
-    ParentType,
-    ContextType
-  >
-  eventTagEdge?: Resolver<
-    Maybe<ResolversTypes['EventTagsEdge']>,
-    ParentType,
-    ContextType,
-    RequireFields<UpdateEventTagPayloadEventTagEdgeArgs, 'orderBy'>
-  >
-  query?: Resolver<Maybe<ResolversTypes['Query']>, ParentType, ContextType>
-  tagByTagId?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
-}
-
 export type UpdateTagPayloadResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['UpdateTagPayload'] = ResolversParentTypes['UpdateTagPayload']
@@ -3202,7 +2939,6 @@ export type Resolvers<ContextType = any> = {
   Cursor?: GraphQLScalarType
   Datetime?: GraphQLScalarType
   DeleteEventPayload?: DeleteEventPayloadResolvers<ContextType>
-  DeleteEventTagPayload?: DeleteEventTagPayloadResolvers<ContextType>
   DeleteTagPayload?: DeleteTagPayloadResolvers<ContextType>
   Event?: EventResolvers<ContextType>
   EventTag?: EventTagResolvers<ContextType>
@@ -3255,6 +2991,5 @@ export type Resolvers<ContextType = any> = {
   TagsConnection?: TagsConnectionResolvers<ContextType>
   TagsEdge?: TagsEdgeResolvers<ContextType>
   UpdateEventPayload?: UpdateEventPayloadResolvers<ContextType>
-  UpdateEventTagPayload?: UpdateEventTagPayloadResolvers<ContextType>
   UpdateTagPayload?: UpdateTagPayloadResolvers<ContextType>
 }

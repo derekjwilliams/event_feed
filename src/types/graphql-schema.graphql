@@ -314,7 +314,7 @@ type Query implements Node {
     """
     The method to use when ordering `EventTag`.
     """
-    orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
+    orderBy: [EventTagsOrderBy!] = [NATURAL]
 
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -418,7 +418,6 @@ type Query implements Node {
     """
     filter: TagFilter
   ): TagsConnection
-  eventTagByEventIdAndTagId(eventId: Int!, tagId: Int!): EventTag
   eventById(id: Int!): Event
   tagById(id: Int!): Tag
   tagByName(name: String!): Tag
@@ -426,8 +425,11 @@ type Query implements Node {
   """
   Reads and enables pagination through a set of `Event`.
   """
-  getEventsByDate(
-    pPubDate: String
+  eventsByDateAndTags(
+    pPubDate: Datetime
+    pTagNames: [String]
+    pDateWindowStart: Datetime
+    pDateWindowEnd: Datetime
 
     """
     Only read the first `n` values of the set.
@@ -467,6 +469,8 @@ type Query implements Node {
   getEventsByDateAndTags(
     pPubDate: String
     pTagNames: [String]
+    pDateWindowStart: String
+    pDateWindowEnd: String
 
     """
     Only read the first `n` values of the set.
@@ -499,16 +503,6 @@ type Query implements Node {
     """
     filter: EventFilter
   ): EventsConnection
-
-  """
-  Reads a single `EventTag` using its globally unique `ID`.
-  """
-  eventTag(
-    """
-    The globally unique `ID` to be used in selecting a single `EventTag`.
-    """
-    nodeId: ID!
-  ): EventTag
 
   """
   Reads a single `Event` using its globally unique `ID`.
@@ -566,11 +560,7 @@ type EventTagsConnection {
   totalCount: Int!
 }
 
-type EventTag implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
+type EventTag {
   eventId: Int!
   tagId: Int!
 
@@ -639,7 +629,7 @@ type Event implements Node {
     """
     The method to use when ordering `EventTag`.
     """
-    orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
+    orderBy: [EventTagsOrderBy!] = [NATURAL]
 
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -651,6 +641,8 @@ type Event implements Node {
     """
     filter: EventTagFilter
   ): EventTagsConnection!
+  full: String
+  tagsString: String
 }
 
 """
@@ -710,8 +702,6 @@ enum EventTagsOrderBy {
   EVENT_ID_DESC
   TAG_ID_ASC
   TAG_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
 }
 
 """
@@ -861,7 +851,7 @@ type Tag implements Node {
     """
     The method to use when ordering `EventTag`.
     """
-    orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
+    orderBy: [EventTagsOrderBy!] = [NATURAL]
 
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -1147,6 +1137,16 @@ input EventFilter {
   Filter by the object’s `baseUrl` field.
   """
   baseUrl: StringFilter
+
+  """
+  Filter by the object’s `full` field.
+  """
+  full: StringFilter
+
+  """
+  Filter by the object’s `tagsString` field.
+  """
+  tagsString: StringFilter
 
   """
   Checks for all expressions in this list.
@@ -1547,26 +1547,6 @@ type Mutation {
   ): CreateTagPayload
 
   """
-  Updates a single `EventTag` using its globally unique id and a patch.
-  """
-  updateEventTag(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateEventTagInput!
-  ): UpdateEventTagPayload
-
-  """
-  Updates a single `EventTag` using a unique key and a patch.
-  """
-  updateEventTagByEventIdAndTagId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateEventTagByEventIdAndTagIdInput!
-  ): UpdateEventTagPayload
-
-  """
   Updates a single `Event` using its globally unique id and a patch.
   """
   updateEvent(
@@ -1615,26 +1595,6 @@ type Mutation {
     """
     input: UpdateTagByNameInput!
   ): UpdateTagPayload
-
-  """
-  Deletes a single `EventTag` using its globally unique id.
-  """
-  deleteEventTag(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteEventTagInput!
-  ): DeleteEventTagPayload
-
-  """
-  Deletes a single `EventTag` using a unique key.
-  """
-  deleteEventTagByEventIdAndTagId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteEventTagByEventIdAndTagIdInput!
-  ): DeleteEventTagPayload
 
   """
   Deletes a single `Event` using its globally unique id.
@@ -1724,7 +1684,7 @@ type CreateEventTagPayload {
     """
     The method to use when ordering `EventTag`.
     """
-    orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
+    orderBy: [EventTagsOrderBy!] = [NATURAL]
   ): EventTagsEdge
 }
 
@@ -1873,94 +1833,6 @@ An input for mutations affecting `Tag`
 input TagInput {
   id: Int
   name: String!
-}
-
-"""
-The output of our update `EventTag` mutation.
-"""
-type UpdateEventTagPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  The `EventTag` that was updated by this mutation.
-  """
-  eventTag: EventTag
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `Event` that is related to this `EventTag`.
-  """
-  eventByEventId: Event
-
-  """
-  Reads a single `Tag` that is related to this `EventTag`.
-  """
-  tagByTagId: Tag
-
-  """
-  An edge for our `EventTag`. May be used by Relay 1.
-  """
-  eventTagEdge(
-    """
-    The method to use when ordering `EventTag`.
-    """
-    orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): EventTagsEdge
-}
-
-"""
-All input for the `updateEventTag` mutation.
-"""
-input UpdateEventTagInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `EventTag` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `EventTag` being updated.
-  """
-  eventTagPatch: EventTagPatch!
-}
-
-"""
-Represents an update to a `EventTag`. Fields that are set will be updated.
-"""
-input EventTagPatch {
-  eventId: Int
-  tagId: Int
-}
-
-"""
-All input for the `updateEventTagByEventIdAndTagId` mutation.
-"""
-input UpdateEventTagByEventIdAndTagIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `EventTag` being updated.
-  """
-  eventTagPatch: EventTagPatch!
-  eventId: Int!
-  tagId: Int!
 }
 
 """
@@ -2145,77 +2017,6 @@ input UpdateTagByNameInput {
   """
   tagPatch: TagPatch!
   name: String!
-}
-
-"""
-The output of our delete `EventTag` mutation.
-"""
-type DeleteEventTagPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  The `EventTag` that was deleted by this mutation.
-  """
-  eventTag: EventTag
-  deletedEventTagId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `Event` that is related to this `EventTag`.
-  """
-  eventByEventId: Event
-
-  """
-  Reads a single `Tag` that is related to this `EventTag`.
-  """
-  tagByTagId: Tag
-
-  """
-  An edge for our `EventTag`. May be used by Relay 1.
-  """
-  eventTagEdge(
-    """
-    The method to use when ordering `EventTag`.
-    """
-    orderBy: [EventTagsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): EventTagsEdge
-}
-
-"""
-All input for the `deleteEventTag` mutation.
-"""
-input DeleteEventTagInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `EventTag` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""
-All input for the `deleteEventTagByEventIdAndTagId` mutation.
-"""
-input DeleteEventTagByEventIdAndTagIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  eventId: Int!
-  tagId: Int!
 }
 
 """

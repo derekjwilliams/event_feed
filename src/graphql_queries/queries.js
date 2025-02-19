@@ -38,13 +38,7 @@ export const EVENTS_QUERY = `
           eventStartDate
           eventEndDate
           location
-          eventTagsByEventId {
-            nodes {
-              tagByTagId {
-                name
-              }
-            }
-          }
+          tagsString
         }
       }
     }
