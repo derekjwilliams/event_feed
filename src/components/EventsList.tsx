@@ -7,7 +7,7 @@ import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
 import { Calendar } from 'lucide-react'
 import EventItem from '@/components/EventItem'
-import { Tag } from '@/types/graphql'
+import { EventsEdge, Tag, TagsEdge } from '@/types/graphql'
 
 function EventsList() {
   const searchParams = useSearchParams()
@@ -109,11 +109,16 @@ function EventsList() {
   }
 
   const handleToggleAnyTag = () => {
-    // Get all non-empty tag names from tagsData.nodes (filter out null and empty strings)
-    const allNonEmptyTagNames =
-      tagsData?.nodes
-        ?.filter((tag): tag is Tag => !!tag && tag.name !== '')
-        .map((tag) => tag.name) ?? []
+    // Get all non-empty tag names from tagsData.edges (filter out null and empty strings)
+    const allNonEmptyTagNames: string[] = []
+    if (tagsData) {
+      for (let i = 0; i < tagsData.edges.length; i++) {
+        const edge = tagsData.edges[i]
+        if (edge.node && edge.node.name !== '') {
+          allNonEmptyTagNames.push(edge.node.name)
+        }
+      }
+    }
 
     // Check if every non-empty tag is currently selected
     const areAllSelected = allNonEmptyTagNames.every((tag) =>
@@ -154,19 +159,20 @@ function EventsList() {
             Error loading tags: {tagsError.message}
           </div>
         )}
-        {tagsData?.nodes
-          ?.filter((tag): tag is NonNullable<typeof tag> => !!tag)
+
+        {tagsData?.edges
+          ?.filter((edge): edge is TagsEdge & { node: Tag } => !!edge.node)
           .map((tag) => (
             <button
-              key={tag.name}
-              onClick={() => handleTagChange(tag.name)}
+              key={tag.node.name}
+              onClick={() => handleTagChange(tag.node.name)}
               className={`px-3 py-1 rounded-full transition-colors ${
-                selectedTags.includes(tag.name)
+                selectedTags.includes(tag.node.name)
                   ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
                   : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300'
-              } ${tag.name === '' ? 'italic' : ''}`}
+              } ${tag.node.name === '' ? 'italic' : ''}`}
             >
-              {tag.name}
+              {tag.node.name}
             </button>
           ))}
 
@@ -200,8 +206,6 @@ function EventsList() {
       {eventsLoading && !eventsData && (
         // Empty events for loading
         <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
-          {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(480px,1fr))] gap-4"> */}
-          {/* <div className="space-y-4"> */}
           {[...Array(10)].map((_, i) => (
             <div
               key={i}
@@ -215,13 +219,12 @@ function EventsList() {
           Error: {eventsError?.message}
         </div>
       )}
-      {/* <div className="lg:grid lg:grid-cols-[repeat(auto-fit,minmax(480px,1fr))] lg:gap-4 flex flex-col"> */}
+
       <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
-        {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(480px,1fr))] gap-4"> */}
-        {(eventsData?.nodes || [])
-          .filter((event): event is NonNullable<typeof event> => event !== null)
-          .map((event) => (
-            <EventItem key={event.id} event={event} />
+        {(eventsData?.edges || [])
+          .filter((edge): edge is EventsEdge & { node: Event } => !!edge.node)
+          .map((edge) => (
+            <EventItem key={edge.node.id} event={edge.node} />
           ))}{' '}
       </div>
 

@@ -17,42 +17,46 @@ export const EVENTS_QUERY = `
         hasPreviousPage
         startCursor
         endCursor
-      } 
-      nodes {
-        id
-        author
-        title
-        description
-        geoLocation {
-          longitude
-          latitude
-        }
-        baseUrl
-        content
-        link
-        pubDate
-        createdAt
-        updatedAt
-        imageUrl
-        eventStartDate
-        eventEndDate
-        location
-        eventTagsByEventId {
-          nodes {
-            tagByTagId {
-              name
+      }
+      edges { 
+        node {
+          id
+          author
+          title
+          description
+          geoLocation {
+            longitude
+            latitude
+          }
+          baseUrl
+          content
+          link
+          pubDate
+          createdAt
+          updatedAt
+          imageUrl
+          eventStartDate
+          eventEndDate
+          location
+          eventTagsByEventId {
+            nodes {
+              tagByTagId {
+                name
+              }
             }
           }
         }
-      } 
+      }
     }
   }`
 
 export const TAGS_QUERY = `
   query {
   allTags (filter: {name : {notEqualTo: ""}} orderBy:NAME_ASC) {
-    nodes {
-      name
+    edges {
+      node {
+        name
+      }
     }
   }
 }

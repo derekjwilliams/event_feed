@@ -5,27 +5,30 @@ import { EventsConnection } from '@/types/graphql'
 export async function fetchEventsWithPagination(
   variables: FetchEventsVariables
 ): Promise<EventsConnection> {
-  const response = await fetch(
-    process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ||
-      'https://event-graphql.vercel.app/graphql',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  const graphqlEndpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || ''
+  if (graphqlEndpoint === '') {
+    throw new Error(
+      `No NEXT_PUBLIC_GRAPHQL_ENDPOINT environment variable found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`
+    )
+  }
+
+  const response = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: EVENTS_QUERY,
+      variables: {
+        pubDate: variables.pubDate,
+        tagNames: variables.tagNames,
+        first: variables.first,
+        after: variables.after,
+        last: variables.last,
+        before: variables.before,
       },
-      body: JSON.stringify({
-        query: EVENTS_QUERY,
-        variables: {
-          pubDate: variables.pubDate,
-          tagNames: variables.tagNames,
-          first: variables.first,
-          after: variables.after,
-          last: variables.last,
-          before: variables.before,
-        },
-      }),
-    }
-  )
+    }),
+  })
 
   if (!response.ok) {
     throw new Error('Failed to fetch events')
@@ -45,7 +48,7 @@ export async function fetchEvents(
   const graphqlEndpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || ''
   if (graphqlEndpoint === '') {
     throw new Error(
-      `No NEXT_PUBLIC_GRAPHQL_ENDPOINT environment variable not found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`
+      `No NEXT_PUBLIC_GRAPHQL_ENDPOINT environment variable found, check configuration. For example .env for running locally, or Vercel Environment Variables for the project`
     )
   }
   if (!pubDate) {
@@ -67,7 +70,7 @@ export async function fetchEvents(
   })
   if (!response.ok) {
     throw new Error(
-      `Failed to get events from graphql server at ${GRAPHQL_ENDPOINT}: ${response.statusText}. Query: ${EVENTS_QUERY}`
+      `Failed to get events from graphql server at ${graphqlEndpoint}: ${response.statusText}. Query: ${EVENTS_QUERY}`
     )
   }
   const { data } = await response.json()
