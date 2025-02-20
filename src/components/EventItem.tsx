@@ -1,9 +1,10 @@
 // Event.tsx
 import Image from 'next/image'
-import { Calendar, MapPin } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { Event } from '@/types/graphql'
-import Link from 'next/link'
 import MapLink from './ui/MapLink'
+import EventCalendarLink from './ui/EventCalendarLink'
+import Link from 'next/link'
 
 const EventItem: React.FC<{ event: Event }> = ({ event }) => {
   const eventTimeZone = 'America/Los_Angeles' // Event's time zone
@@ -50,8 +51,18 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
                   longitude={locationLongitude}
                 ></MapLink>
               )}
-
-            <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
+            <EventCalendarLink
+              uid={`${process.env.NEXT_PUBLIC_ICS_UID}/${event.link}`}
+              start={event.eventStartDate}
+              end={event.eventStartDate}
+              categories={event.tagsString ? event.tagsString.split('|') : []}
+              summary={event.title}
+              description={event.description ? event.description : ''}
+              url={event.link ? event.link : ''}
+              location={event.location ? event.location : ''}
+            >
+              <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
+            </EventCalendarLink>
           </div>
           <h2 className="text-xl font-semibold">
             {event?.link ? (

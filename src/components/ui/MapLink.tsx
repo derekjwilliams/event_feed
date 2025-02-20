@@ -24,7 +24,7 @@ const MapLink = ({
   const [platform, setPlatform] = useState<'ios' | 'macos' | 'other'>('other')
   const [href, setHref] = useState<string>('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [storedCoords, setStoredCoords] = useState<{
+  const [coordinates, setCoordinates] = useState<{
     lat: number
     lng: number
   }>({
@@ -100,53 +100,30 @@ const MapLink = ({
       setHref(generateMapLink())
     })
   }, [latitude, longitude, accuracy, platform])
-  /*
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (platform === 'macos') {
-      e.preventDefault()
-      const userChoice = confirm(
-        'Open in Apple Maps app or Google Maps website?\nOK for Apple Maps\nCancel for Google Maps'
-      )
-
-      window.open(
-        userChoice
-          ? `https://maps.apple.com/?q=${latitude},${longitude}`
-          : `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`,
-        '_blank'
-      )
-    } else if (platform === 'ios') {
-      e.preventDefault()
-      const webFallback = `https://maps.apple.com/?q=${encodeURIComponent(
-        `${latitude},${longitude}`
-      )}`
-
-      window.location.href = `maps://?q=${encodeURIComponent(
-        `${latitude},${longitude}`
-      )}`
-      setTimeout(() => {
-        if (!document.hidden) window.open(webFallback, '_blank')
-      }, 500)
-    }
-  }*/
 
   const handleAppleMaps = () => {
-    window.open(
-      `https://maps.apple.com/?q=${storedCoords.lat},${storedCoords.lng}`,
-      '_blank'
+    const newTab = window.open(
+      `maps://?ll=${coordinates.lat},${coordinates.lng}`,
+      '_self'
     )
-    closeDialog()
+
+    if (newTab) {
+      setTimeout(() => closeDialog(), 100) // Delay to ensure tab opens properly
+    } else {
+      closeDialog()
+    }
   }
 
   const handleGoogleMaps = () => {
     // Construct Google Maps URL directly
-    const googleUrl = `https://www.google.com/maps/search/?api=1&query=${storedCoords.lat},${storedCoords.lng}`
+    const googleUrl = `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`
     window.open(googleUrl, '_blank')
     closeDialog()
   }
 
   const openDialog = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    setStoredCoords({ lat: latitude, lng: longitude })
+    setCoordinates({ lat: latitude, lng: longitude })
     dialogRef.current?.showModal()
     setIsDialogOpen(true)
   }
