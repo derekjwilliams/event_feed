@@ -90,7 +90,7 @@ const MapLink = ({
           )}&ll=${latitude},${longitude}`
         case 'macos':
           // This is just a fallback, dialog will handle the actual choice
-          return `https://maps.apple.com/?q=${latitude},${longitude}`
+          return `https://maps.apple.com/?q=${latitude},${longitude}&ll=${latitude},${longitude}`
         default:
           return `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
       }
@@ -103,7 +103,9 @@ const MapLink = ({
 
   const handleAppleMaps = () => {
     const newTab = window.open(
-      `maps://?ll=${coordinates.lat},${coordinates.lng}`,
+      `https://maps.apple.com/?q=${encodeURIComponent(
+        `${coordinates.lat},${coordinates.lng}`
+      )}`,
       '_self'
     )
 

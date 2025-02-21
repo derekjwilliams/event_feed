@@ -21,17 +21,20 @@ export function generateFeed(events: EventsConnection) {
         process.env.ATOM_EVENTS_FEED_LINK || 'http://localhost:3000/api/atom',
     },
   })
-  if (events.nodes) {
-    events.nodes.forEach((event) => {
-      if (event) {
+  if (events.edges) {
+    events.edges.forEach((edge) => {
+      if (edge.node) {
+        const event = edge.node
+        const categoryStrings = event.tagsString
+          ? event.tagsString.split('|')
+          : []
+
         const categories: Category[] = []
-        event.eventTagsByEventId.nodes.forEach((node) => {
-          if (node && node.tagByTagId) {
-            categories.push({
-              name: node.tagByTagId.name,
-              domain: 'Willamette-events',
-            })
-          }
+        categoryStrings.forEach((categoryName) => {
+          categories.push({
+            name: categoryName,
+            domain: 'Willamette-events',
+          })
         })
         let title = event.title ?? ''
         if (title && event.eventStartDate) {
@@ -77,11 +80,12 @@ export const generateICS = async (
 ): Promise<string> => {
   let vEvents: VEvent[] = []
 
-  if (events.nodes && events.nodes.length > 0) {
+  if (events.edges && events.edges.length > 0) {
     vEvents = []
 
-    events.nodes.forEach((event) => {
-      if (event) {
+    events.edges.forEach((edge) => {
+      if (edge.node) {
+        const event = edge.node
         const uid =
           process.env.NEXT_PUBLIC_ICS_UID ||
           'e5486a1f-5a6d-44c3-83b3-4a3a4f5f6e7@event-feed-willamette.vercel'
@@ -93,9 +97,7 @@ export const generateICS = async (
           ? new Date(event.eventEndDate)
           : new Date()
 
-        const categories = event.eventTagsByEventId.nodes
-          .filter((tag) => tag && tag.tagByTagId && tag.tagByTagId.name)
-          .map((tag) => tag!.tagByTagId!.name as string)
+        const categories = event.tagsString ? event.tagsString.split('|') : []
 
         const e: VEvent = {
           start: { date: start },
