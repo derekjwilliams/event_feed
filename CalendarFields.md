@@ -394,3 +394,86 @@ export const iCalendarEventSchema = z.object({
   patch: PatchObject.optional(), // Optional patch object for updating event
 });
 ```
+
+### Database Schema Notes
+
+#### events
+
+```sql
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,           -- Unique identifier for the event
+    uid VARCHAR(255) UNIQUE NOT NULL, -- Unique identifier (e.g., UID from JSCalendar)
+    summary TEXT,                    -- Event summary (e.g., "Team Meeting")
+    description TEXT,                -- Event description (e.g., "Discuss the upcoming project milestones.")
+    location TEXT,                   -- Event location (e.g., "Room 101")
+    start_date TIMESTAMP NOT NULL,   -- Event start time (UTC)
+    end_date TIMESTAMP,              -- Event end time (UTC), nullable for all-day events
+    duration INTERVAL,               -- Event duration (e.g., '1 hour'), nullable if end_date is provided
+    time_zone VARCHAR(50),           -- Time zone (e.g., "America/New_York"), nullable
+    status VARCHAR(50),              -- Event status (e.g., "CONFIRMED", "CANCELLED")
+    priority INT,                    -- Event priority (e.g., 1 for high priority)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp when event was created
+    last_modified TIMESTAMP,         -- Timestamp when event was last modified
+    transparency VARCHAR(50),        -- Transparency (e.g., "OPAQUE", "TRANSPARENT")
+    recurrence_rule TEXT,            -- Recurrence rule (e.g., "FREQ=WEEKLY;BYDAY=MO")
+    patch JSONB                     -- Store patches for modifying the event (e.g., JSON representation of changes)
+);
+```
+
+#### attendees
+
+```sql
+CREATE TABLE attendees (
+    id SERIAL PRIMARY KEY,
+    event_id INT REFERENCES events(id) ON DELETE CASCADE, -- Link to the event
+    attendee_uri VARCHAR(255) NOT NULL, -- URI for the attendee (e.g., email address or calendar URL)
+    role VARCHAR(50),                  -- Role of the attendee (e.g., "REQ-PARTICIPANT", "ORGANIZER")
+    status VARCHAR(50),                -- Status of the attendee (e.g., "ACCEPTED", "DECLINED")
+    UNIQUE(event_id, attendee_uri)     -- Ensure no duplicate attendees for the same event
+);
+```
+
+#### relations
+
+```sql
+CREATE TABLE relations (
+    id SERIAL PRIMARY KEY,
+    event_id INT REFERENCES events(id) ON DELETE CASCADE,   -- Linking event
+    related_event_id INT REFERENCES events(id),             -- Linked event (optional for related events)
+    relation_type VARCHAR(50),                                -- Relation type (e.g., "first", "next", "parent", "child")
+    UNIQUE(event_id, related_event_id)                        -- Ensure one relation between events
+);
+```
+
+links
+
+```sql
+CREATE TABLE links (
+    id SERIAL PRIMARY KEY,
+    event_id INT REFERENCES events(id) ON DELETE CASCADE, -- Link to the event
+    url VARCHAR(255) NOT NULL,                            -- URL of the link (e.g., event details page)
+    rel VARCHAR(50),                                      -- Optional relation type (e.g., "alternate", "self")
+    UNIQUE(event_id, url)                                 -- Ensure no duplicate links for the same event
+);
+```
+
+#### timezones
+
+```sql
+CREATE TABLE timezones (
+    id SERIAL PRIMARY KEY,
+    timezone_id VARCHAR(50) NOT NULL,  -- Timezone identifier (e.g., "America/New_York")
+    utc_offset INTERVAL,               -- UTC offset (e.g., '-05:00')
+    UNIQUE(timezone_id)                -- Ensure each time zone is unique
+);
+```
+
+Event (events table) stores the core event information, such as the uid, summary, start_date, end_date, status, and priority.
+
+Attendees (attendees table) holds the attendees' information for the event, including role and status (e.g., "ACCEPTED").
+
+Relations (relations table) stores relationships between calendar objects. For instance, you might relate one event to another event, or mark an event as a child of another event.
+
+Links (links table) stores additional external URLs related to the event.
+
+Timezones (timezones table) stores time zone information, if the event’s time zone is explicitly provided.
