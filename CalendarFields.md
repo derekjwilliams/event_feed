@@ -149,3 +149,267 @@ Google (X-GOOGLE-\*)
 | `X-WR-CALNAME`   | Calendar name (common in Apple iCal).                   | Apple        |
 | `X-WR-TIMEZONE`  | Default time zone for the calendar.                     | Apple/Google |
 | `X-LIC-LOCATION` | Legacy time zone identifier (e.g., `America/New_York`). | Common       |
+
+## JSCalendar Data Types
+
+| Data Type            | Description                                                               | Example                                                                           |
+| -------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **`Id`**             | A globally unique identifier for a calendar object.                       | `"a8df6573-0414-4ccc-8b1f-2248e4f4f2d1"` (UUID) or `"https://example.com/event1"` |
+| **`Int`**            | A signed integer in the range `-2^53 + 1` to `2^53 - 1`.                  | `42`, `-15`                                                                       |
+| **`UnsignedInt`**    | A non-negative integer in the range `0` to `2^53 - 1`.                    | `0`, `100`                                                                        |
+| **`UTCDateTime`**    | A date-time in UTC, formatted as ISO 8601 with `Z` suffix.                | `"2023-10-01T09:00:00Z"`                                                          |
+| **`LocalDateTime`**  | A date-time without timezone (assumed to be in the event’s timezone).     | `"2023-10-01T09:00:00"`                                                           |
+| **`Duration`**       | A non-negative ISO 8601 duration.                                         | `"PT1H"` (1 hour), `"P1D"` (1 day)                                                |
+| **`SignedDuration`** | A signed ISO 8601 duration (supports negative values).                    | `"-PT15M"` (negative 15 minutes)                                                  |
+| **`TimeZoneId`**     | An IANA time zone identifier.                                             | `"America/New_York"`, `"Europe/London"`                                           |
+| **`PatchObject`**    | A JSON Patch object (RFC 6902) for partial updates.                       | `{ "op": "replace", "path": "/title", "value": "New Title" }`                     |
+| **`Relation`**       | Describes a relationship to another JSCalendar object (e.g., `"parent"`). | `{ "@type": "Relation", "relation": "parent", "id": "event123" }`                 |
+| **`Link`**           | A URI with optional properties (e.g., `href`, `rel`, `displayText`).      | `{ "href": "https://example.com/docs", "rel": "describedby" }`                    |
+
+UTCDateTime and LocalDateTime follow ISO 8601 formatting.
+
+TimeZoneId must reference valid IANA time zone database entries.
+
+PatchObject enables partial updates using JSON Patch syntax (see RFC 6902).
+
+Relation and Link are objects with structured properties, not primitive types.
+
+### Zod File For The Types
+
+```TypeScript
+/* calendarTypes.ts*/
+
+import { z } from "zod";
+
+// JSCalendar (RFC 8984) Data Types with Zod validation
+
+// Represents a unique identifier for a calendar object/component
+const Id = z.string(); // A string type for ID
+
+// Represents arbitrary text (e.g., descriptions, summaries)
+const Text = z.string(); // A string type for Text
+
+// Represents a UTC-based date and time (ISO 8601 format)
+const UTCDateTime = z.string().refine(val => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(val), {
+  message: "Invalid UTCDateTime format, must be in ISO 8601 with 'Z'."
+});
+
+// Represents a date (without time)
+const Date = z.string().refine(val => /^\d{4}-\d{2}-\d{2}$/.test(val), {
+  message: "Invalid Date format, must be in ISO 8601."
+});
+
+// Represents a time of day (without date)
+const Time = z.string().refine(val => /^\d{2}:\d{2}:\d{2}$/.test(val), {
+  message: "Invalid Time format, must be in 'HH:MM:SS' format."
+});
+
+// Represents a non-negative integer (UnsignedInt)
+const UnsignedInt = z.number().int().nonnegative({
+  message: "UnsignedInt must be a non-negative integer."
+});
+
+// Represents a signed integer (Int)
+const Int = z.number().int(); // Just an integer (can be negative)
+
+const Boolean = z.boolean(); // Boolean value (true or false)
+
+// Represents a URI (Uniform Resource Identifier)
+const Uri = z.string().url({
+  message: "Invalid URI format."
+});
+
+// Represents a duration (ISO 8601 format)
+const Duration = z.string().refine(val => /^P(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$/.test(val), {
+  message: "Invalid Duration format, must be ISO 8601."
+});
+
+// Represents an array of items (e.g., multiple dates or attendees)
+const Array = <T>(schema: z.ZodType<T, any, any>) => schema.array();
+
+// Represents a structured object containing key-value pairs
+const Object = <T>(schema: z.ZodType<T, any, any>) => z.record(schema);
+
+// Example usage of the defined types
+
+// Example of a Calendar Event with multiple Zod validated types
+const CalendarEvent = z.object({
+  id: Id,
+  summary: Text,
+  startDate: UTCDateTime,
+  endDate: UTCDateTime,
+  location: Text,
+  attendees: Array(Uri),
+  priority: UnsignedInt,
+  duration: Duration,
+  isAllDay: Boolean,
+});
+
+// Validate an example object
+const event = {
+  id: "event123",
+  summary: "Team Meeting",
+  startDate: "2023-10-01T09:00:00Z",
+  endDate: "2023-10-01T10:00:00Z",
+  location: "Room 101",
+  attendees: ["mailto:jane.doe@example.com"],
+  priority: 1,
+  duration: "PT1H",
+  isAllDay: false,
+};
+
+const parsedEvent = CalendarEvent.safeParse(event);
+
+if (parsedEvent.success) {
+  console.log("Event is valid:", parsedEvent.data);
+} else {
+  console.error("Event validation failed:", parsedEvent.error.errors);
+}
+```
+
+#### Tiny example use of using the Zod Type Definitions
+
+```TypeScript
+
+// Define an extremely simlpe object schema that contains 'id' and 'start' fields
+const CalendarEvent = z.object({
+  id: Id,            // 'id' is of type Id (string)
+  start: UTCDateTime  // 'start' is of type UTCDateTime (string in ISO 8601 format)
+});
+```
+
+### Zod Definition of JSCalendar Event
+
+```TypeScript
+import { z } from "zod";
+
+// Define the Zod types (already defined in previous examples)
+const Id = z.string();
+const Text = z.string();
+const UTCDateTime = z.string().refine(val => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(val), {
+  message: "Invalid UTCDateTime format, must be in ISO 8601 with 'Z'."
+});
+const Duration = z.string().refine(val => /^P(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$/.test(val), {
+  message: "Invalid Duration format, must be ISO 8601."
+});
+const Boolean = z.boolean();
+const Uri = z.string().url();
+const Array = <T>(schema: z.ZodType<T, any, any>) => schema.array();
+
+// Define an Event object schema in JSCalendar format
+const Event = z.object({
+  id: Id,                    // Unique event ID
+  summary: Text,              // Title or summary of the event
+  description: Text.optional(), // Optional description of the event
+  location: Text.optional(),   // Optional location of the event
+  startDate: UTCDateTime,     // Start date/time (UTC format)
+  endDate: UTCDateTime.optional(), // End date/time (UTC format), optional for all-day events
+  duration: Duration.optional(),   // Duration, alternative to 'endDate'
+  attendees: Array(Uri).optional(), // Optional list of attendees (email/URI)
+  isAllDay: Boolean.optional(),   // Whether the event is all-day
+  priority: z.number().int().optional(), // Optional priority (1=high, 2=normal, 3=low)
+  created: UTCDateTime.optional(), // Creation timestamp
+  lastModified: UTCDateTime.optional(), // Last modification timestamp
+});
+```
+
+#### Use of JSCalendar Event
+
+```TypeScript
+// Example Event object according to JSCalendar structure
+const exampleEvent = {
+  id: "event123",
+  summary: "Team Meeting",
+  description: "Discuss the upcoming project milestones.",
+  location: "Room 101",
+  startDate: "2023-10-01T09:00:00Z",
+  endDate: "2023-10-01T10:00:00Z",
+  attendees: ["mailto:jane.doe@example.com", "mailto:john.smith@example.com"],
+  isAllDay: false,
+  priority: 2,
+  created: "2023-09-01T08:00:00Z",
+  lastModified: "2023-09-15T10:00:00Z",
+};
+
+// Validate the event using the Event schema
+const parsedEvent = Event.safeParse(exampleEvent);
+
+if (parsedEvent.success) {
+  console.log("Event is valid:", parsedEvent.data);
+} else {
+  console.error("Event validation failed:", parsedEvent.error.errors);
+}
+
+```
+
+### Using the calendarTypes.ts for iCalendar Events
+
+The mapping between iCalendar and JSCalendar
+
+| **iCalendar (RFC 5545)**  | **JSCalendar (RFC 8984)**     | **Zod Type**  |
+| ------------------------- | ----------------------------- | ------------- |
+| `DTSTART`, `DTEND`, `DUE` | `startDate`, `endDate`, `due` | `UTCDateTime` |
+| `SUMMARY`                 | `summary`                     | `Text`        |
+| `DESCRIPTION`             | `description`                 | `Text`        |
+| `LOCATION`                | `location`                    | `Text`        |
+| `ATTENDEE`                | `attendees`                   | `Array<Uri>`  |
+| `PRIORITY`                | `priority`                    | `UnsignedInt` |
+| `STATUS`                  | `status`                      | `Text`        |
+| `UID`                     | `id`                          | `Id`          |
+| `RRULE`                   | `recurrenceRule`              | `Text`        |
+| `DTSTAMP`                 | `created`                     | `UTCDateTime` |
+| `LAST-MODIFIED`           | `lastModified`                | `UTCDateTime` |
+| `TRANSP`                  | `transparency`                | `Text`        |
+| `CLASS`                   | `class`                       | `Text`        |
+
+#### Example of Using the calendarTypes to Handle iCalendar Events
+
+```TypeScript
+import { z } from "zod";
+// Import Zod types from the jsCalendarTypes.ts file
+import { Id, Text, UTCDateTime, Duration, UnsignedInt, Array, Uri, Boolean } from './calendarTypes';
+
+// Define an iCalendar Event schema using the Zod types
+const iCalendarEvent = z.object({
+  id: Id,                    // Unique event ID
+  summary: Text,              // Summary or title of the event
+  description: Text.optional(), // Optional description
+  location: Text.optional(),   // Optional location
+  startDate: UTCDateTime,     // Event start time (UTC)
+  endDate: UTCDateTime.optional(), // Event end time (UTC), optional if all-day event
+  duration: Duration.optional(),   // Duration, alternative to endDate
+  attendees: Array(Uri).optional(), // Optional attendees (email/URI)
+  priority: UnsignedInt.optional(), // Optional priority (1=high, 2=normal, 3=low)
+  status: Text.optional(),        // Event status (e.g., confirmed, cancelled)
+  created: UTCDateTime.optional(), // Event creation timestamp
+  lastModified: UTCDateTime.optional(), // Last modified timestamp
+  transparency: Text.optional(),  // Event transparency (e.g., OPAQUE, TRANSPARENT)
+  eventClass: Text.optional(),    // Event classification (e.g., PUBLIC, PRIVATE)
+});
+
+// Example iCalendar Event object
+const exampleiCalendarEvent = {
+  id: "event123",
+  summary: "Team Meeting",
+  description: "Discuss project milestones and timelines.",
+  location: "Room 101",
+  startDate: "2023-10-01T09:00:00Z",
+  endDate: "2023-10-01T10:00:00Z",
+  attendees: ["mailto:jane.doe@example.com", "mailto:john.smith@example.com"],
+  priority: 2,
+  status: "CONFIRMED",
+  created: "2023-09-01T08:00:00Z",
+  lastModified: "2023-09-15T10:00:00Z",
+  transparency: "OPAQUE",
+  eventClass: "PUBLIC"
+};
+
+// Validate the event using the iCalendar schema
+const parsedEvent = iCalendarEvent.safeParse(exampleiCalendarEvent);
+
+if (parsedEvent.success) {
+  console.log("Event is valid:", parsedEvent.data);
+} else {
+  console.error("Event validation failed:", parsedEvent.error.errors);
+}
+```
