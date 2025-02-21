@@ -218,9 +218,9 @@ export const TimeZoneId = z.string().min(1, {
 
 // Represents a relation (e.g., an event's relationship to attendees or other objects)
 export const Relation = z.object({
-  id: z.string(),         // Relation ID (string)
-  type: z.enum(["attendee", "organizer", "relatedTo"]), // Relation type
-  value: z.string() // The related object (e.g., URI or identifier)
+  type: z.literal("Relation"),  // This is a fixed value: "Relation"
+  relation: z.record(z.boolean()).optional(),  // A map of relation types (e.g., "first", "next", etc.)
+  value: z.string()  // URI or identifier for the linked object
 });
 
 // Represents a link (e.g., an external URL for an event)
