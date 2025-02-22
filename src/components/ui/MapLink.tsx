@@ -25,11 +25,11 @@ const MapLink = ({
   const [href, setHref] = useState<string>('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [coordinates, setCoordinates] = useState<{
-    lat: number
-    lng: number
+    latitude: number
+    longitude: number
   }>({
-    lat: 0,
-    lng: 0,
+    latitude: 0,
+    longitude: 0,
   })
   const dialogRef = useRef<HTMLDialogElement>(null)
 
@@ -104,7 +104,7 @@ const MapLink = ({
   const handleAppleMaps = () => {
     const newTab = window.open(
       `https://maps.apple.com/?q=${encodeURIComponent(
-        `${coordinates.lat},${coordinates.lng}`
+        `${coordinates.latitude},${coordinates.longitude}`
       )}`,
       '_self'
     )
@@ -118,14 +118,14 @@ const MapLink = ({
 
   const handleGoogleMaps = () => {
     // Construct Google Maps URL directly
-    const googleUrl = `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`
+    const googleUrl = `https://www.google.com/maps/search/?api=1&query=${coordinates.latitude},${coordinates.longitude}`
     window.open(googleUrl, '_blank')
     closeDialog()
   }
 
   const openDialog = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    setCoordinates({ lat: latitude, lng: longitude })
+    setCoordinates({ latitude, longitude })
     dialogRef.current?.showModal()
     setIsDialogOpen(true)
   }
