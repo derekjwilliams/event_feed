@@ -1,34 +1,36 @@
 'use client'
 
 import { Suspense } from 'react'
-import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { createParser, useQueryState } from 'nuqs'
 import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
 import { Calendar } from 'lucide-react'
 import EventItem from '@/components/EventItem'
 import { EventsEdge, Tag, TagsEdge } from '@/types/graphql'
 
-function EventsList() {
-  const searchParams = useSearchParams()
-  const [selectedTags, setSelectedTags] = useState<string[]>(
-    searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []
-  )
-  const [pagination, setPagination] = useState({
-    after: searchParams.get('after') || undefined,
-    before: searchParams.get('before') || undefined,
-    hasNextPage: false,
-    hasPreviousPage: false,
-  })
+// Create a custom parser for the array of strings
+const tagsParser = createParser({
+  parse: (value: string) => value.split(',').filter(Boolean),
+  serialize: (value: string[]) => value.join(','),
+})
 
-  // Get all of the available tags
+function EventsList() {
+  // Use the correct syntax for nuqs hooks
+  const [selectedTags, setSelectedTags] = useQueryState(
+    'tags',
+    tagsParser.withDefault([])
+  )
+
+  const [after, setAfter] = useQueryState('after')
+
+  const [before, setBefore] = useQueryState('before')
+
   const {
     data: tagsData,
     isLoading: tagsLoading,
     error: tagsError,
   } = useTagsQuery()
 
-  // Get the events, independent of date, with selectedTags, and pagination settings, which we set in the useEffect
   const {
     data: eventsData,
     isLoading: eventsLoading,
@@ -37,48 +39,19 @@ function EventsList() {
   } = useEventsQuery({
     pubDate: new Date(0).toISOString(),
     tagNames: selectedTags,
-    pagination,
+    pagination: {
+      after: after || undefined,
+      before: before || undefined,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    },
   })
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (selectedTags.length > 0) {
-      params.set('tags', selectedTags.join(','))
-    } else {
-      params.delete('tags')
-    }
-    if (eventsData && eventsData.pageInfo.hasNextPage) {
-      if (pagination.after) {
-        params.set('after', pagination.after)
-      }
-    } else {
-      if (!pagination.after) {
-        params.delete('after')
-      }
-    }
-    if (eventsData && eventsData.pageInfo.hasPreviousPage) {
-      if (pagination.before) {
-        params.set('before', pagination.before)
-      }
-    } else {
-      params.delete('before')
-      if (!pagination.after) {
-        params.delete('after')
-      }
-    }
-    window.history.replaceState({}, '', `?${params.toString()}`)
-  }, [selectedTags, pagination, searchParams, eventsData])
 
   const handleNext = () => {
     const pageInfo = eventsData?.pageInfo
     if (pageInfo?.hasNextPage) {
-      setPagination({
-        after: pageInfo.endCursor || undefined,
-        before: undefined,
-        hasNextPage: pageInfo?.hasNextPage,
-        hasPreviousPage: pageInfo?.hasPreviousPage,
-      })
+      setAfter(pageInfo.endCursor || null)
+      setBefore(null)
     }
   }
 
@@ -86,12 +59,8 @@ function EventsList() {
     if (!eventsData) return
     const pageInfo = eventsData.pageInfo
     if (pageInfo?.hasPreviousPage) {
-      setPagination({
-        before: pageInfo.startCursor || undefined,
-        after: undefined,
-        hasNextPage: pageInfo?.hasNextPage,
-        hasPreviousPage: pageInfo?.hasPreviousPage,
-      })
+      setBefore(pageInfo.startCursor || null)
+      setAfter(null)
     }
   }
 
@@ -99,17 +68,13 @@ function EventsList() {
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag]
-    setPagination({
-      before: undefined,
-      after: undefined,
-      hasNextPage: true,
-      hasPreviousPage: false,
-    })
-    setSelectedTags(newTags)
+    setAfter(null)
+    setBefore(null)
+    setSelectedTags(newTags.length > 0 ? newTags : null)
+    // setSelectedTags(newTags)
   }
 
   const handleToggleAnyTag = () => {
-    // Get all non-empty tag names from tagsData.edges (filter out null and empty strings)
     const allNonEmptyTagNames: string[] = []
     if (tagsData) {
       for (let i = 0; i < tagsData.edges.length; i++) {
@@ -120,23 +85,14 @@ function EventsList() {
       }
     }
 
-    // Check if every non-empty tag is currently selected
     const areAllSelected = allNonEmptyTagNames.every((tag) =>
       selectedTags.includes(tag)
     )
 
-    let newSelectedTags: string[]
-    if (areAllSelected) {
-      // Remove all non-empty tags from selectedTags
-      newSelectedTags = selectedTags.filter(
-        (tag) => !allNonEmptyTagNames.includes(tag)
-      )
-    } else {
-      // Add all non-empty tags to selectedTags, ensuring no duplicates
-      newSelectedTags = Array.from(
-        new Set([...selectedTags, ...allNonEmptyTagNames])
-      )
-    }
+    const newSelectedTags = areAllSelected
+      ? selectedTags.filter((tag) => !allNonEmptyTagNames.includes(tag))
+      : Array.from(new Set([...selectedTags, ...allNonEmptyTagNames]))
+
     setSelectedTags(newSelectedTags)
   }
 
@@ -252,6 +208,7 @@ function EventsList() {
     </div>
   )
 }
+
 const SuspendedEventsList = () => (
   <Suspense fallback={<div>Loading...</div>}>
     <EventsList />
