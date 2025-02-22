@@ -395,6 +395,128 @@ export const iCalendarEventSchema = z.object({
 });
 ```
 
+### JSON Schema
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Event",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "startDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "endDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration": {
+      "type": "string",
+      "format": "duration"
+    },
+    "timeZone": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attendees": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9
+    },
+    "status": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "lastModified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "transparency": {
+      "type": "string"
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "Relation"
+          },
+          "relation": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": ["type", "value"],
+        "additionalProperties": false
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "rel": {
+            "type": "string"
+          }
+        },
+        "required": ["url"],
+        "additionalProperties": false
+      }
+    },
+    "patch": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "type": "string",
+          "enum": ["add", "remove", "replace"]
+        },
+        "path": {
+          "type": "string"
+        },
+        "value": {}
+      },
+      "required": ["op", "path"],
+      "additionalProperties": true
+    }
+  },
+  "required": ["id", "summary", "startDate"],
+  "additionalProperties": false
+}
+```
+
 ### Database Schema Notes
 
 #### events
