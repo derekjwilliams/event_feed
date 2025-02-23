@@ -27,7 +27,7 @@ export default function Home() {
           </NavLink>{' '}
         </div>
         <div>
-          <NavLink href="webcal://event-feed-eta.vercel.app//api/calendar">
+          <NavLink href="webcal://event-feed-eta.vercel.app/api/calendar">
             Calendar with one event over webcal
           </NavLink>{' '}
         </div>
