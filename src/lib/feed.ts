@@ -105,7 +105,7 @@ export const generateICS = async (
           end: { date: end },
           summary: event.title,
           description: event.description ?? '',
-          uid: uid + `/${event.link}`,
+          uid: uid + `${event.link}`,
           url: event.link ? `https://events.willamette.edu${event.link}` : '',
           categories: categories,
         }

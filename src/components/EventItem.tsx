@@ -52,7 +52,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
                 ></MapLink>
               )}
             <EventCalendarLink
-              uid={`${process.env.NEXT_PUBLIC_ICS_UID}/${event.link}`}
+              uid={`${process.env.NEXT_PUBLIC_ICS_UID}${event.link}`}
               start={event.eventStartDate}
               end={event.eventStartDate}
               categories={event.tagsString ? event.tagsString.split('|') : []}

@@ -7,6 +7,7 @@ const EPOCH_START = new Date(0).toISOString().split('T')[0]
 export async function GET(req: NextRequest) {
   try {
     // Request headers for caching
+    console.log('GET ICS', req.url)
     const ifModifiedSince = req.headers.get('if-modified-since')
     const ifNoneMatch = req.headers.get('if-none-match')
     const { searchParams } = new URL(req.url)

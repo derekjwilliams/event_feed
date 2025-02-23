@@ -40,7 +40,7 @@ const CalendarLink: React.FC<CalendarLinkProps> = ({
       end: { date: new Date(end) },
       summary,
       description,
-      uid: `${uid}/${url ?? ''}`,
+      uid: `${uid}`,
       url: url ? `https://events.willamette.edu${url}` : undefined,
       categories,
     }
