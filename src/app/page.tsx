@@ -21,6 +21,16 @@ export default function Home() {
           <NavLink href="api/ics">Here</NavLink> to download the Calendar feed
           content (ICS)
         </div>
+        <div>
+          <NavLink href="https://event-feed-eta.vercel.app/api/calendar">
+            Calendar with one event over https
+          </NavLink>{' '}
+        </div>
+        <div>
+          <NavLink href="webcal://event-feed-eta.vercel.app//api/calendar">
+            Calendar with one event over webcal
+          </NavLink>{' '}
+        </div>
       </div>
     </>
   )
