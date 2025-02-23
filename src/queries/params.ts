@@ -7,6 +7,7 @@ export interface EventsQueryParams {
     hasNextPage: boolean
     hasPreviousPage: boolean
   }
+  pageSize: number
 }
 
 export interface FetchEventsVariables {

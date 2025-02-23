@@ -7,19 +7,26 @@ const useEventsQuery = ({
   pubDate,
   tagNames,
   pagination,
+  pageSize,
 }: EventsQueryParams): UseQueryResult<EventsConnection> => {
   const queryResult = useQuery({
     queryKey: [
       'events',
-      { pubDate, tagNames, after: pagination.after, before: pagination.before },
+      {
+        pubDate,
+        tagNames,
+        after: pagination.after,
+        before: pagination.before,
+        pageSize,
+      },
     ],
     queryFn: () =>
       fetchEventsWithPagination({
         pubDate,
         tagNames,
-        first: !pagination.before ? 100 : undefined,
+        first: !pagination.before ? pageSize : undefined,
         after: pagination.after,
-        last: pagination.before ? 100 : undefined,
+        last: pagination.before ? pageSize : undefined,
         before: pagination.before,
       }),
     placeholderData: (previous) => previous,
