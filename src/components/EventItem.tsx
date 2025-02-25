@@ -39,7 +39,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
             width={192}
             height={192}
             className="w-32 h-32 @[480px]:w-48 @[480px]:h-48 object-cover rounded"
-            sizes="(min-width: 480px) 192px, 128px"
+            sizes="192px, 128px"
           />
         )}
         <div className="flex-1">

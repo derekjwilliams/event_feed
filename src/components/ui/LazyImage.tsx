@@ -40,7 +40,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
         setIsVisible(entry.isIntersecting)
       },
       {
-        rootMargin: '200px',
+        rootMargin: '400px 0px 400px 0px',
         threshold: 0.01,
       }
     )
@@ -57,10 +57,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
     let timeoutId: NodeJS.Timeout
 
     if (isVisible) {
-      // Immediately render when becoming visible
       setShouldRender(true)
     } else {
-      // Delay unrender when leaving viewport
       timeoutId = setTimeout(() => {
         setShouldRender(false)
       }, unloadDelay)
@@ -89,12 +87,9 @@ const LazyImage: React.FC<LazyImageProps> = ({
           quality={quality}
           sizes={sizes}
           className="object-cover w-full h-full"
-          onLoadingComplete={() => {
-            // Optional: Track when image is fully loaded
-          }}
         />
       ) : (
-        <div className="w-full h-full bg-gray-200 animate-pulse" />
+        <div className="w-full h-full bg-gray-200" />
       )}
     </div>
   )
