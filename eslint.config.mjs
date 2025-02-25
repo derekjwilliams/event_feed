@@ -24,6 +24,9 @@ const eslintConfig = [
       '@typescript-eslint/no-unused-vars': 'off',
     },
   },
+  {
+    ignores: ['src/appsync/**/*.ts', 'node_modules/'],
+  },
 ]
 
 export default eslintConfig
