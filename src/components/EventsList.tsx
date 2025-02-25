@@ -10,7 +10,7 @@ import EventItem from '@/components/EventItem'
 import { EventsEdge, Tag, TagsEdge } from '@/types/graphql'
 
 function EventsList() {
-  const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 25 //TODO get from somewhere else
+  const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 50 //TODO get from somewhere else
   const searchParams = useSearchParams()
   const [selectedTags, setSelectedTags] = useState<string[]>(
     searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []

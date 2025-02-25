@@ -37,6 +37,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
             alt={event.title}
             width={128}
             height={128}
+            loading="lazy"
             className="w-32 h-32 object-cover rounded"
           />
         )}
