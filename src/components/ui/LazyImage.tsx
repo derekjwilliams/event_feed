@@ -1,4 +1,4 @@
-// components/LazyImage.tsx
+// components/ui/LazyImage.tsx
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
