@@ -5,6 +5,7 @@ import { Event } from '@/types/graphql'
 import MapLink from './ui/MapLink'
 import EventCalendarLink from './ui/EventCalendarLink'
 import Link from 'next/link'
+import LazyImage from './ui/LazyImage'
 
 const EventItem: React.FC<{ event: Event }> = ({ event }) => {
   const eventTimeZone = 'America/Los_Angeles' // Event's time zone
@@ -32,12 +33,11 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
     >
       <div className="flex gap-4">
         {event.imageUrl && (
-          <Image
+          <LazyImage
             src={event.imageUrl}
             alt={event.title}
             width={128}
             height={128}
-            loading="lazy"
             className="w-32 h-32 object-cover rounded"
           />
         )}
