@@ -1,4 +1,4 @@
-// components/ui/LazyImage.tsx
+// components/LazyImage.tsx
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -13,54 +13,74 @@ interface LazyImageProps {
   style?: React.CSSProperties
   sizes?: string
   quality?: number
+  unloadDelay?: number
 }
 
 const LazyImage: React.FC<LazyImageProps> = ({
   src,
   alt,
-  width,
-  height,
-  className,
+  width = 192,
+  height = 192,
+  className = 'w-32 h-32 @[480px]:w-48 @[480px]:h-48',
   style,
   sizes,
   quality = 75,
+  unloadDelay = 1000, // Default 1-second delay
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [shouldRender, setShouldRender] = useState(false)
 
+  // Intersection Observer for visibility tracking
   useEffect(() => {
+    if (!containerRef.current) return
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.disconnect()
-        }
+        setIsVisible(entry.isIntersecting)
       },
       {
-        rootMargin: '300px',
+        rootMargin: '200px',
         threshold: 0.01,
       }
     )
 
-    if (containerRef.current) observer.observe(containerRef.current)
+    observer.observe(containerRef.current)
 
     return () => {
-      if (containerRef.current) observer.unobserve(containerRef.current)
+      observer.disconnect()
     }
   }, [])
+
+  // Delay unload logic
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+
+    if (isVisible) {
+      // Immediately render when becoming visible
+      setShouldRender(true)
+    } else {
+      // Delay unrender when leaving viewport
+      timeoutId = setTimeout(() => {
+        setShouldRender(false)
+      }, unloadDelay)
+    }
+
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [isVisible, unloadDelay])
 
   return (
     <div
       ref={containerRef}
       className={className}
       style={{
-        width,
-        height,
         position: 'relative',
         ...style,
       }}
     >
-      {isVisible ? (
+      {shouldRender ? (
         <Image
           src={src}
           alt={alt}
@@ -69,10 +89,12 @@ const LazyImage: React.FC<LazyImageProps> = ({
           quality={quality}
           sizes={sizes}
           className="object-cover w-full h-full"
-          loading="lazy"
+          onLoadingComplete={() => {
+            // Optional: Track when image is fully loaded
+          }}
         />
       ) : (
-        <div className="w-full h-full bg-gray-200" />
+        <div className="w-full h-full bg-gray-200 animate-pulse" />
       )}
     </div>
   )

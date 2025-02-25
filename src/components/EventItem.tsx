@@ -31,14 +31,15 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
       key={event.id}
       className="p-4 bg-neutral-200 dark:bg-neutral-800 rounded-lg"
     >
-      <div className="flex gap-4">
+      <div className="@container flex gap-4">
         {event.imageUrl && (
           <LazyImage
             src={event.imageUrl}
             alt={event.title}
-            width={128}
-            height={128}
-            className="w-32 h-32 object-cover rounded"
+            width={192}
+            height={192}
+            className="w-32 h-32 @[480px]:w-48 @[480px]:h-48 object-cover rounded"
+            sizes="(min-width: 480px) 192px, 128px"
           />
         )}
         <div className="flex-1">
