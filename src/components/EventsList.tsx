@@ -10,7 +10,7 @@ import EventItem from '@/components/EventItem'
 import { EventsEdge, Tag, TagsEdge } from '@/types/graphql'
 
 function EventsList() {
-  const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 50 //TODO get from somewhere else
+  const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 50
   const searchParams = useSearchParams()
   const [selectedTags, setSelectedTags] = useState<string[]>(
     searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []
@@ -144,7 +144,7 @@ function EventsList() {
 
   return (
     <div className="space-y-4">
-      {/* Tag Filter */}
+      {/* Start Tags Filter */}
       <div className="flex gap-2 flex-wrap">
         {tagsLoading && (
           <div className="space-x-2 animate-pulse">
@@ -204,6 +204,7 @@ function EventsList() {
           <Calendar className="h-5 w-5" />
         </a>
       </div>
+      {/* End Tags Filter */}
 
       {eventsLoading && !eventsData && (
         // Empty events for loading

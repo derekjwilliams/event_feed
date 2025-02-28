@@ -1,10 +1,8 @@
 // Event.tsx
-import Image from 'next/image'
 import { Calendar } from 'lucide-react'
 import { Event } from '@/types/graphql'
 import MapLink from './ui/MapLink'
 import EventCalendarLink from './ui/EventCalendarLink'
-import Link from 'next/link'
 import LazyImage from './ui/LazyImage'
 
 const EventItem: React.FC<{ event: Event }> = ({ event }) => {

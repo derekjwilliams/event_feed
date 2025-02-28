@@ -5,7 +5,7 @@ import {
   UpdateTagInput,
   Tag,
 } from '../types/types'
-
+import { Buffer } from 'buffer'
 /**
  * Get a tag by ID
  */
