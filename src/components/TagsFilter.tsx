@@ -1,7 +1,7 @@
 'use client'
 
 import { Calendar } from 'lucide-react'
-import { Tags, TagsConnection, TagsEdge } from '@/types/graphql'
+import { TagsConnection, TagsEdge } from '@/types/graphql'
 
 interface TagsFilterProps {
   tagsLoading: boolean
