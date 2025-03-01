@@ -7,7 +7,6 @@ const useTagsQuery = (): UseQueryResult<Query['allTags']> => {
     queryKey: ['tags'],
     queryFn: fetchTags,
   })
-
   return queryResult
 }
 

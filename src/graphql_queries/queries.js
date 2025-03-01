@@ -34,6 +34,7 @@ export const EVENTS_QUERY = `
           imageUrl
           eventStartDate
           eventEndDate
+          eventTimeZone
           location
           geoLocation {
             longitude

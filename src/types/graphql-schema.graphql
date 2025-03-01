@@ -503,6 +503,7 @@ type Query implements Node {
     """
     filter: EventFilter
   ): EventsConnection
+  isValidTimezone(tz: String): Boolean
 
   """
   Reads a single `Event` using its globally unique `ID`.
@@ -595,6 +596,7 @@ type Event implements Node {
   eventStartDate: Datetime
   geoLocation: GeographyPoint
   baseUrl: String
+  eventTimeZone: String
 
   """
   Reads and enables pagination through a set of `EventTag`.
@@ -980,6 +982,8 @@ enum EventsOrderBy {
   GEO_LOCATION_DESC
   BASE_URL_ASC
   BASE_URL_DESC
+  EVENT_TIME_ZONE_ASC
+  EVENT_TIME_ZONE_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -1062,6 +1066,11 @@ input EventCondition {
   Checks for equality with the object’s `baseUrl` field.
   """
   baseUrl: String
+
+  """
+  Checks for equality with the object’s `eventTimeZone` field.
+  """
+  eventTimeZone: String
 }
 
 """
@@ -1137,6 +1146,11 @@ input EventFilter {
   Filter by the object’s `baseUrl` field.
   """
   baseUrl: StringFilter
+
+  """
+  Filter by the object’s `eventTimeZone` field.
+  """
+  eventTimeZone: StringFilter
 
   """
   Filter by the object’s `full` field.
@@ -1778,6 +1792,7 @@ input EventInput {
   eventStartDate: Datetime
   geoLocation: GeoJSON
   baseUrl: String
+  eventTimeZone: String
 }
 
 """
@@ -1906,6 +1921,7 @@ input EventPatch {
   eventStartDate: Datetime
   geoLocation: GeoJSON
   baseUrl: String
+  eventTimeZone: String
 }
 
 """

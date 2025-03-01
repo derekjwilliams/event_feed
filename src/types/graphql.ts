@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   GraphQLResolveInfo,
   GraphQLScalarType,
@@ -280,6 +278,7 @@ export type Event = Node & {
   eventStartDate?: Maybe<Scalars['Datetime']['output']>
   /** Reads and enables pagination through a set of `EventTag`. */
   eventTagsByEventId: EventTagsConnection
+  eventTimeZone?: Maybe<Scalars['String']['output']>
   full?: Maybe<Scalars['String']['output']>
   geoLocation?: Maybe<GeographyPoint>
   id: Scalars['Int']['output']
@@ -321,6 +320,8 @@ export type EventCondition = {
   eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
   /** Checks for equality with the object’s `eventStartDate` field. */
   eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
+  /** Checks for equality with the object’s `eventTimeZone` field. */
+  eventTimeZone?: InputMaybe<Scalars['String']['input']>
   /** Checks for equality with the object’s `geoLocation` field. */
   geoLocation?: InputMaybe<Scalars['GeoJSON']['input']>
   /** Checks for equality with the object’s `id` field. */
@@ -357,6 +358,8 @@ export type EventFilter = {
   eventEndDate?: InputMaybe<DatetimeFilter>
   /** Filter by the object’s `eventStartDate` field. */
   eventStartDate?: InputMaybe<DatetimeFilter>
+  /** Filter by the object’s `eventTimeZone` field. */
+  eventTimeZone?: InputMaybe<StringFilter>
   /** Filter by the object’s `full` field. */
   full?: InputMaybe<StringFilter>
   /** Filter by the object’s `id` field. */
@@ -390,6 +393,7 @@ export type EventInput = {
   description?: InputMaybe<Scalars['String']['input']>
   eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
   eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
+  eventTimeZone?: InputMaybe<Scalars['String']['input']>
   geoLocation?: InputMaybe<Scalars['GeoJSON']['input']>
   id?: InputMaybe<Scalars['Int']['input']>
   imageUrl?: InputMaybe<Scalars['String']['input']>
@@ -409,6 +413,7 @@ export type EventPatch = {
   description?: InputMaybe<Scalars['String']['input']>
   eventEndDate?: InputMaybe<Scalars['Datetime']['input']>
   eventStartDate?: InputMaybe<Scalars['Datetime']['input']>
+  eventTimeZone?: InputMaybe<Scalars['String']['input']>
   geoLocation?: InputMaybe<Scalars['GeoJSON']['input']>
   id?: InputMaybe<Scalars['Int']['input']>
   imageUrl?: InputMaybe<Scalars['String']['input']>
@@ -529,6 +534,8 @@ export enum EventsOrderBy {
   EventEndDateDesc = 'EVENT_END_DATE_DESC',
   EventStartDateAsc = 'EVENT_START_DATE_ASC',
   EventStartDateDesc = 'EVENT_START_DATE_DESC',
+  EventTimeZoneAsc = 'EVENT_TIME_ZONE_ASC',
+  EventTimeZoneDesc = 'EVENT_TIME_ZONE_DESC',
   GeoLocationAsc = 'GEO_LOCATION_ASC',
   GeoLocationDesc = 'GEO_LOCATION_DESC',
   IdAsc = 'ID_ASC',
@@ -1006,6 +1013,7 @@ export type Query = Node & {
   eventsByDateAndTags?: Maybe<EventsConnection>
   /** Reads and enables pagination through a set of `Event`. */
   getEventsByDateAndTags?: Maybe<EventsConnection>
+  isValidTimezone?: Maybe<Scalars['Boolean']['output']>
   /** Fetches an object given its globally unique `ID`. */
   node?: Maybe<Node>
   /** The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`. */
@@ -1093,6 +1101,11 @@ export type QueryGetEventsByDateAndTagsArgs = {
   pDateWindowStart?: InputMaybe<Scalars['String']['input']>
   pPubDate?: InputMaybe<Scalars['String']['input']>
   pTagNames?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>
+}
+
+/** The root query type which gives access points into the data universe. */
+export type QueryIsValidTimezoneArgs = {
+  tz?: InputMaybe<Scalars['String']['input']>
 }
 
 /** The root query type which gives access points into the data universe. */
@@ -2026,6 +2039,11 @@ export type EventResolvers<
     ContextType,
     RequireFields<EventEventTagsByEventIdArgs, 'orderBy'>
   >
+  eventTimeZone?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   full?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   geoLocation?: Resolver<
     Maybe<ResolversTypes['GeographyPoint']>,
@@ -2827,6 +2845,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     Partial<QueryGetEventsByDateAndTagsArgs>
+  >
+  isValidTimezone?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    Partial<QueryIsValidTimezoneArgs>
   >
   node?: Resolver<
     Maybe<ResolversTypes['Node']>,

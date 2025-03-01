@@ -1,7 +1,7 @@
 import { TAGS_QUERY } from '@/graphql_queries/queries'
-import { Query } from '@/types/graphql'
+import { Query, TagsConnection } from '@/types/graphql'
 
-export async function fetchTags(): Promise<Query['allTags']> {
+export async function fetchTags(): Promise<TagsConnection | null> {
   const graphqlEndpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || ''
   if (graphqlEndpoint === '') {
     throw new Error(

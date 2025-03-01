@@ -1,28 +1,14 @@
-// Event.tsx
+// EventItem.tsx
 import { Calendar } from 'lucide-react'
 import { Event } from '@/types/graphql'
 import MapLink from './ui/MapLink'
 import EventCalendarLink from './ui/EventCalendarLink'
 import LazyImage from './ui/LazyImage'
+import { EventDateAndTime } from './EventDateAndTime'
 
 const EventItem: React.FC<{ event: Event }> = ({ event }) => {
-  const eventTimeZone = 'America/Los_Angeles' // Event's time zone
   const locationLatitude = event.geoLocation?.latitude
   const locationLongitude = event.geoLocation?.longitude
-
-  const eventStartTimeString = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: eventTimeZone, // Forces display in event's local time
-    hour12: true, // Ensures 12-hour format
-  }).format(new Date(event.eventStartDate))
-
-  const eventEndTimeString = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: eventTimeZone, // Forces display in event's local time
-    hour12: true, // Ensures 12-hour format
-  }).format(new Date(event.eventEndDate))
 
   return (
     <div
@@ -79,20 +65,11 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
               <span>{event.title}</span>
             )}
           </h2>
-          <div className="flex">
-            {event.eventStartDate && (
-              <div className="text-md font-semibold text-neutral-600 dark:text-neutral-200">
-                {new Date(event.eventStartDate ?? '').toDateString()}
-              </div>
-            )}
-            {eventStartTimeString !== eventEndTimeString && (
-              <div className="mx-4 text-md text-neutral-600 dark:text-neutral-200">
-                <span>
-                  {eventStartTimeString} - {eventEndTimeString}
-                </span>
-              </div>
-            )}
-          </div>
+          <EventDateAndTime
+            startDate={event.eventStartDate}
+            endDate={event.eventEndDate}
+            timeZone={event.eventTimeZone}
+          />{' '}
         </div>
       </div>
       <div>

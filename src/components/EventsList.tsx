@@ -5,9 +5,9 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
-import { Calendar } from 'lucide-react'
 import EventItem from '@/components/EventItem'
-import { EventsEdge, Tag, TagsEdge } from '@/types/graphql'
+import { EventsEdge } from '@/types/graphql'
+import TagsFilter from './TagsFilter'
 
 function EventsList() {
   const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 50
@@ -144,67 +144,14 @@ function EventsList() {
 
   return (
     <div className="space-y-4">
-      {/* Start Tags Filter */}
-      <div className="flex gap-2 flex-wrap">
-        {tagsLoading && (
-          <div className="space-x-2 animate-pulse">
-            {[...Array(20)].map((_, i) => (
-              <div
-                key={i}
-                className="h-8 w-20 bg-neutral-200 rounded-full inline-block"
-              />
-            ))}
-          </div>
-        )}
-        {tagsError && (
-          <div className="text-red-500">
-            Error loading tags: {tagsError.message}
-          </div>
-        )}
-
-        {tagsData?.edges
-          ?.filter((edge): edge is TagsEdge & { node: Tag } => !!edge.node)
-          .map((tag) => (
-            <button
-              key={tag.node.name}
-              onClick={() => handleTagChange(tag.node.name)}
-              className={`px-3 py-1 rounded-full transition-colors ${
-                selectedTags.includes(tag.node.name)
-                  ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
-                  : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300'
-              } ${tag.node.name === '' ? 'italic' : ''}`}
-            >
-              {tag.node.name}
-            </button>
-          ))}
-
-        <div className="ml-auto">
-          <button
-            key={''}
-            onClick={() => handleTagChange('')}
-            className={`mx-4 px-3 py-1 rounded-full transition-colors ${
-              selectedTags.includes('')
-                ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
-                : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300 italic'
-            }`}
-          >
-            Not Tagged
-          </button>
-          <button
-            onClick={handleToggleAnyTag}
-            className="px-3 py-1 rounded-full transition-colors bg-blue-600 dark:bg-amber-200  saturate-25  text-white dark:text-black"
-          >
-            Any Tagged
-          </button>
-        </div>
-        <a
-          href="webcal://event-feed-eta.vercel.app/api/ics"
-          className="float-right bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-        >
-          <Calendar className="h-5 w-5" />
-        </a>
-      </div>
-      {/* End Tags Filter */}
+      <TagsFilter
+        tagsLoading={tagsLoading}
+        tagsError={tagsError}
+        tagsData={tagsData}
+        selectedTags={selectedTags}
+        handleTagChange={handleTagChange}
+        handleToggleAnyTag={handleToggleAnyTag}
+      />
 
       {eventsLoading && !eventsData && (
         // Empty events for loading
