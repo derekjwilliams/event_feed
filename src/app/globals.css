@@ -40,3 +40,7 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+dialog::backdrop {
+  @apply bg-black/30;
+}

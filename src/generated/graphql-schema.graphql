@@ -216,6 +216,7 @@ type Events implements Node {
     """filter the rows returned"""
     where: EventTagsBoolExp
   ): EventTagsConnection!
+  eventTimeZone: String
   geoLocation: geography
   id: ID!
   imageUrl: String
@@ -240,6 +241,7 @@ input EventsBoolExp {
   eventStartDate: TimestamptzComparisonExp
   eventTags: EventTagsBoolExp
   eventTagsAsString: StringComparisonExp
+  eventTimeZone: StringComparisonExp
   geoLocation: GeographyComparisonExp
   id: IntComparisonExp
   imageUrl: StringComparisonExp
@@ -272,6 +274,7 @@ input EventsOrderBy {
   eventStartDate: OrderBy
   eventTagsAggregate: EventTagsAggregateOrderBy
   eventTagsAsString: OrderBy
+  eventTimeZone: OrderBy
   geoLocation: OrderBy
   id: OrderBy
   imageUrl: OrderBy
@@ -302,6 +305,9 @@ enum EventsSelectColumn {
 
   """column name"""
   eventStartDate
+
+  """column name"""
+  eventTimeZone
 
   """column name"""
   geoLocation

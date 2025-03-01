@@ -24,7 +24,7 @@ export async function handleFeedRequest(
     const events = await fetchEventsWithPagination({
       pubDate: modifiedSinceDate,
       tagNames: tags || [], // tags
-      first: Number(process.env.EVENT_LIST_PAGE_SIZE) || 200, //TODO, change as needed
+      first: Number(process.env.NEXT_PUBLIC_MAX_FEED_EVENT_SIZE) || 200, //TODO, change as needed
       after: undefined,
       last: undefined,
       before: undefined,

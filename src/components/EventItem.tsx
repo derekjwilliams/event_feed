@@ -1,56 +1,60 @@
-// Event.tsx
-import Image from 'next/image'
-import { Calendar, MapPin } from 'lucide-react'
+// EventItem.tsx
+import { Calendar } from 'lucide-react'
 import { Events } from '@/types/graphql'
-import Link from 'next/link'
+import MapLink from './ui/MapLink'
+import EventCalendarLink from './ui/EventCalendarLink'
+import LazyImage from './ui/LazyImage'
+import { EventDateAndTime } from './EventDateAndTime'
+import { Key } from 'react'
 
 const EventItem: React.FC<{ event: Events }> = ({ event }) => {
-  const eventTimeZone = 'America/Los_Angeles' // Event's time zone
-
-  const eventStartTimeString = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: eventTimeZone, // Forces display in event's local time
-    hour12: true, // Ensures 12-hour format
-  }).format(new Date(event.eventStartDate))
-
-  const eventEndTimeString = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: eventTimeZone, // Forces display in event's local time
-    hour12: true, // Ensures 12-hour format
-  }).format(new Date(event.eventEndDate))
-
-  // const baseUrl =
-  //   process.env.NEXT_PUBLIC_BASE_URL || 'https://events.willamette.edu'
+  const locationLatitude = event.geoLocation?.coordinates[1]
+  const locationLongitude = event.geoLocation?.coordinates[0]
 
   return (
     <div
       key={event.id}
       className="p-4 bg-neutral-200 dark:bg-neutral-800 rounded-lg"
     >
-      <div className="flex gap-4">
+      <div className="@container flex gap-4">
         {event.imageUrl && (
-          <Image
+          <LazyImage
             src={event.imageUrl}
             alt={event.title}
-            width={128}
-            height={128}
-            className="w-32 h-32 object-cover rounded"
+            width={192}
+            height={192}
+            className="w-32 h-32 @[480px]:w-48 @[480px]:h-48 object-cover rounded"
+            sizes="192px, 128px"
           />
         )}
         <div className="flex-1">
           <div className="float-right">
-            {event.geoLocation && (
-              <Link
-                target="_blank"
-                className="float-left"
-                href={`https://www.google.com/maps/search/?api=1&query=${event.geoLocation?.coordinates[1]},${event.geoLocation?.coordinates[0]}`}
-              >
-                <MapPin className="text-neutral-500 dark:text-neutral-200 saturate-25" />
-              </Link>
-            )}
-            <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
+            {locationLatitude !== undefined &&
+              locationLongitude !== undefined && (
+                <MapLink
+                  target="_blank"
+                  className="float-left"
+                  latitude={locationLatitude}
+                  longitude={locationLongitude}
+                  label={event.location ?? ''}
+                ></MapLink>
+              )}
+            <EventCalendarLink
+              uid={`${process.env.NEXT_PUBLIC_ICS_UID}${event.link}`}
+              start={event.eventStartDate}
+              end={event.eventStartDate}
+              categories={
+                event.eventTagsAsString
+                  ? event.eventTagsAsString.split('|')
+                  : []
+              }
+              summary={event.title}
+              description={event.description ? event.description : ''}
+              url={event.link ? event.link : ''}
+              location={event.location ? event.location : ''}
+            >
+              <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
+            </EventCalendarLink>
           </div>
           <h2 className="text-xl font-semibold">
             {event?.link ? (
@@ -67,20 +71,11 @@ const EventItem: React.FC<{ event: Events }> = ({ event }) => {
               <span>{event.title}</span>
             )}
           </h2>
-          <div className="flex">
-            {event.eventStartDate && (
-              <div className="text-md font-semibold text-neutral-600 dark:text-neutral-200">
-                {new Date(event.eventStartDate ?? '').toDateString()}
-              </div>
-            )}
-            {eventStartTimeString !== eventEndTimeString && (
-              <div className="mx-4 text-md text-neutral-600 dark:text-neutral-200">
-                <span>
-                  {eventStartTimeString} - {eventEndTimeString}
-                </span>
-              </div>
-            )}
-          </div>
+          <EventDateAndTime
+            startDate={new Date(event.eventStartDate)}
+            endDate={new Date(event.eventEndDate)}
+            timeZone={event.eventTimeZone}
+          />{' '}
         </div>
       </div>
       <div>
@@ -101,20 +96,20 @@ const EventItem: React.FC<{ event: Events }> = ({ event }) => {
           event.eventTagsAsString?.split('|')[0] !== '') ||
           (event.eventTagsAsString &&
             event.eventTagsAsString.split('|')?.length >= 2 && (
-            <div className="mt-2 flex gap-2">
+              <div className="mt-2 flex gap-2">
                 {event.eventTagsAsString
                   ?.split('|')
-                  .filter((tagname) => tagname !== '')
-                  .map((tagname, index) => (
-                  <div
-                    key={index}
-                    className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100 dark:text-black"
-                  >
+                  .filter((tagname: string) => tagname !== '')
+                  .map((tagname: string, index: Key) => (
+                    <div
+                      key={index}
+                      className="mt-4 px-4 py-1 dark:text-neutral-800 w-fit rounded-full text-sm bg-blue-700 dark:bg-amber-200 saturate-25 text-neutral-100"
+                    >
                       {tagname}
-                  </div>
-                ))}
-            </div>
-          ))}
+                    </div>
+                  ))}
+              </div>
+            ))}
       </div>
     </div>
   )

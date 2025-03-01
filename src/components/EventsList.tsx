@@ -1,3 +1,5 @@
+// EventList.tsx
+
 'use client'
 
 import { Suspense } from 'react'
@@ -5,13 +7,12 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import useTagsQuery from '@/queries/tags'
 import useEventsQuery from '@/queries/events'
-import { Calendar } from 'lucide-react'
 import EventItem from '@/components/EventItem'
-import { TagsEdge } from '@/types/graphql'
-
-// Feature - Implement as React Server Components to further improve performance and lower server load
+import { EventsEdge } from '@/types/graphql'
+import TagsFilter from './TagsFilter'
 
 function EventsList() {
+  const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 50
   const searchParams = useSearchParams()
   const [selectedTags, setSelectedTags] = useState<string[]>(
     searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []
@@ -37,9 +38,10 @@ function EventsList() {
     error: eventsError,
     isError,
   } = useEventsQuery({
-    pubDate: new Date(0).toISOString().split('T')[0],
+    pubDate: new Date(0).toISOString(),
     tagNames: selectedTags,
     pagination,
+    pageSize,
   })
 
   useEffect(() => {
@@ -111,13 +113,16 @@ function EventsList() {
   }
 
   const handleToggleAnyTag = () => {
-    // Get all non-empty tag names from tagsData.nodes (filter out null and empty strings)
-    const allNonEmptyTagNames =
-      tagsData?.edges
-        ?.filter(
-          (edge): edge is TagsEdge => !!edge.node && edge.node.name !== ''
-        )
-        .map((edge) => edge.node.name) ?? []
+    // Get all non-empty tag names from tagsData.edges (filter out null and empty strings)
+    const allNonEmptyTagNames: string[] = []
+    if (tagsData) {
+      for (let i = 0; i < tagsData.edges.length; i++) {
+        const edge = tagsData.edges[i]
+        if (edge.node && edge.node.name !== '') {
+          allNonEmptyTagNames.push(edge.node.name)
+        }
+      }
+    }
 
     // Check if every non-empty tag is currently selected
     const areAllSelected = allNonEmptyTagNames.every((tag) =>
@@ -141,65 +146,14 @@ function EventsList() {
 
   return (
     <div className="space-y-4">
-      {/* Tag Filter */}
-      <div className="flex gap-2 flex-wrap">
-        {tagsLoading && (
-          <div className="space-x-2 animate-pulse">
-            {[...Array(20)].map((_, i) => (
-              <div
-                key={i}
-                className="h-8 w-20 bg-neutral-200 rounded-full inline-block"
-              />
-            ))}
-          </div>
-        )}
-        {tagsError && (
-          <div className="text-red-500">
-            Error loading tags: {tagsError.message}
-          </div>
-        )}
-        {tagsData?.edges
-          ?.filter((edge): edge is NonNullable<typeof edge> => !!edge)
-          .map((edge) => (
-            <button
-              key={edge.node.name}
-              onClick={() => handleTagChange(edge.node.name)}
-              className={`px-3 py-1 rounded-full transition-colors ${
-                selectedTags.includes(edge.node.name)
-                  ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
-                  : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300'
-              } ${edge.node.name === '' ? 'italic' : ''}`}
-            >
-              {edge.node.name}
-            </button>
-          ))}
-
-        <div className="ml-auto">
-          <button
-            key={''}
-            onClick={() => handleTagChange('')}
-            className={`mx-4 px-3 py-1 rounded-full transition-colors ${
-              selectedTags.includes('')
-                ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
-                : 'bg-neutral-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300 italic'
-            }`}
-          >
-            Not Tagged
-          </button>
-          <button
-            onClick={handleToggleAnyTag}
-            className="px-3 py-1 rounded-full transition-colors bg-blue-600 dark:bg-amber-200  saturate-25  text-white dark:text-black"
-          >
-            Any Tagged
-          </button>
-        </div>
-        <a
-          href="webcal://event-feed-eta.vercel.app/api/ics"
-          className="float-right bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-        >
-          <Calendar className="h-5 w-5" />
-        </a>
-      </div>
+      <TagsFilter
+        tagsLoading={tagsLoading}
+        tagsError={tagsError}
+        tagsData={tagsData}
+        selectedTags={selectedTags}
+        handleTagChange={handleTagChange}
+        handleToggleAnyTag={handleToggleAnyTag}
+      />
 
       {eventsLoading && !eventsData && (
         // Empty events for loading
@@ -212,17 +166,17 @@ function EventsList() {
           ))}
         </div>
       )}
-
       {isError && (
         <div className="p-4 text-red-600 bg-red-50 rounded-lg">
           Error: {eventsError?.message}
         </div>
       )}
+
       <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
         {(eventsData?.edges || [])
-          .filter((edge): edge is NonNullable<typeof edge> => edge !== null)
-          .map((edge, index) => (
-            <EventItem key={index} event={edge.node} />
+          .filter((edge): edge is EventsEdge & { node: Event } => !!edge.node)
+          .map((edge) => (
+            <EventItem key={edge.node.id} event={edge.node} />
           ))}{' '}
       </div>
 

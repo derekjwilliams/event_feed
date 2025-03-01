@@ -7,6 +7,7 @@ const useEventsQuery = ({
   pubDate,
   tagNames,
   pagination,
+  pageSize,
 }: EventsQueryParams): UseQueryResult<EventsConnection> => {
   // handle edge cases
   if (pagination.last && pagination.first) {
@@ -31,19 +32,16 @@ const useEventsQuery = ({
         last: pagination.last,
         after: pagination.after,
         before: pagination.before,
+        pageSize,
       },
     ],
     queryFn: () =>
       fetchEventsWithPagination({
         pubDate,
         tagNames,
-        first: !pagination.before
-          ? Number(process.env.EVENT_LIST_PAGE_SIZE) || 200
-          : undefined,
+        first: !pagination.before ? pageSize : undefined,
         after: pagination.after,
-        last: pagination.before
-          ? Number(process.env.EVENT_LIST_PAGE_SIZE) || 200
-          : undefined,
+        last: pagination.before ? pageSize : undefined,
         before: pagination.before,
       }),
     placeholderData: (previous) => previous,
