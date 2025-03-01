@@ -82,15 +82,24 @@ const MapLink = ({
 
     const generateMapLink = () => {
       const coords = `${latitude},${longitude}${accuracy ? `±${accuracy}` : ''}`
-
       switch (platform) {
         case 'ios':
-          return `maps://?q=${encodeURIComponent(
-            coords
-          )}&ll=${latitude},${longitude}`
+          if (label && label.trim() !== '') {
+            return `maps://?q=${label}&addess=${label}&ll=${encodeURIComponent(
+              coords
+            )}`
+          } else {
+            return `maps://?q=${encodeURIComponent(
+              coords
+            )}&ll=${encodeURIComponent(coords)}`
+          }
         case 'macos':
           // This is just a fallback, dialog will handle the actual choice
-          return `https://maps.apple.com/?q=${latitude},${longitude}&ll=${latitude},${longitude}`
+          if (label && label.trim() !== '') {
+            return `https://maps.apple.com/?q=${label}&address=${label}&ll=${latitude},${longitude}`
+          } else {
+            return `https://maps.apple.com/?q=${latitude},${longitude}&ll=${latitude},${longitude}`
+          }
         default:
           return `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
       }
@@ -102,12 +111,22 @@ const MapLink = ({
   }, [latitude, longitude, accuracy, platform])
 
   const handleAppleMaps = () => {
-    const newTab = window.open(
-      `https://maps.apple.com/?q=${encodeURIComponent(
-        `${coordinates.latitude},${coordinates.longitude}`
-      )}`,
-      '_self'
-    )
+    let newTab
+    if (label && label.trim() !== '') {
+      newTab = window.open(
+        `https://maps.apple.com/?ll=${encodeURIComponent(
+          `${coordinates.latitude},${coordinates.longitude}`
+        )}&address=${label}&q=${label}`,
+        '_self'
+      )
+    } else {
+      newTab = window.open(
+        `https://maps.apple.com/?q=${encodeURIComponent(
+          `${coordinates.latitude},${coordinates.longitude}`
+        )}`,
+        '_self'
+      )
+    }
 
     if (newTab) {
       setTimeout(() => closeDialog(), 100) // Delay to ensure tab opens properly
