@@ -66,8 +66,8 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
             )}
           </h2>
           <EventDateAndTime
-            startDate={event.eventStartDate}
-            endDate={event.eventEndDate}
+            startDate={new Date(event.eventStartDate)}
+            endDate={new Date(event.eventEndDate)}
             timeZone={event.eventTimeZone}
           />{' '}
         </div>

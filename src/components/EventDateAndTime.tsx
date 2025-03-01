@@ -3,41 +3,67 @@ import { useEffect, useState } from 'react'
 
 const fallbackTimeZone = 'America/Los_Angeles'
 
-const formatEventTime = (date: Date, timeZone: string | null) => {
-  return new Intl.DateTimeFormat(undefined, {
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: timeZone ?? fallbackTimeZone,
-  }).format(date)
-}
-
-const formatEventDate = (date: Date, timeZone: string | null) => {
-  return new Intl.DateTimeFormat(undefined, {
-    weekday: 'short',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: timeZone ?? fallbackTimeZone,
-  }).format(date)
-}
-
 export const EventDateAndTime: React.FC<{
-  startDate: string
-  endDate: string
+  startDate: Date
+  endDate: Date
   timeZone?: string | null
 }> = ({ startDate, endDate, timeZone }) => {
+  const [showLocalTime, setShowLocalTime] = useState(false)
   const [startTimeString, setStartTimeString] = useState('')
   const [endTimeString, setEndTimeString] = useState('')
   const [startDateString, setStartDateString] = useState('')
 
   useEffect(() => {
-    setStartTimeString(formatEventTime(new Date(startDate), timeZone ?? null))
-    setEndTimeString(formatEventTime(new Date(endDate), timeZone ?? null))
-    setStartDateString(formatEventDate(new Date(startDate), timeZone ?? null))
-  }, [startDate, endDate, timeZone])
+    const eventDateFormatter = new Intl.DateTimeFormat(undefined, {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      timeZone: timeZone ?? fallbackTimeZone,
+    })
+    const localDateFormatter = new Intl.DateTimeFormat(undefined, {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+
+    const eventTimeFormatter = new Intl.DateTimeFormat(undefined, {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: timeZone ?? fallbackTimeZone,
+    })
+
+    const localTimeFormatter = new Intl.DateTimeFormat(undefined, {
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+
+    setStartDateString(eventDateFormatter.format(startDate))
+    setStartDateString(
+      showLocalTime
+        ? localDateFormatter.format(startDate)
+        : eventDateFormatter.format(startDate)
+    )
+
+    setStartTimeString(
+      showLocalTime
+        ? localTimeFormatter.format(startDate)
+        : eventTimeFormatter.format(startDate)
+    )
+    setEndTimeString(
+      showLocalTime
+        ? localTimeFormatter.format(endDate)
+        : eventTimeFormatter.format(endDate)
+    )
+  }, [startDate, endDate, timeZone, showLocalTime])
 
   return (
-    <div className="flex">
+    <div
+      className="flex cursor-pointer hover:opacity-75 transition-opacity"
+      onClick={() => setShowLocalTime(!showLocalTime)}
+      title="Click to toggle between event location time and browser local time"
+    >
       {startDate && (
         <div className="text-md font-semibold text-neutral-600 dark:text-neutral-200">
           {startDateString || new Date(startDate).toDateString()}
@@ -49,6 +75,11 @@ export const EventDateAndTime: React.FC<{
           <div className="mx-4 text-md text-neutral-600 dark:text-neutral-200">
             <span>
               {startTimeString} - {endTimeString}
+              {showLocalTime && (
+                <span className="ml-2 text-xs text-neutral-500 dark:text-neutral-400">
+                  (your local time)
+                </span>
+              )}
             </span>
           </div>
         )}
