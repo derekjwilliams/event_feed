@@ -35,6 +35,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
                   className="float-left"
                   latitude={locationLatitude}
                   longitude={locationLongitude}
+                  label={event.location ?? ''}
                 ></MapLink>
               )}
             <EventCalendarLink
