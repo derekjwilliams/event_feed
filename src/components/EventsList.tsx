@@ -8,7 +8,7 @@ import useEventsQuery from '@/queries/events'
 import EventItem from '@/components/EventItem'
 import { EventsEdge } from '@/types/graphql'
 import TagsFilter from './TagsFilter'
-import { X, Filter, Menu } from 'lucide-react'
+import { X, Menu } from 'lucide-react'
 
 function EventsList() {
   const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 50
