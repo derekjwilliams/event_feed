@@ -1,4 +1,7 @@
+import { EventItems } from '@/components/EventItems'
+import { EventLayout } from '@/components/EventLayout'
 import SuspendedEventsList from '@/components/EventsList'
+import { Options } from '@/components/Options'
 
 export default function EventsPage() {
   return (

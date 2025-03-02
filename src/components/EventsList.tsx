@@ -145,12 +145,14 @@ function EventsList() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-screen w-96 bg-white z-50 flex flex-col ${
-          isSidebarOpen ? 'block' : 'hidden'
-        }`}
+        className={`
+          transition-all duration-300 overflow-hidden
+          ${isSidebarOpen ? 'max-h-[1000px] lg:h-auto lg:w-80' : 'h-0 lg:w-0'}
+          lg:overflow-y-auto
+        `}
       >
         <div className="flex items-center justify-between p-4 border-b">
           <button
@@ -170,17 +172,17 @@ function EventsList() {
         />
       </div>
       {/* Main Content */}
-      <div
-        className={`flex-1 transition-margin duration-300 ${
-          isSidebarOpen ? 'ml-96' : 'ml-0'
-        }`}
-      >
+      <div className="flex-1 min-h-0 overflow-y-auto">
         {!isSidebarOpen && (
-          <button onClick={() => setIsSidebarOpen(true)} className="m-4 flex">
-            <Menu className="h-6 w-6" />
-          </button>
+          <div className="p-4">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="flex items-center gap-2 px-4 py-2"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          </div>
         )}
-
         <div className="p-4">
           {eventsLoading && !eventsData && (
             // Empty events for loading
@@ -199,7 +201,7 @@ function EventsList() {
             </div>
           )}
 
-          <div className="flex flex-col gap-4 grid grid-cols-1 md:grid-cols-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {(eventsData?.edges || [])
               .filter(
                 (edge): edge is EventsEdge & { node: Event } => !!edge.node
