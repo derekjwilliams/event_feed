@@ -8,10 +8,12 @@ import useEventsQuery from '@/queries/events'
 import EventItem from '@/components/EventItem'
 import { EventsEdge } from '@/types/graphql'
 import TagsFilter from './TagsFilter'
+import { X, Filter, Menu } from 'lucide-react'
 
 function EventsList() {
   const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 50
   const searchParams = useSearchParams()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedTags, setSelectedTags] = useState<string[]>(
     searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []
   )
@@ -143,61 +145,70 @@ function EventsList() {
   }
 
   return (
-    <div className="space-y-4">
-      <TagsFilter
-        tagsLoading={tagsLoading}
-        tagsError={tagsError}
-        tagsData={tagsData}
-        selectedTags={selectedTags}
-        handleTagChange={handleTagChange}
-        handleToggleAnyTag={handleToggleAnyTag}
-      />
-
-      {eventsLoading && !eventsData && (
-        // Empty events for loading
-        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
-          {[...Array(10)].map((_, i) => (
-            <div
-              key={i}
-              className="h-32 bg-neutral-100 rounded-lg min-h-96"
-            ></div>
-          ))}
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <div
+        className={`fixed left-0 top-0 h-screen w-96 bg-white z-50 flex flex-col ${
+          isSidebarOpen ? 'block' : 'hidden'
+        }`}
+      >
+        <div className="flex items-center justify-between p-4 border-b">
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="p-1 rounded hover:bg-gray-100"
+          >
+            <X className="h-6 w-6" />
+          </button>
         </div>
-      )}
-      {isError && (
-        <div className="p-4 text-red-600 bg-red-50 rounded-lg">
-          Error: {eventsError?.message}
-        </div>
-      )}
-
-      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
-        {(eventsData?.edges || [])
-          .filter((edge): edge is EventsEdge & { node: Event } => !!edge.node)
-          .map((edge) => (
-            <EventItem key={edge.node.id} event={edge.node} />
-          ))}{' '}
+        <TagsFilter
+          tagsLoading={tagsLoading}
+          tagsError={tagsError}
+          tagsData={tagsData}
+          selectedTags={selectedTags}
+          handleTagChange={handleTagChange}
+          handleToggleAnyTag={handleToggleAnyTag}
+        />
       </div>
+      {/* Main Content */}
+      <div
+        className={`flex-1 transition-margin duration-300 ${
+          isSidebarOpen ? 'ml-96' : 'ml-0'
+        }`}
+      >
+        {!isSidebarOpen && (
+          <button onClick={() => setIsSidebarOpen(true)} className="m-4 flex">
+            <Menu className="h-6 w-6" />
+          </button>
+        )}
 
-      <div className="flex justify-between items-center">
-        <button
-          onClick={handlePrevious}
-          disabled={!eventsData?.pageInfo?.hasPreviousPage || eventsLoading}
-          className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
-        >
-          Previous
-        </button>
-        <div className="flex items-center gap-4">
-          {eventsLoading && (
-            <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full" />
+        <div className="p-4">
+          {eventsLoading && !eventsData && (
+            // Empty events for loading
+            <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3">
+              {[...Array(10)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-32 bg-neutral-100 rounded-lg min-h-96"
+                ></div>
+              ))}
+            </div>
           )}
+          {isError && (
+            <div className="p-4 text-red-600 bg-red-50 rounded-lg">
+              Error: {eventsError?.message}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-4 grid grid-cols-1 md:grid-cols-3">
+            {(eventsData?.edges || [])
+              .filter(
+                (edge): edge is EventsEdge & { node: Event } => !!edge.node
+              )
+              .map((edge) => (
+                <EventItem key={edge.node.id} event={edge.node} />
+              ))}
+          </div>
         </div>
-        <button
-          onClick={handleNext}
-          disabled={!eventsData?.pageInfo?.hasNextPage || eventsLoading}
-          className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
-        >
-          Next
-        </button>
       </div>
     </div>
   )
