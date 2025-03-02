@@ -15,14 +15,14 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
       key={event.id}
       className="p-4 bg-neutral-200 dark:bg-neutral-800 rounded-lg"
     >
-      <div className="@container flex gap-4">
+      <div className="@container/EventItem flex gap-4">
         {event.imageUrl && (
           <LazyImage
             src={event.imageUrl}
             alt={event.title}
             width={192}
             height={192}
-            className="w-32 h-32 @[480px]:w-48 @[480px]:h-48 object-cover rounded"
+            className="w-32 h-32 @md/EventItem:w-48 @md/EventItem:h-48 object-cover" // see https://tailwindcss.com/docs/responsive-design#container-size-reference
             sizes="192px, 128px"
           />
         )}

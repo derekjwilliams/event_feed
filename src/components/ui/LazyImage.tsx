@@ -21,7 +21,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
   alt,
   width = 192,
   height = 192,
-  className = 'w-32 h-32 @[480px]:w-48 @[480px]:h-48',
+  className = 'w-32 h-32 object-cover',
   style,
   sizes,
   quality = 75,
