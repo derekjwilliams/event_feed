@@ -13,7 +13,6 @@ import { X, Menu } from 'lucide-react'
 function EventsList() {
   const pageSize = Number(process.env.NEXT_PUBLIC_EVENT_LIST_PAGE_SIZE) || 50
   const searchParams = useSearchParams()
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedTags, setSelectedTags] = useState<string[]>(
     searchParams.get('tags') ? searchParams.get('tags')!.split(',') : []
   )
@@ -23,28 +22,47 @@ function EventsList() {
     hasNextPage: false,
     hasPreviousPage: false,
   })
-
+  const [isOpen, setIsOpen] = useState(false)
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   const openSidebar = () => {
-    const dialog = dialogRef.current
-    if (dialog) {
-      dialog.showModal()
-      void dialog.offsetWidth
-      dialog.classList.add('opacity-100', 'translate-x-0')
-      dialog.classList.remove('opacity-0', 'translate-x-[-100%]')
-    }
+    setIsOpen(true)
+    dialogRef.current?.showModal()
+    // Force iOS repaint
+    requestAnimationFrame(() => {
+      dialogRef.current?.classList.add('opacity-100', 'translate-x-0')
+    })
   }
 
   const closeSidebar = () => {
-    const dialog = dialogRef.current
-    if (dialog) {
-      dialog.classList.remove('opacity-100', 'translate-x-0')
-      dialog.classList.add('opacity-0', 'translate-x-[-100%]')
-      setTimeout(() => dialog.close(), 300) // Match transition duration
-    }
+    dialogRef.current?.classList.remove('opacity-100', 'translate-x-0')
+    setTimeout(() => {
+      dialogRef.current?.close()
+      setIsOpen(false)
+    }, 300)
   }
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
 
+    // Create a type-safe handler that works for both event types
+    const handleClose = (e: MouseEvent | TouchEvent) => {
+      if (e.target === dialog) closeSidebar()
+    }
+
+    // Separate handlers with proper typing
+    const touchHandler = (e: TouchEvent) => handleClose(e)
+    const clickHandler = (e: MouseEvent) => handleClose(e)
+
+    // Add listeners with correct types
+    dialog.addEventListener('click', clickHandler)
+    dialog.addEventListener('touchstart', touchHandler)
+
+    return () => {
+      dialog.removeEventListener('click', clickHandler)
+      dialog.removeEventListener('touchstart', touchHandler)
+    }
+  }, [])
   // Get all of the available tags
   const {
     data: tagsData,
@@ -242,21 +260,25 @@ function EventsList() {
       <dialog
         ref={dialogRef}
         className={`
-          fixed top-4 left-4 right-4 inset-y-0 max-w-full
-          w-[calc(100%-2rem)]
-          translate-x-[-100%] opacity-0
+          fixed top-4 
+          left-[calc(100%-1rem)]  // Start off-screen to the right
+          w-[calc(100%-2rem)]     // Account for margins
+          max-h-[90vh]
+          translate-x-[-100%]     // Pull back by full width when open
+          opacity-0
           transition-all duration-300 ease-in-out
-        bg-white shadow-lg
-        backdrop:bg-black/50 backdrop:opacity-0
+          bg-white shadow-lg rounded-lg
+          backdrop:bg-black/50 backdrop:opacity-0
+          backdrop:transition-opacity backdrop:duration-300
           [&:not([open])]:hidden
-      `}
+        `}
         onClick={(e) => e.target === dialogRef.current && closeSidebar()}
       >
         <div className="flex h-full">
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto p-4">
             <div className="flex items-center justify-between border-b pb-4">
-              <h2 className="text-lg font-semibold">Filters</h2>
+              <h2 className="text-lg font-semibold"></h2>
               <button
                 onClick={closeSidebar}
                 className="p-1 rounded hover:bg-gray-100"
@@ -276,33 +298,6 @@ function EventsList() {
           </div>
         </div>
       </dialog>
-
-      {/* <div
-        className={`absolute m-4 top-0 left-0 right-0 z-50 bg-white overflow-y-auto shadow-lg transition-all duration-300 ease-in-out transform ${
-          isSidebarOpen
-            ? 'translate-x-0 opacity-100 pointer-events-auto'
-            : '-translate-x-full opacity-0 pointer-events-none'
-        }`}
-      >
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold"> </h2>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="p-1 rounded hover:bg-gray-100"
-            aria-label="Close filters"
-          >
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-        <TagsFilter
-          tagsLoading={tagsLoading}
-          tagsError={tagsError}
-          tagsData={tagsData}
-          selectedTags={selectedTags}
-          handleTagChange={handleTagChange}
-          handleToggleAnyTag={handleToggleAnyTag}
-        />
-      </div> */}
     </div>
   )
 }
