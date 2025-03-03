@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useRef } from 'react'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import useTagsQuery from '@/queries/tags'
@@ -23,6 +23,27 @@ function EventsList() {
     hasNextPage: false,
     hasPreviousPage: false,
   })
+
+  const dialogRef = useRef<HTMLDialogElement>(null)
+
+  const openSidebar = () => {
+    const dialog = dialogRef.current
+    if (dialog) {
+      dialog.showModal()
+      void dialog.offsetWidth
+      dialog.classList.add('opacity-100', 'translate-x-0')
+      dialog.classList.remove('opacity-0', 'translate-x-[-100%]')
+    }
+  }
+
+  const closeSidebar = () => {
+    const dialog = dialogRef.current
+    if (dialog) {
+      dialog.classList.remove('opacity-100', 'translate-x-0')
+      dialog.classList.add('opacity-0', 'translate-x-[-100%]')
+      setTimeout(() => dialog.close(), 300) // Match transition duration
+    }
+  }
 
   // Get all of the available tags
   const {
@@ -73,6 +94,18 @@ function EventsList() {
     }
     window.history.replaceState({}, '', `?${params.toString()}`)
   }, [selectedTags, pagination, searchParams, eventsData])
+
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+
+    const handleCancel = (e: Event) => {
+      e.preventDefault() // Prevent the default closing behavior if needed
+      closeSidebar()
+    }
+    dialog.addEventListener('cancel', handleCancel)
+    return () => dialog.removeEventListener('cancel', handleCancel)
+  }, [])
 
   const handleNext = () => {
     const pageInfo = eventsData?.pageInfo
@@ -146,14 +179,11 @@ function EventsList() {
 
   return (
     <div className="relative min-h-screen bg-gray-50">
-      {/* Main Content */}
       <div className="flex-1 min-h-0 overflow-y-auto">
         <div className="p-4 h-12">
           <button
-            onClick={() => setIsSidebarOpen(true)}
-            className={`flex items-center gap-2 px-4 py-2 ${
-              isSidebarOpen ? 'invisible' : ''
-            }`}
+            onClick={openSidebar}
+            className="fixed border-2 z-100 flex items-center p-4 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
           >
             <Menu className="h-6 w-6" />
           </button>
@@ -185,18 +215,69 @@ function EventsList() {
                 <EventItem key={edge.node.id} event={edge.node} />
               ))}
           </div>
+          <div className="mt-4 flex justify-between items-center">
+            <button
+              onClick={handlePrevious}
+              disabled={!eventsData?.pageInfo?.hasPreviousPage || eventsLoading}
+              className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
+            >
+              Previous
+            </button>
+            <div className="flex items-center gap-4">
+              {eventsLoading && (
+                <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full" />
+              )}
+            </div>
+            <button
+              onClick={handleNext}
+              disabled={!eventsData?.pageInfo?.hasNextPage || eventsLoading}
+              className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
-      {/* Backdrop */}
-      <div
-        className={`absolute inset-0 z-40 bg-black transition-opacity duration-300 ease-in-out ${
-          isSidebarOpen
-            ? 'opacity-20 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
-        }`}
-      ></div>
-      {/* Sidebar */}
-      <div
+
+      <dialog
+        ref={dialogRef}
+        className={`
+          fixed top-4 left-4 right-4 inset-y-0 max-w-full
+          w-[calc(100%-2rem)]
+          translate-x-[-100%] opacity-0
+          transition-all duration-300 ease-in-out
+        bg-white shadow-lg
+        backdrop:bg-black/50 backdrop:opacity-0
+          [&:not([open])]:hidden
+      `}
+        onClick={(e) => e.target === dialogRef.current && closeSidebar()}
+      >
+        <div className="flex h-full">
+          {/* Content Area */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex items-center justify-between border-b pb-4">
+              <h2 className="text-lg font-semibold">Filters</h2>
+              <button
+                onClick={closeSidebar}
+                className="p-1 rounded hover:bg-gray-100"
+                aria-label="Close filters"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <TagsFilter
+              tagsLoading={tagsLoading}
+              tagsError={tagsError}
+              tagsData={tagsData}
+              selectedTags={selectedTags}
+              handleTagChange={handleTagChange}
+              handleToggleAnyTag={handleToggleAnyTag}
+            />
+          </div>
+        </div>
+      </dialog>
+
+      {/* <div
         className={`absolute m-4 top-0 left-0 right-0 z-50 bg-white overflow-y-auto shadow-lg transition-all duration-300 ease-in-out transform ${
           isSidebarOpen
             ? 'translate-x-0 opacity-100 pointer-events-auto'
@@ -221,7 +302,7 @@ function EventsList() {
           handleTagChange={handleTagChange}
           handleToggleAnyTag={handleToggleAnyTag}
         />
-      </div>
+      </div> */}
     </div>
   )
 }
