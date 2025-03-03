@@ -145,44 +145,19 @@ function EventsList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
-      {/* Sidebar */}
-      <div
-        className={`
-          transition-all duration-300 overflow-hidden
-          ${isSidebarOpen ? 'max-h-[1000px] lg:h-auto lg:w-80' : 'h-0 lg:w-0'}
-          lg:overflow-y-auto
-        `}
-      >
-        <div className="flex items-center justify-between p-4 border-b">
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="p-1 rounded hover:bg-gray-100"
-          >
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-        <TagsFilter
-          tagsLoading={tagsLoading}
-          tagsError={tagsError}
-          tagsData={tagsData}
-          selectedTags={selectedTags}
-          handleTagChange={handleTagChange}
-          handleToggleAnyTag={handleToggleAnyTag}
-        />
-      </div>
+    <div className="relative min-h-screen bg-gray-50">
       {/* Main Content */}
       <div className="flex-1 min-h-0 overflow-y-auto">
-        {!isSidebarOpen && (
-          <div className="p-4">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="flex items-center gap-2 px-4 py-2"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-          </div>
-        )}
+        <div className="p-4 h-12">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className={`flex items-center gap-2 px-4 py-2 ${
+              isSidebarOpen ? 'invisible' : ''
+            }`}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
         <div className="p-4">
           {eventsLoading && !eventsData && (
             // Empty events for loading
@@ -211,6 +186,41 @@ function EventsList() {
               ))}
           </div>
         </div>
+      </div>
+      {/* Backdrop */}
+      <div
+        className={`absolute inset-0 z-40 bg-black transition-opacity duration-300 ease-in-out ${
+          isSidebarOpen
+            ? 'opacity-20 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        }`}
+      ></div>
+      {/* Sidebar */}
+      <div
+        className={`absolute m-4 top-0 left-0 right-0 z-50 bg-white overflow-y-auto shadow-lg transition-all duration-300 ease-in-out transform ${
+          isSidebarOpen
+            ? 'translate-x-0 opacity-100 pointer-events-auto'
+            : '-translate-x-full opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-lg font-semibold">Filters</h2>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="p-1 rounded hover:bg-gray-100"
+            aria-label="Close filters"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+        <TagsFilter
+          tagsLoading={tagsLoading}
+          tagsError={tagsError}
+          tagsData={tagsData}
+          selectedTags={selectedTags}
+          handleTagChange={handleTagChange}
+          handleToggleAnyTag={handleToggleAnyTag}
+        />
       </div>
     </div>
   )

@@ -24,11 +24,11 @@ export default function TagsFilter({
   return (
     <div className="p-4">
       {tagsLoading && (
-        <div className="flex flex-row lg:flex-col gap-2 animate-pulse overflow-x-auto lg:overflow-visible pb-3 lg:pb-0">
+        <div className="flex flex-col gap-2 animate-pulse overflow-y-auto pb-3">
           {[...Array(20)].map((_, i) => (
             <div
               key={i}
-              className="h-8 flex-shrink-0 w-32 bg-neutral-200 rounded-full"
+              className="h-8 flex-shrink-0 w-full bg-neutral-200 rounded-full"
             />
           ))}
         </div>
@@ -40,14 +40,14 @@ export default function TagsFilter({
         </div>
       )}
 
-      <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto pb-3 lg:pb-0">
+      <div className="flex flex-wrap gap-2 overflow-y-auto pb-3">
         {tagsData?.edges
           ?.filter((edge): edge is { node: Tag } => !!edge.node)
           .map((edge) => (
             <button
               key={edge.node.name}
               onClick={() => handleTagChange(edge.node.name)}
-              className={`flex-shrink-0 whitespace-nowrap lg:whitespace-normal px-3 py-2 rounded-full text-left transition-colors 
+              className={`self-start flex-shrink-0 whitespace-normal px-3 py-2 rounded-full text-left transition-colors 
                 ${
                   selectedTags.includes(edge.node.name)
                     ? 'bg-blue-950 dark:bg-amber-300 text-white dark:text-black'
@@ -83,7 +83,7 @@ export default function TagsFilter({
 
         <Link
           href="webcal://event-feed-eta.vercel.app/api/ics"
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 mt-4 bg-gray-700 hover:bg-gray-800 text-white font-bold rounded"
+          className="w-auto inline-flex items-center justify-center gap-2 px-4 py-2 mt-4 bg-gray-700 hover:bg-gray-800 text-white font-bold rounded"
         >
           <Calendar className="h-5 w-5" />
           Subscribe
