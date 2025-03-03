@@ -185,6 +185,27 @@ function EventsList() {
                 <EventItem key={edge.node.id} event={edge.node} />
               ))}
           </div>
+          <div className="mt-4 flex justify-between items-center">
+            <button
+              onClick={handlePrevious}
+              disabled={!eventsData?.pageInfo?.hasPreviousPage || eventsLoading}
+              className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
+            >
+              Previous
+            </button>
+            <div className="flex items-center gap-4">
+              {eventsLoading && (
+                <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full" />
+              )}
+            </div>
+            <button
+              onClick={handleNext}
+              disabled={!eventsData?.pageInfo?.hasNextPage || eventsLoading}
+              className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded disabled:opacity-50 text-gray-800 dark:text-neutral-300"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
       {/* Backdrop */}
