@@ -204,7 +204,7 @@ function EventsList() {
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Filters</h2>
+          <h2 className="text-lg font-semibold"> </h2>
           <button
             onClick={() => setIsSidebarOpen(false)}
             className="p-1 rounded hover:bg-gray-100"
