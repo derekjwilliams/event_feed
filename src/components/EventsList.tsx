@@ -208,7 +208,6 @@ function EventsList() {
           </div>
         </div>
       </div>
-
       {/* Backdrop */}
       <div
         className={`absolute inset-0 z-40 bg-black transition-opacity duration-300 ease-in-out ${
@@ -219,13 +218,13 @@ function EventsList() {
       ></div>
       {/* Sidebar */}
       <div
-        className={`fixed m-4 top-0 left-0 right-0 z-50 bg-white overflow-y-auto shadow-lg transition-all duration-300 ease-in-out transform ${
+        className={`fixed m-4 top-0 left-0 right-0 z-50 bg-white shadow-lg transition-all duration-300 ease-in-out transform ${
           isSidebarOpen
-            ? 'translate-x-0 opacity-100 rounded pointer-events-auto'
+            ? 'translate-x-0 opacity-100 rounded pointer-events-auto max-h-[calc(100vh-2rem)] overflow-y-auto'
             : '-translate-x-full opacity-0 pointer-events-none'
         }`}
       >
-        <div className=" dark:bg-neutral-400 flex items-center justify-between p-2 border-b">
+        <div className="dark:bg-neutral-400 flex items-center justify-between p-2 border-b">
           <h2 className="text-lg font-semibold"> </h2>
           <button
             onClick={() => setIsSidebarOpen(false)}
