@@ -22,7 +22,7 @@ export default function TagsFilter({
   handleToggleAnyTag,
 }: TagsFilterProps) {
   return (
-    <div className="p-4">
+    <div className="p-4 dark:bg-neutral-400">
       {tagsLoading && (
         <div className="flex flex-col gap-2 animate-pulse overflow-y-auto pb-3">
           {[...Array(20)].map((_, i) => (

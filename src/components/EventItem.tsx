@@ -47,6 +47,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
               description={event.description ? event.description : ''}
               url={event.link ? event.link : ''}
               location={event.location ? event.location : ''}
+              className="cursor-pointer"
             >
               <Calendar className="text-neutral-500 dark:text-neutral-200 saturate-25" />
             </EventCalendarLink>
@@ -75,7 +76,7 @@ const EventItem: React.FC<{ event: Event }> = ({ event }) => {
       </div>
       <div>
         {event.location && (
-          <h3 className="text-lg font-semibold text-neutral-600 dark:text-neutral-200">
+          <h3 className="p-2 text-lg font-semibold text-neutral-600 dark:text-neutral-200">
             {event.location}
           </h3>
         )}

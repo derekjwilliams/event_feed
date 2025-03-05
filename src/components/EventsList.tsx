@@ -145,13 +145,13 @@ function EventsList() {
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-50">
+    <div className="relative min-h-screen bg-gray-50  dark:bg-neutral-400">
       {/* Main Content */}
       <div className="flex-1 min-h-0 overflow-y-auto">
-        <div className="p-4 h-12">
+        <div className="p-2">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className={`flex items-center gap-2 px-4 py-2 ${
+            className={`cursor-pointer fixed top-0 flex items-center bg-neutral-100 dark:bg-neutral-400 disabled:opacity-50 text-gray-800 dark:text-neutral-100 z-50 rounded-full gap-2 p-2 m-2 ${
               isSidebarOpen ? 'invisible' : ''
             }`}
           >
@@ -208,6 +208,7 @@ function EventsList() {
           </div>
         </div>
       </div>
+
       {/* Backdrop */}
       <div
         className={`absolute inset-0 z-40 bg-black transition-opacity duration-300 ease-in-out ${
@@ -218,13 +219,13 @@ function EventsList() {
       ></div>
       {/* Sidebar */}
       <div
-        className={`absolute m-4 top-0 left-0 right-0 z-50 bg-white overflow-y-auto shadow-lg transition-all duration-300 ease-in-out transform ${
+        className={`fixed m-4 top-0 left-0 right-0 z-50 bg-white overflow-y-auto shadow-lg transition-all duration-300 ease-in-out transform ${
           isSidebarOpen
-            ? 'translate-x-0 opacity-100 pointer-events-auto'
+            ? 'translate-x-0 opacity-100 rounded pointer-events-auto'
             : '-translate-x-full opacity-0 pointer-events-none'
         }`}
       >
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className=" dark:bg-neutral-400 flex items-center justify-between p-2 border-b">
           <h2 className="text-lg font-semibold"> </h2>
           <button
             onClick={() => setIsSidebarOpen(false)}
