@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xml:base="https://www.climate.gov/">
+  <channel>
+    <title><![CDATA[ Climate.gov Decision Makers Take 5 ]]></title>
+    <link>https://www.climate.gov/</link>
+    <atom:link href="https://www.climate.gov/feeds/news-features/take5.rss" rel="self" type="application/rss+xml"/>
+    <description><![CDATA[ Climate.gov's Take5 Decision Maker's ]]></description>
+    <language>en</language>
+    
+    <item>
+  <title><![CDATA[ Ron Bartel explains the roots of sod-based crop resilience ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-take-5/ron-bartel-explains-roots-sod-based-crop-resilience</link>
+  <description> In the Southeast, a conventional crop rotation is two years of cotton followed by two years of peanuts. In this extended interview, Ron Bartel explains why farmers should consider a grass rotation,… </description>
+  <pubDate>
+      Mon, 27 Oct 2014 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-take-5/ron-bartel-explains-roots-sod-based-crop-resilience
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[  Brian Swett discusses Boston’s climate future  ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-take-5/brian-swett-discusses-boston%E2%80%99s-climate-future</link>
+  <description> Brian Swett, Chief of Environment, Energy, and Open Space for the city of Boston, talks about maintaining the city's historic heritage while planning for the future.
+ </description>
+  <pubDate>
+      Wed, 30 Jul 2014 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-take-5/brian-swett-discusses-boston%E2%80%99s-climate-future
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[  Jacqueline Kozak Thiel talks about Hawaii’s sustainability efforts and preparing the island chain for climate change  ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-take-5/jacqueline-kozak-thiel-talks-about-hawaii%E2%80%99s-sustainability</link>
+  <description> Jacqueline Kozak Thiel, Hawaii's State Sustainability Coordinator, talks about the state's unique sustainability challenges and how the island chain is planning for climate change.
+ </description>
+  <pubDate>
+      Tue, 01 Jul 2014 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-take-5/jacqueline-kozak-thiel-talks-about-hawaii%E2%80%99s-sustainability
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Jeanine Jones tackles drought management issues in California ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-take-5/jeanine-jones-tackles-drought-management-issues-california</link>
+  <description> Jeanine Jones, Interstate Resources Manager for the California Department of Water Resources, talks about the state's ongoing drought conditions and planning for California's water future.
+ </description>
+  <pubDate>
+      Tue, 13 May 2014 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-take-5/jeanine-jones-tackles-drought-management-issues-california
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Jon Hare discusses climate’s impact on fisheries, new study to assess species vulnerability  ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-take-5/jon-hare-discusses-climate%E2%80%99s-impact-fisheries-new-study-assess</link>
+  <description> Research oceanographer Jonathan Hare answers questions about the first application of a new protocol for assessing the vulnerability of Northeast fisheries to climate change.
+ </description>
+  <pubDate>
+      Mon, 28 Apr 2014 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-take-5/jon-hare-discusses-climate%E2%80%99s-impact-fisheries-new-study-assess
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Laura Briefer talks about preparing Salt Lake City’s water supply for a changing climate  ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-take-5/laura-briefer-talks-about-preparing-salt-lake-city%E2%80%99s-water</link>
+  <description> Water resources manager Laura Briefer describes how Salt Lake City’s Department of Public Utilities is using climate information to help plan for the city’s future.
+ </description>
+  <pubDate>
+      Wed, 12 Feb 2014 07:00:00 -0500
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-take-5/laura-briefer-talks-about-preparing-salt-lake-city%E2%80%99s-water
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Decision Makers Take 5: Thuan Nguyen ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-take-5/decision-makers-take-5-thuan-nguyen</link>
+  <description> Find out how the Red Cross is using climate information in Vietnam to solve public health problems.
+ </description>
+  <pubDate>
+      Tue, 20 Nov 2012 07:00:00 -0500
+    </pubDate>
+    <dc:creator>
+      Brian Kahn
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-take-5/decision-makers-take-5-thuan-nguyen
+    </guid>
+    </item>
+
+  </channel>
+</rss>

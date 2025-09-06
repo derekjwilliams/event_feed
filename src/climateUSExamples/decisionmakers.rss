@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xml:base="https://www.climate.gov/">
+  <channel>
+    <title><![CDATA[ Climate.gov Decision Maker's Toolbox ]]></title>
+    <link>https://www.climate.gov/</link>
+    <atom:link href="https://www.climate.gov/feeds/news-features/decisionmakers.rss" rel="self" type="application/rss+xml"/>
+    <description><![CDATA[  ]]></description>
+    <language>en</language>
+    
+    <item>
+  <title><![CDATA[ New Drought.gov a one-stop NOAA resource for all things drought ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/new-droughtgov-one-stop-noaa-resource-all-things-drought</link>
+  <description> New website features more&amp;nbsp;interactive content and easy-to-understand graphics describing current and predicted drought conditions.&amp;nbsp;&amp;nbsp;
+ </description>
+  <pubDate>
+      Wed, 20 Jan 2021 07:00:00 -0500
+    </pubDate>
+    <dc:creator>
+      Adam Lang
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/new-droughtgov-one-stop-noaa-resource-all-things-drought
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ A new NOAA tool is helping to predict U.S. droughts, global famine ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/new-noaa-tool-helping-predict-us-droughts-global-famine</link>
+  <description> Drought is about more than lack of rainfall.&amp;nbsp; A new tool keeps track of another major player: how thirsty the atmosphere is.
+ </description>
+  <pubDate>
+      Thu, 04 Jan 2018 07:00:00 -0500
+    </pubDate>
+    <dc:creator>
+      Theo Stein
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/new-noaa-tool-helping-predict-us-droughts-global-famine
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Water Resources Dashboard ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/water-resources-dashboard</link>
+  <description> The Climate Resilience Toolkit's Water Resources Dashboard is a one-stop website for data and information on drought, flooding, precipitation, climate, and other water-related risks and opportunities… </description>
+  <pubDate>
+      Tue, 22 Mar 2016 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/water-resources-dashboard
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Managing agricultural climate risks in U.S. Southeast ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/managing-agricultural-climate-risks-us-southeast</link>
+  <description> AgroClimate.org is an open-source suite of tools and resources tailored to farmers and ranchers in the southeastern United States.
+ </description>
+  <pubDate>
+      Thu, 14 May 2015 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh, Ned Gardiner
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/managing-agricultural-climate-risks-us-southeast
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ How NOAA keeps track of carbon dioxide and other greenhouse gases ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/how-noaa-keeps-track-carbon-dioxide-and-other-greenhouse-gases</link>
+  <description> Since 2004, researchers in NOAA’s Global Monitoring Division have released the Annual Greenhouse Gas Index: a single value that compares the total warming effect of each year's concentrations of heat… </description>
+  <pubDate>
+      Mon, 02 Jun 2014 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/how-noaa-keeps-track-carbon-dioxide-and-other-greenhouse-gases
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Tracking carbon dioxide across the globe ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/tracking-carbon-dioxide-across-globe</link>
+  <description> CarbonTracker is a tool for modelling sources and sinks of carbon dioxide. Users can download the code, carbon dioxide data, and the tool's carbon flux estimates to conduct their own analyses or to… </description>
+  <pubDate>
+      Thu, 22 May 2014 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Rebecca Lindsey
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/tracking-carbon-dioxide-across-globe
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ The Weather and Climate Toolkit ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/weather-and-climate-toolkit</link>
+  <description> (VIDEO) Visualizing data makes it easier to understand exactly how an extreme weather event affected people’s lives, livelihoods, and property and how those things could be affected in the future.… </description>
+  <pubDate/>
+    <dc:creator>
+      Emily Greenhalgh, Ned Gardiner
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/weather-and-climate-toolkit
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Climate forecast training for international meteorologists ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/climate-forecast-training-international-meteorologists</link>
+  <description> Climate change is a global phenomenon, affecting weather events around the world. Therefore, people around the globe need climate information to anticipate potentially damaging floods, droughts, crop… </description>
+  <pubDate>
+      Wed, 19 Mar 2014 08:00:00 -0400
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/climate-forecast-training-international-meteorologists
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Using climate data to protect growers and ranchers ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/using-climate-data-protect-growers-and-ranchers</link>
+  <description> Working with private companies, the U.S. Department of Agriculture’s Risk Management Agency uses precipitation data from NOAA’s Climate Prediction Center as part of an insurance program for ranchers… </description>
+  <pubDate>
+      Wed, 05 Mar 2014 07:00:00 -0500
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/using-climate-data-protect-growers-and-ranchers
+    </guid>
+    </item>
+<item>
+  <title><![CDATA[ Mapping weather and climate in the West ]]></title>
+  <link>https://www.climate.gov/news-features/decision-makers-toolbox/mapping-weather-and-climate-west</link>
+  <description> The WestMap climate analysis and mapping toolbox is an interactive, web-based tool that helps users see the climate conditions that underlie droughts, storms, floods, and changes in streamflow.
+ </description>
+  <pubDate>
+      Thu, 30 Jan 2014 07:00:00 -0500
+    </pubDate>
+    <dc:creator>
+      Emily Greenhalgh
+    </dc:creator>
+    <guid isPermaLink="false">
+      https://www.climate.gov/news-features/decision-makers-toolbox/mapping-weather-and-climate-west
+    </guid>
+    </item>
+
+  </channel>
+</rss>
